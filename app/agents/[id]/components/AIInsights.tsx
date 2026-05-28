@@ -1,131 +1,102 @@
-import { Agent, ConsistencyRating, ResponseGrade } from '@/types/agent';
+import { Agent, ConsistencyRating } from '@/types/agent';
 import { ScoreBreakdown, SCORE_WEIGHTS } from '@/lib/scoring';
 import SourceLabel from './SourceLabel';
+import SectionHeader from './SectionHeader';
 
-function responseGradeColor(grade: ResponseGrade): string {
-  if (grade === 'Under 1 hour') return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-  if (grade === 'Same day') return 'bg-blue-100 text-blue-700 border-blue-200';
-  if (grade === 'Next day') return 'bg-amber-100 text-amber-700 border-amber-200';
-  return 'bg-red-100 text-red-700 border-red-200';
-}
+// ── Design tokens ─────────────────────────────────────────────────────────────
 
-function consistencyColor(rating: ConsistencyRating): string {
-  if (rating === 'Highly consistent') return 'text-emerald-600';
-  if (rating === 'Moderate variance') return 'text-amber-600';
-  return 'text-red-500';
-}
+const INNER    = { background: 'rgba(255,255,255,0.04)', border: '1px solid #2D3148' } as const;
+const C_SEC    = '#94A3B8';
+const C_TER    = '#4B5563';
+const C_INTERP = '#CBD5E1';
 
-function subScoreColor(score: number): string {
-  if (score >= 80) return 'bg-emerald-500';
-  if (score >= 60) return 'bg-amber-400';
-  return 'bg-red-500';
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function subScoreColor(score: number) {
+  if (score >= 80) return '#10b981';
+  if (score >= 60) return '#f59e0b';
+  return '#ef4444';
 }
 
 const BREAKDOWN_LABELS: Record<keyof ScoreBreakdown, string> = {
   transactionPerformance: 'Transaction Performance',
   skinInTheGame:          'Skin in the Game',
   clientOutcomes:         'Client Outcomes',
-  expertise:              'Expertise',
+  expertise:              'Local Market Expertise',
   responsiveness:         'Responsiveness',
   marketIntelligence:     'Market Intelligence',
 };
 
+function consistencyColor(rating: ConsistencyRating) {
+  if (rating === 'Highly consistent') return '#10b981';
+  if (rating === 'Moderate variance') return '#f59e0b';
+  return '#ef4444';
+}
+
 interface Props {
-  agent: Agent;
+  agent:     Agent;
   breakdown: ScoreBreakdown;
 }
 
 export default function AIInsights({ agent, breakdown }: Props) {
+  const waveColor = consistencyColor(agent.consistencyRating);
+
   return (
-    <section className="bg-slate-900 rounded-xl p-5 text-white">
-      <div className="flex items-center gap-2 mb-5">
-        <span className="text-xs font-semibold bg-violet-600 text-white px-2.5 py-1 rounded-full">
+    <section
+      className="rounded-2xl p-4 sm:p-5"
+      style={{ background: '#1A1D2E', border: '1px solid #2D3148' }}
+    >
+      <div className="flex items-center gap-3 mb-5">
+        <SectionHeader className="mb-0">Provn Intelligence</SectionHeader>
+        <span
+          className="font-black px-3 py-1 rounded-full"
+          style={{ fontSize: '11px', background: 'rgba(139,92,246,0.15)', color: '#a78bfa', border: '1px solid rgba(139,92,246,0.30)', letterSpacing: '0.05em' }}
+        >
           AI Generated
         </span>
-        <h2 className="text-lg font-bold text-white">Provn Intelligence</h2>
       </div>
 
       {/* Score breakdown */}
-      <div className="bg-slate-800 rounded-lg p-4 mb-4">
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-4">
-          Score Breakdown
-        </p>
-        <div className="space-y-3">
+      <div className="rounded-2xl p-3 sm:p-4 mb-5" style={INNER}>
+        <p className="uppercase mb-4" style={{ fontSize: '11px', fontWeight: 600, color: C_TER, letterSpacing: '0.1em' }}>Score Breakdown</p>
+        <div className="space-y-4">
           {(Object.keys(breakdown) as Array<keyof ScoreBreakdown>).map((key) => {
-            const score = breakdown[key];
+            const score  = breakdown[key];
             const weight = Math.round(SCORE_WEIGHTS[key] * 100);
+            const color  = subScoreColor(score);
             return (
               <div key={key}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-slate-300 font-medium">
-                    {BREAKDOWN_LABELS[key]}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-slate-500">{weight}% weight</span>
-                    <span className="text-sm font-bold text-white w-8 text-right">{score}</span>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>{BREAKDOWN_LABELS[key]}</span>
+                  <div className="flex items-center gap-3">
+                    <span style={{ fontSize: '12px', color: C_SEC }}>{weight}% weight</span>
+                    <span className="font-black tabular-nums w-8 text-right" style={{ fontSize: '20px', color }}>{score}</span>
                   </div>
                 </div>
-                <div className="w-full bg-slate-700 rounded-full h-1.5">
-                  <div
-                    className={`h-1.5 rounded-full transition-all ${subScoreColor(score)}`}
-                    style={{ width: `${score}%` }}
-                  />
+                <div className="w-full rounded-full h-2 overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                  <div className="h-2 rounded-full" style={{ width: `${score}%`, backgroundColor: color }} />
                 </div>
               </div>
             );
           })}
         </div>
-        <p className="text-xs text-slate-600 mt-3">Verified by Provn · Computed from verified data sources</p>
+        <p className="mt-4" style={{ fontSize: '11px', color: C_TER }}>Verified by Provn · Computed from verified data sources</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Writing style */}
-        <div className="bg-slate-800 rounded-lg p-4">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">
-            Writing Style Analysis
-          </p>
-          <p className="text-sm text-white leading-relaxed">{agent.writingStyleSummary}</p>
-          <SourceLabel source="Source: Provn AI · Public bio & listing copy analysis" />
-        </div>
-
-        {/* Response grade */}
-        <div className="bg-slate-800 rounded-lg p-4">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">
-            Response Pattern
-          </p>
-          <span
-            className={`inline-block text-sm font-bold px-3 py-1.5 rounded-full border ${responseGradeColor(agent.responseGrade)}`}
-          >
-            {agent.responseGrade}
-          </span>
-          <p className="text-xs text-slate-500 mt-2">
-            Measured via blind mystery shopper cadence — agent is not aware of test timing
-          </p>
-          <SourceLabel source="Verified by Provn · Mystery shopper data" />
-        </div>
-
-        {/* Consistency score */}
-        <div className="bg-slate-800 rounded-lg p-4">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">
-            Consistency Score
-          </p>
-          <p className={`text-lg font-bold ${consistencyColor(agent.consistencyRating)}`}>
-            {agent.consistencyRating}
-          </p>
-          <p className="text-xs text-slate-500 mt-1">
-            Measures variance in performance metrics over the last 3 years
-          </p>
-          <SourceLabel source="Source: MLS Data · Provn Analysis" />
-        </div>
-
-        {/* Client type match */}
-        <div className="bg-slate-800 rounded-lg p-4">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">
-            Client Type Match
-          </p>
-          <p className="text-sm text-white leading-relaxed">{agent.clientTypeMatch}</p>
-          <SourceLabel source="Source: Provn AI · MLS transaction history analysis" />
-        </div>
+      {/* Plain-English summary lines */}
+      <div className="space-y-3 pt-1">
+        <p className="leading-relaxed" style={{ fontSize: '13px', color: C_INTERP, lineHeight: 1.6 }}>
+          <span className="font-semibold text-white">Writing style:</span> {agent.writingStyleSummary}
+        </p>
+        <p className="leading-relaxed" style={{ fontSize: '13px', color: C_INTERP, lineHeight: 1.6 }}>
+          <span className="font-semibold text-white">Consistency:</span>{' '}
+          <span className="font-semibold" style={{ color: waveColor }}>{agent.consistencyRating}</span>
+          {' '}— based on variance in MLS performance metrics over 3 years
+        </p>
+        <p className="leading-relaxed" style={{ fontSize: '13px', color: C_INTERP, lineHeight: 1.6 }}>
+          <span className="font-semibold text-white">Best match for:</span> {agent.clientTypeMatch}
+        </p>
+        <SourceLabel source="Source: Provn AI · MLS Data · Public bio & listing copy" />
       </div>
     </section>
   );

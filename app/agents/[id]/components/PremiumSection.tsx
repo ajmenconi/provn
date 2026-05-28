@@ -1,5 +1,14 @@
 import { Agent } from '@/types/agent';
+import { gradeAccent, gradeGradient } from '@/lib/gradeAccent';
+import SaleMap from './SaleMap';
 import SourceLabel from './SourceLabel';
+import SectionHeader from './SectionHeader';
+
+const CARD    = { background: '#1A1D2E', border: '1px solid #2D3148' } as const;
+const INNER   = { background: 'rgba(255,255,255,0.04)', border: '1px solid #2D3148' } as const;
+const C_SEC   = '#94A3B8';
+const C_TER   = '#4B5563';
+const C_INTERP = '#CBD5E1';
 
 interface Props {
   agent: Agent;
@@ -8,50 +17,94 @@ interface Props {
 export default function PremiumSection({ agent }: Props) {
   if (!agent.isPremium) return null;
 
+  const accent   = gradeAccent(agent.provnLetterGrade);
+  const gradient = gradeGradient(agent.provnLetterGrade);
+
   return (
     <section>
-      {/* Premium badge header */}
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-xs font-semibold bg-amber-500 text-amber-950 px-3 py-1 rounded-full">
+      {/* Premium header rule */}
+      <div className="flex items-center gap-3 mb-4">
+        <span className="text-xs font-black px-3 py-1 rounded-full shrink-0" style={{ backgroundColor: '#f59e0b', color: '#1c1000' }}>
           Premium Profile
         </span>
-        <div className="h-px flex-1 bg-gray-200" />
+        <div className="h-px flex-1" style={{ backgroundColor: '#2D3148' }} />
       </div>
 
       <div className="space-y-4">
-        {/* Intro video */}
+
+        {/* ── Video thumbnail ─────────────────────────────────────── */}
         {agent.introVideoUrl && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-              Agent Introduction
-            </p>
-            <div className="aspect-video w-full rounded-lg overflow-hidden bg-gray-900">
-              <iframe
-                src={agent.introVideoUrl}
-                className="w-full h-full"
-                allowFullScreen
-                title="Agent introduction video"
+          <div className="rounded-2xl p-5" style={CARD}>
+            <SectionHeader className="mb-3">Agent Introduction</SectionHeader>
+
+            {/* 16:9 thumbnail placeholder */}
+            <div className="relative w-full rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+              <div className="absolute inset-0" style={{ background: gradient }} />
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    'radial-gradient(ellipse at 30% 35%, rgba(255,255,255,0.22) 0%, transparent 55%),' +
+                    'radial-gradient(ellipse at 75% 65%, rgba(0,0,0,0.12) 0%, transparent 55%)',
+                }}
               />
+              <div
+                className="absolute bottom-0 left-0 right-0 h-2/5"
+                style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%)' }}
+              />
+              <div className="absolute top-4 left-4">
+                <span className="text-[11px] font-black text-white bg-black/35 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                  Provn Premium
+                </span>
+              </div>
+              <div className="absolute top-4 right-4">
+                <span className="text-[11px] font-semibold text-white bg-white/20 backdrop-blur-sm border border-white/30 px-2.5 py-1 rounded-full">
+                  Coming Soon
+                </span>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div
+                  className="flex items-center justify-center rounded-full border-2 border-white/50 bg-white/20 backdrop-blur-sm"
+                  style={{ width: '72px', height: '72px' }}
+                >
+                  <svg className="w-8 h-8 text-white ml-1.5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="absolute bottom-4 left-4">
+                <span className="text-xs font-bold text-white/60 bg-black/25 px-2 py-0.5 rounded">— : —</span>
+              </div>
+              <div className="absolute bottom-4 right-4 text-right max-w-xs">
+                <p className="text-base font-black text-white leading-tight drop-shadow-sm">
+                  {agent.name}&apos;s Agent Introduction
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.65)' }}>{agent.brokerageName}</p>
+              </div>
             </div>
-            <SourceLabel source="Agent-submitted · Approved by Provn" />
+
+            <div className="mt-3">
+              <SourceLabel source="Agent-submitted · Approved by Provn" />
+            </div>
           </div>
         )}
 
-        {/* Win stories */}
+        {/* ── Win stories ──────────────────────────────────────────── */}
         {agent.winStories.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
-              Verified Win Stories
-            </p>
+          <div className="rounded-2xl p-4 sm:p-5" style={CARD}>
+            <SectionHeader className="mb-4">Verified Win Stories</SectionHeader>
             <div className="space-y-4">
               {agent.winStories.map((story, i) => (
-                <div key={i} className="border border-gray-100 rounded-lg p-4">
+                <div key={i} className="rounded-xl p-3 sm:p-4" style={INNER}>
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <span className="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">
+                    <span
+                      className="font-semibold px-2.5 py-1 rounded-full"
+                      style={{ fontSize: '13px', backgroundColor: `${accent}12`, color: accent, border: `1px solid ${accent}30` }}
+                    >
                       {story.dealType}
                     </span>
                     {story.clientVerified && (
-                      <span className="shrink-0 text-xs font-semibold text-emerald-600 flex items-center gap-1">
+                      <span className="shrink-0 font-semibold flex items-center gap-1" style={{ fontSize: '12px', color: '#10b981' }}>
                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
@@ -59,19 +112,22 @@ export default function PremiumSection({ agent }: Props) {
                       </span>
                     )}
                   </div>
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-2">
                     <div>
-                      <span className="font-semibold text-gray-500">Challenge: </span>
-                      <span className="text-gray-700">{story.challenge}</span>
+                      <span className="font-semibold" style={{ fontSize: '13px', color: '#FFFFFF' }}>Challenge: </span>
+                      <span className="leading-relaxed" style={{ fontSize: '13px', color: C_INTERP, lineHeight: 1.6 }}>{story.challenge}</span>
                     </div>
                     <div>
-                      <span className="font-semibold text-gray-500">Outcome: </span>
-                      <span className="text-gray-700">{story.outcome}</span>
+                      <span className="font-semibold" style={{ fontSize: '13px', color: '#FFFFFF' }}>Outcome: </span>
+                      <span className="leading-relaxed" style={{ fontSize: '13px', color: C_INTERP, lineHeight: 1.6 }}>{story.outcome}</span>
                     </div>
                   </div>
-                  <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-                    <span className="text-xs text-gray-400">Transaction value</span>
-                    <span className="text-lg font-black text-gray-900">{story.dollarImpact}</span>
+                  <div
+                    className="mt-3 pt-3 flex items-center justify-between border-t"
+                    style={{ borderColor: '#2D3148' }}
+                  >
+                    <span style={{ fontSize: '13px', color: C_SEC }}>Transaction value</span>
+                    <span className="font-black text-white" style={{ fontSize: '22px' }}>{story.dollarImpact}</span>
                   </div>
                   <SourceLabel source="Agent-submitted · Client confirmation on file · Verified by Provn" />
                 </div>
@@ -80,29 +136,32 @@ export default function PremiumSection({ agent }: Props) {
           </div>
         )}
 
-        {/* Featured neighborhood */}
+        {/* ── Featured Market — SVG sale map ──────────────────────── */}
         {agent.featuredNeighborhood && (
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Featured Market
-              </p>
-              <span className="text-xs bg-blue-50 border border-blue-200 text-blue-700 font-semibold px-2.5 py-1 rounded-full">
-                {agent.featuredNeighborhood}
+          <div className="rounded-2xl p-4 sm:p-5" style={CARD}>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <SectionHeader className="mb-1">Featured Market</SectionHeader>
+                <p className="mt-0.5 leading-relaxed" style={{ fontSize: '13px', color: C_SEC, lineHeight: 1.5 }}>
+                  Past sale locations across {agent.primaryCounty} County
+                </p>
+              </div>
+              <span
+                className="font-semibold px-3 py-1.5 rounded-full shrink-0"
+                style={{ fontSize: '13px', backgroundColor: `${accent}12`, color: accent, border: `1.5px solid ${accent}30` }}
+              >
+                📍 {agent.featuredNeighborhood}
               </span>
             </div>
-            <div className="bg-gray-100 rounded-lg h-40 flex items-center justify-center text-gray-400">
-              <div className="text-center">
-                <svg className="w-8 h-8 mx-auto mb-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                </svg>
-                <p className="text-sm font-medium">Recent Sales Map</p>
-                <p className="text-xs">Mapbox integration — configure API key to enable</p>
-              </div>
+
+            <SaleMap agent={agent} accent={accent} />
+
+            <div className="mt-3">
+              <SourceLabel source="Source: MLS Data · Zillow · Agent transaction history · Provn-verified" />
             </div>
-            <SourceLabel source="Source: MLS Data · Agent-selected featured market" />
           </div>
         )}
+
       </div>
     </section>
   );

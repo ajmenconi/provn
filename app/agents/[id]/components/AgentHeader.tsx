@@ -1,146 +1,229 @@
-import { Agent, LetterGrade } from '@/types/agent';
-
-function gradeColor(grade: LetterGrade): string {
-  if (grade === 'A+' || grade === 'A') return 'bg-emerald-500 ring-emerald-400';
-  if (grade === 'B+' || grade === 'B') return 'bg-amber-500 ring-amber-400';
-  return 'bg-orange-500 ring-orange-400';
-}
-
-function yearsLicensed(issueDateStr: string): number {
-  const issued = new Date(issueDateStr);
-  const now = new Date();
-  return now.getFullYear() - issued.getFullYear();
-}
+/**
+ * AgentHeader — hero content, centered group layout.
+ *
+ * Three flex-peers on desktop: photo · info block · score ring
+ * All three centered in a max-w-[900px] container so they read
+ * as a cohesive unit rather than stretching edge-to-edge.
+ *
+ * Mobile: stacks vertically, all center-aligned.
+ * Desktop: horizontal row, items-start, gap-12 (48px) between peers.
+ *
+ * Opacity rule: NO text below 70% opacity anywhere in this component.
+ * The gradient provides visual interest — legibility wins over subtlety.
+ */
+import { Agent } from '@/types/agent';
+import { gradeAccent } from '@/lib/gradeAccent';
+import ScoreRing from './ScoreRing';
 
 function formatLicenseDate(issueDateStr: string): string {
   return new Date(issueDateStr).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
+    month: 'long', day: 'numeric', year: 'numeric',
   });
 }
+
+function yearsLicensed(issueDateStr: string): number {
+  return new Date().getFullYear() - new Date(issueDateStr).getFullYear();
+}
+
+function heroStat(agent: Agent): string {
+  const domPct    = Math.round((1 - agent.avgDaysOnMarket / agent.marketMedianDaysOnMarket) * 100);
+  const spLpDelta = +(agent.salePriceToListRatio - agent.salePriceToListRatioMarket).toFixed(1);
+  const prPct     = Math.round((1 - agent.priceReductionRate / agent.marketPriceReductionRate) * 100);
+  if (domPct >= 40)   return `Closes homes ${domPct}% faster than the ${agent.primaryCounty} County average`;
+  if (spLpDelta >= 2) return `Gets sellers ${spLpDelta}% above asking — ${spLpDelta}pp ahead of the market`;
+  if (prPct >= 40)    return `Price reduction rate ${prPct}% below the county average`;
+  return `${agent.totalCareerTransactions}+ verified transactions in ${agent.primaryCounty} County`;
+}
+
+function topBadges(agent: Agent): string[] {
+  const badges: string[] = [];
+  const domPct    = Math.round((1 - agent.avgDaysOnMarket / agent.marketMedianDaysOnMarket) * 100);
+  const spLpDelta = +(agent.salePriceToListRatio - agent.salePriceToListRatioMarket).toFixed(1);
+  const prPct     = Math.round((1 - agent.priceReductionRate / agent.marketPriceReductionRate) * 100);
+  if (domPct >= 30)    badges.push('Fast Closer');
+  if (spLpDelta >= 1)  badges.push('Over-Ask Results');
+  if (prPct >= 30)     badges.push('Accurate Pricer');
+  if (agent.fallThroughRate < agent.marketFallThroughRate) badges.push('Low Fall-Throughs');
+  if (agent.totalCareerTransactions >= 200) badges.push('200+ Deals');
+  return badges.slice(0, 3);
+}
+
+const SOURCE_COPY: Record<string, string> = {
+  'zillow':      'Photo via Zillow',
+  'realtor.com': 'Photo via Realtor.com',
+  'auto':        'Photo auto-matched',
+  'custom':      'Custom photo',
+};
 
 interface Props {
   agent: Agent;
 }
 
 export default function AgentHeader({ agent }: Props) {
-  const years = yearsLicensed(agent.licenseIssueDate);
+  const years      = yearsLicensed(agent.licenseIssueDate);
+  const accent     = gradeAccent(agent.provnLetterGrade);
+  const initials   = agent.name.split(' ').map((n) => n[0]).join('');
+  const sourceCopy = agent.headshotSource ? SOURCE_COPY[agent.headshotSource] : null;
+  const badges     = topBadges(agent);
 
   return (
-    <div className="bg-slate-900 text-white">
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        {/* Top row */}
-        <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-          {/* Headshot */}
-          <div className="shrink-0">
-            {agent.headshotUrl ? (
-              <img
-                src={agent.headshotUrl}
-                alt={agent.name}
-                className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover ring-2 ring-slate-600"
-              />
-            ) : (
-              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-slate-700 ring-2 ring-slate-600 flex items-center justify-center">
-                <span className="text-3xl sm:text-4xl font-bold text-slate-400">
-                  {agent.name.split(' ').map((n) => n[0]).join('')}
-                </span>
-              </div>
-            )}
+    // Centered group — max 900px so elements stay close together
+    <div className="max-w-[900px] mx-auto flex flex-col lg:flex-row items-center lg:items-start justify-center gap-8 lg:gap-12">
+
+      {/* ── 1. PHOTO ──────────────────────────────────────────────────────── */}
+      <div className="relative shrink-0">
+        {agent.headshotUrl ? (
+          <img
+            src={agent.headshotUrl}
+            alt={agent.name}
+            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover ring-4 ring-white/25"
+          />
+        ) : (
+          <div
+            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full ring-4 ring-white/25 flex items-center justify-center"
+            style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
+          >
+            <span className="text-4xl font-black text-white select-none">{initials}</span>
           </div>
-
-          {/* Name + details */}
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">{agent.name}</h1>
-
-            {/* Brokerage */}
-            <div className="flex items-center gap-2 mt-1">
-              {agent.brokerageLogoUrl ? (
-                <img src={agent.brokerageLogoUrl} alt={agent.brokerageName} className="h-5 object-contain" />
-              ) : null}
-              <span className="text-slate-300 text-sm">{agent.brokerageName}</span>
-            </div>
-
-            {/* Location */}
-            <p className="text-slate-400 text-sm mt-1">
-              {agent.primaryCity}, {agent.primaryCounty} County, CA
+        )}
+        {sourceCopy && (
+          <div
+            className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-full whitespace-nowrap"
+            style={{ backgroundColor: 'rgba(0,0,0,0.50)', backdropFilter: 'blur(8px)' }}
+          >
+            {/* 📷 source label — kept at 75% minimum */}
+            <p style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(255,255,255,0.75)' }}>
+              📷 {sourceCopy}
             </p>
-
-            {/* Badges row */}
-            <div className="flex flex-wrap items-center gap-2 mt-3">
-              {/* License type */}
-              <span
-                className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                  agent.licenseType === 'Broker'
-                    ? 'bg-amber-500 text-amber-950'
-                    : 'bg-slate-600 text-slate-200'
-                }`}
-              >
-                {agent.licenseType}
-              </span>
-
-              {/* License status */}
-              <span
-                className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                  agent.licenseStatus === 'Active'
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-red-500 text-white'
-                }`}
-              >
-                {agent.licenseStatus}
-              </span>
-
-              {/* DRE license */}
-              <span className="text-xs text-slate-400">
-                DRE #{' '}
-                <a
-                  href="https://www2.dre.ca.gov/PublicASP/pplinfo.asp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 underline hover:text-blue-300"
-                >
-                  {agent.licenseNumber}
-                </a>
-              </span>
-            </div>
-
-            {/* License date */}
-            <p className="text-xs text-slate-500 mt-1.5">
-              Licensed {formatLicenseDate(agent.licenseIssueDate)} &mdash;{' '}
-              <span className="text-slate-300 font-medium">Licensed {years} years</span>
-              <span className="block text-slate-600 mt-0.5">Source: CA DRE</span>
-            </p>
-
-            {/* Languages */}
-            {agent.languages.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-3">
-                {agent.languages.map((lang) => (
-                  <span
-                    key={lang}
-                    className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full"
-                  >
-                    {lang}
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
+        )}
+      </div>
 
-          {/* Provn Score */}
-          <div className="flex flex-col items-center shrink-0 mt-2 sm:mt-0">
-            <div
-              className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full ring-4 ${gradeColor(agent.provnLetterGrade)} flex flex-col items-center justify-center shadow-lg`}
+      {/* ── 2. INFO BLOCK ─────────────────────────────────────────────────── */}
+      <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-3">
+
+        {/* Name */}
+        <div>
+          <h1
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight"
+            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.30)' }}
+          >
+            {agent.name}
+          </h1>
+          {/* Brokerage / city — 90% opacity minimum */}
+          <p className="text-sm mt-1.5" style={{ color: 'rgba(255,255,255,0.90)' }}>
+            {agent.brokerageName} &middot; {agent.primaryCity}, {agent.primaryCounty} County
+          </p>
+        </div>
+
+        {/* License type · status · DRE number */}
+        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
+          <span className={`text-xs font-black px-3 py-1.5 rounded-full ${
+            agent.licenseType === 'Broker'
+              ? 'bg-amber-400 text-amber-950'
+              : 'bg-white/20 text-white'
+          }`}>
+            {agent.licenseType}
+          </span>
+
+          <span
+            className="text-xs font-black px-3 py-1.5 rounded-full"
+            style={
+              agent.licenseStatus === 'Active'
+                ? { background: '#10b981', color: '#ffffff' }
+                : { background: '#ef4444', color: '#ffffff' }
+            }
+          >
+            {agent.licenseStatus}
+          </span>
+
+          {/* DRE — 85% opacity, link underlined */}
+          <span className="text-xs" style={{ color: 'rgba(255,255,255,0.85)' }}>
+            DRE#{' '}
+            <a
+              href="https://www2.dre.ca.gov/PublicASP/pplinfo.asp"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-white transition-colors"
             >
-              <span className="text-3xl sm:text-4xl font-black text-white leading-none">
-                {agent.provnLetterGrade}
+              {agent.licenseNumber}
+            </a>
+          </span>
+        </div>
+
+        {/* License vintage — 75% minimum, source label 75% minimum */}
+        <p className="leading-relaxed" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
+          Licensed {formatLicenseDate(agent.licenseIssueDate)} &mdash;{' '}
+          <span className="font-semibold" style={{ color: 'rgba(255,255,255,0.90)' }}>{years} years</span>
+          <span className="block mt-0.5" style={{ color: 'rgba(255,255,255,0.75)', fontSize: '11px' }}>
+            Source: CA DRE
+          </span>
+        </p>
+
+        {/* Top-3 performance mini-pills */}
+        {badges.length > 0 && (
+          <div className="flex flex-wrap justify-center lg:justify-start gap-1.5">
+            {badges.map((badge) => (
+              <span
+                key={badge}
+                className="text-[11px] font-bold px-2.5 py-1 rounded-full"
+                style={{
+                  backgroundColor: `${accent}20`,
+                  color: '#ffffff',
+                  border: `1px solid ${accent}50`,
+                }}
+              >
+                {badge}
               </span>
-              <span className="text-xs text-white/80 mt-0.5">{agent.provnScore}/100</span>
-            </div>
-            <p className="text-xs text-slate-400 mt-2 text-center">Provn Score</p>
-            <p className="text-xs text-slate-600 text-center">Verified by Provn</p>
+            ))}
           </div>
+        )}
+
+        {/* Language pills — white text, white/10 bg, white/20 border */}
+        {agent.languages.length > 0 && (
+          <div className="flex flex-wrap justify-center lg:justify-start gap-2">
+            {agent.languages.map((lang) => (
+              <span
+                key={lang}
+                className="text-xs font-medium px-3 py-1 rounded-full"
+                style={{
+                  background: 'rgba(255,255,255,0.10)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255,255,255,0.20)',
+                }}
+              >
+                {lang}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── 3. SCORE RING ─────────────────────────────────────────────────── */}
+      <div className="flex flex-col items-center gap-3 shrink-0 lg:pt-2">
+        <ScoreRing score={agent.provnScore} grade={agent.provnLetterGrade} />
+        <div className="text-center">
+          {/* "Provn Score" label — 75% minimum */}
+          <p
+            className="uppercase mb-2"
+            style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.75)' }}
+          >
+            Provn Score
+          </p>
+          {/* Hero stat — font-weight 600, full white, no opacity reduction */}
+          <p
+            className="font-semibold text-white leading-snug max-w-[220px]"
+            style={{ fontSize: '13px', lineHeight: 1.5 }}
+          >
+            {heroStat(agent)}
+          </p>
+          {/* "Verified by Provn" — 70% minimum */}
+          <p className="mt-1.5" style={{ fontSize: '11px', color: 'rgba(255,255,255,0.70)' }}>
+            Verified by Provn
+          </p>
         </div>
       </div>
+
     </div>
   );
 }

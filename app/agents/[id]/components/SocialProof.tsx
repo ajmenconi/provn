@@ -1,109 +1,142 @@
 import { Agent } from '@/types/agent';
+import { gradeAccent } from '@/lib/gradeAccent';
 import SourceLabel from './SourceLabel';
 
-function StarScore({ score, max }: { score: number; max: number }) {
-  const pct = (score / max) * 100;
+// ── Stars ─────────────────────────────────────────────────────────────────────
+
+function Stars({ score, max = 5 }: { score: number; max?: number }) {
+  const filled = Math.round((score / max) * 5);
   return (
-    <div className="flex items-center gap-1.5">
-      <div className="relative w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
-        <div className="absolute inset-y-0 left-0 bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
-      </div>
-      <span className="text-sm font-bold text-gray-900">{score.toFixed(1)}</span>
+    <div className="flex gap-1">
+      {Array.from({ length: 5 }, (_, i) => (
+        <svg
+          key={i}
+          className={`w-5 h-5 ${i < filled ? 'text-amber-400' : 'text-gray-200'}`}
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" />
+        </svg>
+      ))}
     </div>
   );
 }
 
-function formatReviewDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'long',
-    year: 'numeric',
-  });
-}
+// ── Platform config ───────────────────────────────────────────────────────────
+
+const PLATFORM_CONFIG: Record<string, { bg: string; text: string; short: string }> = {
+  'Google':      { bg: '#4285F4', text: '#fff', short: 'G' },
+  'Zillow':      { bg: '#006AFF', text: '#fff', short: 'Z' },
+  'Realtor.com': { bg: '#D92228', text: '#fff', short: 'R' },
+  'Homes.com':   { bg: '#7B2FBE', text: '#fff', short: 'H' },
+};
+
+// ── Keyword theme colors ──────────────────────────────────────────────────────
+
+const THEME_COLORS = [
+  'bg-blue-100 text-blue-800',
+  'bg-emerald-100 text-emerald-800',
+  'bg-violet-100 text-violet-800',
+  'bg-amber-100 text-amber-800',
+  'bg-pink-100 text-pink-800',
+];
+
+// ── Section ───────────────────────────────────────────────────────────────────
 
 interface Props {
   agent: Agent;
 }
 
 export default function SocialProof({ agent }: Props) {
-  return (
-    <section className="bg-white rounded-xl border border-gray-200 p-5">
-      <h2 className="text-lg font-bold text-gray-900 mb-4">Social Proof</h2>
+  const accent = gradeAccent(agent.provnLetterGrade);
 
-      {/* Composite score */}
-      <div className="flex flex-col sm:flex-row sm:items-end gap-4 mb-6 pb-5 border-b border-gray-100">
-        <div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-            Weighted Composite
-          </p>
-          <div className="flex items-baseline gap-2 mt-1">
-            <span className="text-4xl font-black text-gray-900">
+  return (
+    <section
+      className="bg-white rounded-2xl shadow-sm border border-gray-100 border-l-4 p-5 sm:p-6"
+      style={{ borderLeftColor: accent }}
+    >
+      <h2 className="text-2xl font-black text-gray-900 mb-5">⭐ Social Proof</h2>
+
+      {/* Main row: composite score + platform breakdown */}
+      <div className="flex flex-col sm:flex-row gap-6">
+
+        {/* Composite score — dominant left column */}
+        <div className="flex flex-col gap-2 sm:pr-6 sm:border-r sm:border-gray-100 shrink-0">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Composite Score</p>
+          <div className="flex items-baseline gap-2">
+            <span
+              className="font-black text-gray-900 tabular-nums leading-none"
+              style={{ fontSize: '72px', lineHeight: 1 }}
+            >
               {agent.weightedCompositeScore.toFixed(2)}
             </span>
-            <span className="text-lg text-gray-400">/ 5.0</span>
+            <span className="text-2xl font-light text-gray-300 mb-1">/ 5</span>
           </div>
-          <p className="text-xs text-gray-400 mt-0.5">
-            {agent.totalVerifiedReviewCount.toLocaleString()} verified reviews across all platforms
+          <Stars score={agent.weightedCompositeScore} />
+          <p className="text-sm text-gray-600 mt-1">
+            <span className="text-xl font-black text-gray-900 tabular-nums">
+              {agent.totalVerifiedReviewCount.toLocaleString()}
+            </span>{' '}
+            verified reviews
           </p>
-          <SourceLabel source="Verified by Provn · Aggregated from Google, Zillow, Realtor.com, Homes.com" />
+          <SourceLabel source="Verified by Provn · Google, Zillow, Realtor.com, Homes.com" />
         </div>
 
-        <div className="sm:ml-auto text-sm text-gray-500">
-          Most recent review:{' '}
-          <span className="font-semibold text-gray-700">
-            {formatReviewDate(agent.mostRecentReviewDate)}
-          </span>
-        </div>
-      </div>
-
-      {/* Platform breakdown */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        {agent.reviewPlatforms.map((p) => (
-          <div key={p.platform}>
-            <p className="text-xs font-semibold text-gray-500">{p.platform}</p>
-            <StarScore score={p.score} max={p.maxScore} />
-            <p className="text-xs text-gray-400 mt-0.5">{p.reviewCount} reviews</p>
-            <SourceLabel source={`Source: ${p.platform}`} />
+        {/* Right column: platform mini-cards + Provn survey */}
+        <div className="flex flex-col gap-3 flex-1 min-w-0">
+          {/* Platform scores 2×2 grid */}
+          <div className="grid grid-cols-2 gap-2">
+            {agent.reviewPlatforms.map((p) => {
+              const cfg = PLATFORM_CONFIG[p.platform] ?? { bg: '#6b7280', text: '#fff', short: p.platform[0] };
+              return (
+                <div
+                  key={p.platform}
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl"
+                  style={{ backgroundColor: `${cfg.bg}10`, border: `1.5px solid ${cfg.bg}28` }}
+                >
+                  <span
+                    className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-black shrink-0"
+                    style={{ backgroundColor: cfg.bg, fontSize: '10px' }}
+                  >
+                    {cfg.short}
+                  </span>
+                  <div>
+                    <p className="text-base font-black text-gray-900 leading-none tabular-nums">
+                      {p.score.toFixed(1)}
+                    </p>
+                    <p className="text-[11px] text-gray-400 mt-0.5">{p.reviewCount} reviews</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        ))}
-      </div>
 
-      {/* Keyword themes */}
-      <div className="mb-6">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-          Top Review Themes
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {agent.reviewKeywordThemes.map((theme) => (
-            <span
-              key={theme}
-              className="text-sm font-semibold bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full"
-            >
-              {theme}
-            </span>
-          ))}
-        </div>
-        <SourceLabel source="Source: Provn AI · Keyword extraction from all platform reviews" />
-      </div>
-
-      {/* Post-close survey */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide">
-              Provn Verified Post-Close Survey
-            </p>
-            <p className="text-xs text-blue-500 mt-0.5">
-              Platform-issued 90 days after closing · Carries additional weight
-            </p>
-          </div>
-          <div className="text-right">
-            <span className="text-3xl font-black text-blue-800">
+          {/* Provn Verified Survey — inline */}
+          <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 border border-blue-100">
+            <svg className="w-5 h-5 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+            </svg>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-blue-700">Provn Verified Survey</p>
+              <p className="text-[11px] text-blue-500 leading-snug">Independent score · issued 90 days post-close</p>
+            </div>
+            <p className="text-2xl font-black text-blue-700 tabular-nums shrink-0">
               {agent.postCloseSurveyScore.toFixed(1)}
-            </span>
-            <span className="text-sm text-blue-400"> / 5</span>
+            </p>
           </div>
         </div>
-        <SourceLabel source="Verified by Provn · Direct client outreach post-close" />
+      </div>
+
+      {/* Keyword theme pills */}
+      <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-gray-100">
+        {agent.reviewKeywordThemes.map((theme, i) => (
+          <span
+            key={theme}
+            className={`text-sm font-bold px-4 py-1.5 rounded-full ${THEME_COLORS[i % THEME_COLORS.length]}`}
+          >
+            {theme}
+          </span>
+        ))}
       </div>
     </section>
   );

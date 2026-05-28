@@ -1,37 +1,145 @@
 import { placeholderAgent } from './placeholder';
 import { scoreAgent } from '@/lib/scoring';
+import { gradeGradient } from '@/lib/gradeAccent';
 import AgentHeader from './components/AgentHeader';
-import PerformanceMetrics from './components/PerformanceMetrics';
+import HeroSocialProof from './components/HeroSocialProof';
+import BeyondRealEstate from './components/BeyondRealEstate';
+import HowTheyCompare from './components/HowTheyCompare';
+import PerformanceSnapshot from './components/PerformanceSnapshot';
+import MarketActivity from './components/MarketActivity';
 import SkinInTheGame from './components/SkinInTheGame';
-import ExpertiseBadges from './components/ExpertiseBadges';
 import MarketIntelligence from './components/MarketIntelligence';
+import ExpertiseBadges from './components/ExpertiseBadges';
 import AIInsights from './components/AIInsights';
-import SocialProof from './components/SocialProof';
 import PremiumSection from './components/PremiumSection';
+import FadeIn from './components/FadeIn';
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+// ── Between-section divider ───────────────────────────────────────────────────
+// Subtle 1px line with breathing room above and below so the eye knows
+// where one section ends and the next begins.
+
+function Divider() {
+  return (
+    <div
+      className="mt-6 sm:mt-8 border-t"
+      style={{ borderColor: '#2D3148' }}
+      aria-hidden="true"
+    />
+  );
+}
+
+// ── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function AgentProfilePage({ params }: PageProps) {
-  await params; // resolves id — swap for real DB fetch once data layer is wired
+  await params;
   const agent = placeholderAgent;
   const { composite, letterGrade, breakdown } = scoreAgent(agent);
   const scoredAgent = { ...agent, provnScore: composite, provnLetterGrade: letterGrade };
+  const gradient    = gradeGradient(scoredAgent.provnLetterGrade);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AgentHeader agent={scoredAgent} />
-      <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
-        <PerformanceMetrics agent={scoredAgent} />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <SkinInTheGame agent={scoredAgent} />
-          <MarketIntelligence agent={scoredAgent} />
+    <div className="min-h-screen" style={{ backgroundColor: '#0F1117' }}>
+
+      {/* ── 1. HERO — name, score, brokerage, hero stat, license badges ── */}
+      <div className="relative" style={{ background: gradient }}>
+        <div className="max-w-7xl mx-auto px-5 md:px-8 py-10 lg:py-14">
+          <AgentHeader agent={scoredAgent} />
         </div>
-        <ExpertiseBadges agent={scoredAgent} />
-        <AIInsights agent={scoredAgent} breakdown={breakdown} />
-        <SocialProof agent={scoredAgent} />
-        <PremiumSection agent={scoredAgent} />
+        <div
+          className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, transparent, #0F1117)' }}
+        />
+      </div>
+
+      {/* ── 2–10. Profile body ───────────────────────────────────────────── */}
+      {/*
+        Section order mirrors the consumer decision journey:
+          who is this person → can I trust them → are they good at their job
+          → do they fit my situation
+
+        Each section is separated by a single 1px #2D3148 divider + breathing
+        room so the eye registers a page-turn without heavy visual separation.
+      */}
+      <main className="max-w-7xl mx-auto px-6 md:px-12 pb-16">
+
+        {/* ── 2. Social Proof — first trust signal ── */}
+        <div className="pt-8">
+          <FadeIn>
+            <HeroSocialProof agent={scoredAgent} />
+          </FadeIn>
+        </div>
+
+        {/* ── 3. How They Compare — radar chart vs county ── */}
+        <Divider />
+        <div className="pt-6 sm:pt-8">
+          <FadeIn delay={20}>
+            <HowTheyCompare agent={scoredAgent} />
+          </FadeIn>
+        </div>
+
+        {/* ── 4. Performance Snapshot — stats in large type ── */}
+        <Divider />
+        <div className="pt-6 sm:pt-8">
+          <FadeIn delay={40}>
+            <PerformanceSnapshot agent={scoredAgent} />
+          </FadeIn>
+        </div>
+
+        {/* ── 5. Market Activity — marketing quality + consistency timeline ── */}
+        <Divider />
+        <div className="pt-6 sm:pt-8">
+          <FadeIn delay={60}>
+            <MarketActivity agent={scoredAgent} />
+          </FadeIn>
+        </div>
+
+        {/* ── 6. Skin in the Game + Local Market Expertise — side by side ── */}
+        <Divider />
+        <div className="pt-6 sm:pt-8">
+          <FadeIn delay={80}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <SkinInTheGame agent={scoredAgent} />
+              <MarketIntelligence agent={scoredAgent} />
+            </div>
+          </FadeIn>
+        </div>
+
+        {/* ── 7. Expertise Depth — specialty badges ── */}
+        <Divider />
+        <div className="pt-6 sm:pt-8">
+          <FadeIn delay={100}>
+            <ExpertiseBadges agent={scoredAgent} />
+          </FadeIn>
+        </div>
+
+        {/* ── 8. Provn Intelligence — AI insights ── */}
+        <Divider />
+        <div className="pt-6 sm:pt-8">
+          <FadeIn delay={120}>
+            <AIInsights agent={scoredAgent} breakdown={breakdown} />
+          </FadeIn>
+        </div>
+
+        {/* ── 9. Beyond Real Estate — personal story before premium ── */}
+        <Divider />
+        <div className="pt-6 sm:pt-8">
+          <FadeIn delay={140}>
+            <BeyondRealEstate agent={scoredAgent} />
+          </FadeIn>
+        </div>
+
+        {/* ── 10. Premium — video + win stories (paid agents only) ── */}
+        <Divider />
+        <div className="pt-6 sm:pt-8">
+          <FadeIn delay={160}>
+            <PremiumSection agent={scoredAgent} />
+          </FadeIn>
+        </div>
+
       </main>
     </div>
   );
