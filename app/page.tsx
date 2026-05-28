@@ -1724,201 +1724,6 @@ function ProblemSection() {
 
 
 
-// ── Section 3: What Provn does differently ────────────────────────────────────
-
-const DIFF_ROWS: { bad: string; good: string }[] = [
-  {
-    bad: 'The agent you see first paid for that placement',
-    good: 'Rankings are based entirely on verified transaction data and independent scoring',
-  },
-  {
-    bad: 'Buyer inquiries go to whoever bought the zip code — not the best agent',
-    good: 'You are matched to agents based on performance in your specific price range and neighborhood',
-  },
-  {
-    bad: 'Reviews tell you if people liked their agent',
-    good: 'Provn tells you if the agent is the right fit for your specific situation',
-  },
-  {
-    bad: 'No data on price reductions, fall-through rates, or agent property ownership',
-    good: 'All performance data is pulled from public records — agents cannot edit or influence their own score',
-  },
-  {
-    bad: 'Agents pay monthly fees for premium placement',
-    good: 'Agents cannot pay for status or placement — period',
-  },
-  {
-    bad: 'Your contact information is sold to agents as a lead',
-    good: 'Your information is only shared with agents you choose to contact',
-  },
-];
-
-function DiffRow({ row, index }: { row: typeof DIFF_ROWS[0]; index: number }) {
-  const [hovered, setHovered] = useState(false);
-  const bg = index % 2 === 0 ? '#0A0F1E' : '#0D1520';
-  return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1px 1fr',
-        alignItems: 'center',
-        background: hovered ? '#111827' : bg,
-        transition: 'background 0.2s ease',
-        minHeight: 56,
-      }}
-    >
-      {/* Left — platform bad */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0 24px' }}>
-        <span style={{ flexShrink: 0, color: '#EF4444', fontSize: 16, lineHeight: 1 }}>✗</span>
-        <span style={{ fontSize: 14, color: '#94A3B8', lineHeight: 1.55 }}>{row.bad}</span>
-      </div>
-
-      {/* Center divider */}
-      <div style={{ alignSelf: 'stretch', background: '#1E2A3A' }} />
-
-      {/* Right — Provn good */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-          padding: '0 24px',
-          borderLeft: hovered ? '2px solid #10B981' : '2px solid transparent',
-          transition: 'border-color 0.2s ease',
-        }}
-      >
-        <span style={{ flexShrink: 0, color: '#10B981', fontSize: 16, lineHeight: 1 }}>✓</span>
-        <span style={{ fontSize: 14, color: '#ffffff', fontWeight: 500, lineHeight: 1.55 }}>{row.good}</span>
-      </div>
-    </div>
-  );
-}
-
-function ProvnDiffSection() {
-  return (
-    <section
-      style={{
-        background: '#0A0F1E',
-        padding: '80px clamp(24px, 4vw, 48px)',
-        borderTop: '1px solid #1E2A3A',
-        borderBottom: '1px solid #1E2A3A',
-      }}
-    >
-      <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
-        <FadeIn>
-          <EyebrowPill text="✦ NO PAY TO PLAY" />
-
-          {/* Two-line headline */}
-          <div style={{ textAlign: 'center', marginBottom: 20 }}>
-            <h2 style={{
-              fontSize: 'clamp(32px, 5vw, 56px)',
-              fontWeight: 900,
-              color: '#ffffff',
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-              margin: 0,
-              display: 'block',
-            }}>
-              Every other platform has a price.
-            </h2>
-            <h2 style={{
-              fontSize: 'clamp(32px, 5vw, 56px)',
-              fontWeight: 900,
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-              margin: 0,
-              background: 'linear-gradient(135deg, #EF4444, #F59E0B)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              display: 'block',
-            }}>
-              Provn does not.
-            </h2>
-          </div>
-
-          <p style={{
-            textAlign: 'center',
-            fontSize: 17,
-            color: '#94A3B8',
-            maxWidth: 560,
-            margin: '0 auto 56px',
-            lineHeight: 1.75,
-          }}>
-            Agents earn their placement through verified performance data. The best agent
-            in your neighborhood shows up first — whether they advertise or not.
-          </p>
-        </FadeIn>
-
-        <FadeIn delay={80}>
-          {/* Column header labels */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1px 1fr',
-            marginBottom: 4,
-          }}>
-            <div style={{ padding: '0 24px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ color: '#EF4444', fontSize: 14 }}>✗</span>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#EF4444', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                Every other platform
-              </span>
-            </div>
-            <div />
-            <div style={{ padding: '0 24px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ color: '#10B981', fontSize: 14 }}>✓</span>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                Provn
-              </span>
-            </div>
-          </div>
-
-          {/* Table border wrapper */}
-          <div style={{ border: '1px solid #1E2A3A', borderRadius: 12, overflow: 'hidden' }}>
-            {DIFF_ROWS.map((row, i) => (
-              <DiffRow key={i} row={row} index={i} />
-            ))}
-          </div>
-
-          {/* Referral fee callout */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: 16,
-            maxWidth: 680,
-            margin: '40px auto 0',
-            background: 'linear-gradient(135deg, #0F2A1A, #0A1520)',
-            border: '1px solid rgba(16,185,129,0.3)',
-            borderRadius: 12,
-            padding: '20px 24px',
-          }}>
-            {/* Shield icon */}
-            <div style={{ flexShrink: 0, marginTop: 2 }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z" fill="#10B981" opacity="0.2"/>
-                <path d="M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z" stroke="#10B981" strokeWidth="1.5" strokeLinejoin="round"/>
-                <path d="M9 12l2 2 4-4" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            {/* Text */}
-            <p style={{
-              fontSize: 15,
-              color: '#CBD5E1',
-              lineHeight: 1.7,
-              margin: 0,
-            }}>
-              When you find your agent through Provn, a referral fee is paid by the
-              agent at closing — not by you, never affecting your cost. You agree to these
-              terms before seeing any matches. Full transparency, no surprises.
-            </p>
-          </div>
-        </FadeIn>
-      </div>
-    </section>
-  );
-}
-
 // ── Section 4: Provn Score ───────────────────────────────────────────────────
 
 const SCORE_ROWS = [
@@ -1958,6 +1763,8 @@ function ScoreBarsPanel() {
   const ref = useRef<HTMLDivElement>(null);
   const [triggered, setTriggered] = useState(false);
   const [counts, setCounts] = useState(SCORE_ROWS.map(() => 0));
+  const [openIndex, setOpenIndex] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [formulaOpen, setFormulaOpen] = useState(false);
 
   useEffect(() => {
@@ -1979,10 +1786,10 @@ function ScoreBarsPanel() {
     SCORE_ROWS.forEach((row, i) => {
       const delay = i * 150;
       const duration = 1200;
-      let startTime: number | null = null;
+      let t0: number | null = null;
       const tick = (now: number) => {
-        if (!startTime) startTime = now;
-        const elapsed = now - startTime - delay;
+        if (!t0) t0 = now;
+        const elapsed = now - t0 - delay;
         if (elapsed < 0) { rafs[i] = requestAnimationFrame(tick); return; }
         const t = Math.min(elapsed / duration, 1);
         const eased = 1 - Math.pow(1 - t, 3);
@@ -1999,42 +1806,85 @@ function ScoreBarsPanel() {
   }, [triggered]);
 
   return (
-    <div ref={ref}>
-      {SCORE_ROWS.map((row, i) => (
-        <div key={row.label} style={{ marginBottom: 28 }}>
-          {/* Label row */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 4 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 18, lineHeight: 1 }}>{row.icon}</span>
-              <span style={{ fontSize: 14, fontWeight: 600, color: '#ffffff' }}>{row.label}</span>
-            </div>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#10B981', minWidth: 36, textAlign: 'right', flexShrink: 0 }}>
-              {counts[i]}%
-            </span>
-          </div>
-          {/* Why it matters */}
-          <p style={{ fontSize: 12, color: '#94A3B8', fontStyle: 'italic', lineHeight: 1.55, margin: '0 0 7px 28px' }}>
-            {row.why}
-          </p>
-          {/* Bar */}
-          <div style={{ height: 8, borderRadius: 4, background: '#1E2A3A', overflow: 'hidden', marginBottom: 5 }}>
+    <div ref={ref} style={{ flex: '11 1 340px', minWidth: 0 }}>
+      {SCORE_ROWS.map((row, i) => {
+        const isOpen = openIndex === i;
+        const isHovered = hoveredIndex === i;
+        return (
+          <div key={row.label}>
+            {i > 0 && <div style={{ height: 1, background: '#1E2A3A' }} />}
             <div
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              onClick={() => setOpenIndex(isOpen ? -1 : i)}
               style={{
-                height: '100%',
-                borderRadius: 4,
-                background: 'linear-gradient(90deg, #10B981, #06B6D4)',
-                width: triggered ? `${row.pct}%` : '0%',
-                transition: `width 1.2s cubic-bezier(0.4,0,0.2,1) ${i * 0.15}s`,
+                padding: '16px 12px',
+                cursor: 'pointer',
+                background: isHovered ? '#0F1628' : 'transparent',
+                transition: 'background 0.2s ease',
+                borderRadius: 8,
+                margin: '0 -12px',
               }}
-            />
+            >
+              {/* Header row */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 20, lineHeight: 1 }}>{row.icon}</span>
+                  <span style={{ fontSize: 16, fontWeight: 700, color: '#ffffff' }}>{row.label}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+                  <span style={{ fontSize: 16, fontWeight: 700, color: '#10B981' }}>{counts[i]}%</span>
+                  <span style={{
+                    display: 'inline-block',
+                    fontSize: 11,
+                    color: '#4B5563',
+                    transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.3s ease',
+                    lineHeight: 1,
+                  }}>
+                    ▼
+                  </span>
+                </div>
+              </div>
+
+              {/* Fill bar — always visible below header */}
+              <div style={{ height: 6, borderRadius: 3, background: '#1E2A3A', overflow: 'hidden', marginTop: 12 }}>
+                <div
+                  style={{
+                    height: '100%',
+                    borderRadius: 3,
+                    background: 'linear-gradient(90deg, #10B981, #06B6D4)',
+                    width: triggered ? `${row.pct}%` : '0%',
+                    transition: `width 1.2s cubic-bezier(0.4,0,0.2,1) ${i * 0.15}s`,
+                  }}
+                />
+              </div>
+
+              {/* Expandable: why + source */}
+              <div style={{
+                maxHeight: isOpen ? '220px' : '0px',
+                overflow: 'hidden',
+                transition: 'max-height 0.3s ease',
+              }}>
+                <p style={{
+                  fontSize: 15, color: '#CBD5E1',
+                  lineHeight: 1.8, margin: '12px 0 4px',
+                  opacity: isOpen ? 1 : 0,
+                  transition: 'opacity 0.25s ease 0.05s',
+                }}>
+                  {row.why}
+                </p>
+                <div style={{ fontSize: 12, color: '#4B5563', paddingBottom: 8 }}>
+                  {row.source}
+                </div>
+              </div>
+            </div>
           </div>
-          {/* Source */}
-          <div style={{ fontSize: 11, color: '#4B5563', marginLeft: 28 }}>{row.source}</div>
-        </div>
-      ))}
+        );
+      })}
 
       {/* Expandable formula */}
-      <div style={{ marginTop: 8, borderTop: '1px solid #1E2A3A', paddingTop: 16 }}>
+      <div style={{ marginTop: 12, borderTop: '1px solid #1E2A3A', paddingTop: 16 }}>
         <button
           onClick={() => setFormulaOpen(f => !f)}
           style={{
@@ -2070,9 +1920,22 @@ function ScoreBarsPanel() {
           </p>
         </div>
       </div>
+
+      <p style={{
+        fontSize: 13,
+        color: '#4B5563',
+        fontStyle: 'italic',
+        textAlign: 'center',
+        marginTop: 32,
+        lineHeight: 1.65,
+      }}>
+        Scores update automatically as new data becomes available.
+        Agents are never notified in advance of score changes.
+      </p>
     </div>
   );
 }
+
 
 // ── Inline radar chart (self-contained) ──────────────────────────────────────
 
@@ -2140,11 +2003,11 @@ function RadarChartPanel() {
   const benchLabel = mode === 'county' ? 'Sonoma County Avg' : 'Top 10%';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '9 1 280px', minWidth: 0 }}>
       {/* Section label */}
       <div style={{
-        fontSize: 12, color: '#4B5563', textTransform: 'uppercase',
-        letterSpacing: '0.08em', marginBottom: 16,
+        fontSize: 13, color: '#4B5563', textTransform: 'uppercase',
+        letterSpacing: '0.08em', marginBottom: 24,
       }}>
         SAMPLE PROVN STRENGTH PROFILE
       </div>
@@ -2305,7 +2168,7 @@ function RadarChartPanel() {
           <path d="M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z" stroke="#10B981" strokeWidth="1.5" strokeLinejoin="round" />
           <path d="M9 12l2 2 4-4" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        <span style={{ fontSize: 13, color: '#CBD5E1', lineHeight: 1.65 }}>
+        <span style={{ fontSize: 15, color: '#CBD5E1', lineHeight: 1.65 }}>
           Every axis on this chart is calculated from verified public data. Sarah Chen cannot edit any of it.
         </span>
       </div>
@@ -2318,8 +2181,8 @@ function RadarChartPanel() {
         style={{
           display: 'inline-block', marginTop: 18,
           background: '#10B981', color: '#ffffff',
-          fontSize: 14, fontWeight: 600,
-          padding: '11px 28px', borderRadius: 8,
+          fontSize: 16, fontWeight: 700,
+          padding: '14px 28px', borderRadius: 8,
           textDecoration: 'none',
           boxShadow: '0 4px 20px rgba(16,185,129,0.3)',
         }}
@@ -2340,14 +2203,14 @@ function ScoreSection() {
         borderTop: '1px solid #1E2A3A',
       }}
     >
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         {/* Header */}
         <FadeIn>
           <EyebrowPill text="✦ THE PROVN SCORE" />
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
             <h2
               style={{
-                fontSize: 'clamp(32px, 5vw, 56px)',
+                fontSize: 'clamp(40px, 6vw, 64px)',
                 fontWeight: 900,
                 lineHeight: 1.1,
                 letterSpacing: '-0.02em',
@@ -2378,9 +2241,9 @@ function ScoreSection() {
           <p
             style={{
               textAlign: 'center',
-              fontSize: 17,
+              fontSize: 19,
               color: '#94A3B8',
-              maxWidth: 520,
+              maxWidth: 600,
               margin: '0 auto 72px',
               lineHeight: 1.75,
             }}
@@ -2394,16 +2257,14 @@ function ScoreSection() {
         {/* Two-column layout */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: 'clamp(40px, 5vw, 64px)',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 48,
             alignItems: 'center',
           }}
         >
           {/* LEFT — Score bars */}
-          <FadeIn>
-            <ScoreBarsPanel />
-          </FadeIn>
+          <ScoreBarsPanel />
 
           {/* RIGHT — Radar chart */}
           <FadeIn delay={120}>
@@ -2925,16 +2786,26 @@ function Footer() {
         >
           {/* Brand */}
           <div>
-            <div
-              style={{
-                fontSize: '20px',
-                fontWeight: 800,
-                color: '#ffffff',
-                marginBottom: '6px',
-              }}
-            >
-              Provn
-            </div>
+            <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, marginBottom: '6px' }}>
+              <div
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  background: GREEN,
+                  flexShrink: 0,
+                }}
+              />
+              <span
+                style={{
+                  fontSize: '20px',
+                  fontWeight: 800,
+                  color: '#ffffff',
+                }}
+              >
+                Provn
+              </span>
+            </Link>
             <div style={{ fontSize: '13px', color: C_SEC }}>Know before you hire.</div>
           </div>
 
@@ -3007,7 +2878,6 @@ export default function HomePage() {
       <CardFlipSection />
       <ProblemSection />
       <ScoreSection />
-      <ProvnDiffSection />
       <EducationSection />
       <CTASection />
       <Footer />
