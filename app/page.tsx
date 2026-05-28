@@ -389,208 +389,551 @@ function Nav() {
   );
 }
 
-// ── Section 1: Hero ───────────────────────────────────────────────────────────
+// ── Section 1: Card Flip Hero ─────────────────────────────────────────────────
 
-// ── Count-up hook ─────────────────────────────────────────────────────────────
-
-function useCountUp(target: number, duration = 1800): number {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    const start = performance.now();
-    let raf: number;
-    const tick = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
-      setCount(Math.round(eased * target));
-      if (t < 1) raf = requestAnimationFrame(tick);
-      else setCount(target);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, duration]);
-  return count;
-}
-
-// ── Particle canvas ───────────────────────────────────────────────────────────
-
-function ParticleCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const W = window.innerWidth;
-    const H = window.innerHeight;
-    canvas.width = W;
-    canvas.height = H;
-
-    const SPEED = 0.3;
-    type Dot = { x: number; y: number; vx: number; vy: number };
-    const dots: Dot[] = Array.from({ length: 80 }, () => {
-      const angle = Math.random() * Math.PI * 2;
-      return {
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: Math.cos(angle) * SPEED,
-        vy: Math.sin(angle) * SPEED,
-      };
-    });
-
-    let raf: number;
-    const draw = () => {
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = 'rgba(16,185,129,0.15)';
-      for (const d of dots) {
-        d.x += d.vx;
-        d.y += d.vy;
-        if (d.x < 0 || d.x > W) { d.vx = -d.vx; d.x = Math.max(0, Math.min(W, d.x)); }
-        if (d.y < 0 || d.y > H) { d.vy = -d.vy; d.y = Math.max(0, Math.min(H, d.y)); }
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, 2, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      raf = requestAnimationFrame(draw);
-    };
-
-    raf = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        pointerEvents: 'none',
-        zIndex: 0,
-      }}
-    />
-  );
-}
-
-// ── Stat pill ─────────────────────────────────────────────────────────────────
-
-function StatPill({
-  value,
-  displayFn,
-  label,
+function ScoreRing({
+  score,
   color,
+  grade,
+  glow = false,
 }: {
-  value: number;
-  displayFn: (n: number) => string;
-  label: string;
+  score: number;
   color: string;
+  grade: string;
+  glow?: boolean;
 }) {
-  const count = useCountUp(value);
+  const R = 34;
+  const circ = 2 * Math.PI * R;
+  const offset = circ * (1 - score / 100);
   return (
     <div
       style={{
-        background: '#0F1628',
-        border: '1px solid #1E2A3A',
-        borderRadius: 12,
-        padding: '12px 20px',
-        textAlign: 'center',
-        minWidth: 160,
-        flex: '0 0 auto',
+        position: 'relative',
+        width: 80,
+        height: 80,
+        margin: '0 auto 12px',
+        filter: glow ? 'drop-shadow(0 0 8px rgba(16,185,129,0.6))' : 'none',
       }}
     >
-      <div style={{ fontSize: 24, fontWeight: 800, color, lineHeight: 1 }}>
-        {displayFn(count)}
-      </div>
-      <div style={{ fontSize: 11, color: C_SEC, marginTop: 6, lineHeight: 1.4 }}>
-        {label}
+      <svg width={80} height={80} viewBox="0 0 80 80">
+        <circle cx={40} cy={40} r={R} fill="none" stroke="#2D2D2D" strokeWidth={6} />
+        <circle
+          cx={40}
+          cy={40}
+          r={R}
+          fill="none"
+          stroke={color}
+          strokeWidth={6}
+          strokeLinecap="round"
+          strokeDasharray={circ}
+          strokeDashoffset={offset}
+          transform="rotate(-90 40 40)"
+        />
+      </svg>
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <span style={{ fontSize: 22, fontWeight: 900, color, lineHeight: 1 }}>{grade}</span>
+        <span style={{ fontSize: 10, color: C_SEC, marginTop: 2 }}>{score}/100</span>
       </div>
     </div>
   );
 }
 
+type ActivityColor = 'green' | 'red' | 'gray';
 
-// ── Section 1: Hero ───────────────────────────────────────────────────────────
+function ActivityBar({ pattern }: { pattern: ActivityColor[] }) {
+  return (
+    <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 120 }}>
+      {pattern.map((c, i) => (
+        <div
+          key={i}
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: 2,
+            background: c === 'green' ? '#10B981' : c === 'red' ? '#EF4444' : '#2D2D2D',
+            flexShrink: 0,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
-function HeroSection() {
+interface CardData {
+  avatarUrl: string;
+  avatarBorder: string;
+  avatarShadow: string;
+  name: string;
+  agentTitle: string;
+  brokerage: string;
+  stars: string;
+  borderColor: string;
+  shadowColor: string;
+  bgGradient: string;
+  score: number;
+  grade: string;
+  scoreColor: string;
+  glow: boolean;
+  rows: { label: string; value: string; color: string }[];
+  activityPattern: ActivityColor[];
+  pillBg: string;
+  pillBorderColor: string;
+  pillText: string;
+  pillTextColor: string;
+}
+
+const CARD_DATA: CardData[] = [
+  // Left — Tara Reynolds (amber · C+ coaster)
+  {
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face',
+    avatarBorder: '#F59E0B',
+    avatarShadow: '0 0 12px rgba(245,158,11,0.3)',
+    name: 'Tara Reynolds',
+    agentTitle: 'REALTOR® · 11 Years',
+    brokerage: 'Keller Williams · Petaluma',
+    stars: '4.9 stars · 34 reviews',
+    borderColor: '#F59E0B',
+    shadowColor: 'rgba(245,158,11,0.12)',
+    bgGradient: 'linear-gradient(145deg, #1A1500, #1A1D2E)',
+    score: 58,
+    grade: 'C+',
+    scoreColor: '#F59E0B',
+    glow: false,
+    rows: [
+      { label: 'Licensed', value: '11 years', color: '#CBD5E1' },
+      { label: 'Career transactions', value: '94 total', color: '#CBD5E1' },
+      { label: 'Last sale', value: '4 months ago', color: '#F59E0B' },
+      { label: 'Price reductions', value: '4 of last 10 listings', color: '#F59E0B' },
+      { label: 'Property owned', value: '1 — primary residence only', color: '#F59E0B' },
+    ],
+    activityPattern: ['green','green','gray','green','gray','gray','green','green','gray','green','gray','green'],
+    pillBg: '#1A1200',
+    pillBorderColor: 'rgba(245,158,11,0.4)',
+    pillText: '⚠ Inconsistent activity — not aligned with your price range',
+    pillTextColor: '#F59E0B',
+  },
+  // Middle — James Miller (red · C novice)
+  {
+    avatarUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=face',
+    avatarBorder: '#EF4444',
+    avatarShadow: '0 0 12px rgba(239,68,68,0.3)',
+    name: 'James Miller',
+    agentTitle: 'REALTOR® · 2 Years',
+    brokerage: 'Century 21 · Santa Rosa',
+    stars: '4.8 stars · 11 reviews',
+    borderColor: '#EF4444',
+    shadowColor: 'rgba(239,68,68,0.15)',
+    bgGradient: 'linear-gradient(145deg, #1A0D0D, #1A1D2E)',
+    score: 41,
+    grade: 'C',
+    scoreColor: '#EF4444',
+    glow: false,
+    rows: [
+      { label: 'Licensed', value: '2 years', color: '#EF4444' },
+      { label: 'Career transactions', value: '8 total', color: '#EF4444' },
+      { label: 'Last sale', value: '9 months ago', color: '#F59E0B' },
+      { label: 'Price reductions', value: '6 of last 8 listings', color: '#EF4444' },
+      { label: 'Property owned', value: 'None verified', color: '#EF4444' },
+    ],
+    activityPattern: ['red','red','gray','gray','red','red','gray','gray','red','gray','gray','gray'],
+    pillBg: '#2D0A0A',
+    pillBorderColor: 'rgba(239,68,68,0.4)',
+    pillText: '⚠ High risk — limited experience in current market',
+    pillTextColor: '#EF4444',
+  },
+  // Right — Sarah Chen (green · A+ pro)
+  {
+    avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face',
+    avatarBorder: '#10B981',
+    avatarShadow: '0 0 12px rgba(16,185,129,0.3)',
+    name: 'Sarah Chen',
+    agentTitle: 'BROKER · 19 Years',
+    brokerage: 'Compass · Healdsburg',
+    stars: '4.9 stars · 147 reviews',
+    borderColor: '#10B981',
+    shadowColor: 'rgba(16,185,129,0.2)',
+    bgGradient: 'linear-gradient(145deg, #0A1F12, #0F1628)',
+    score: 94,
+    grade: 'A+',
+    scoreColor: '#10B981',
+    glow: true,
+    rows: [
+      { label: 'Licensed', value: '19 years', color: '#10B981' },
+      { label: 'Career transactions', value: '312 total', color: '#10B981' },
+      { label: 'Last sale', value: '3 weeks ago', color: '#10B981' },
+      { label: 'Price reductions', value: '1 of last 10 listings', color: '#10B981' },
+      { label: 'Property owned', value: '4 properties · $2.1M portfolio', color: '#10B981' },
+    ],
+    activityPattern: ['green','green','green','green','green','green','green','green','green','green','green','green'],
+    pillBg: '#0A2A1A',
+    pillBorderColor: '#10B981',
+    pillText: '✓ Top 5% Sonoma County · Currently active · Verified owner',
+    pillTextColor: '#10B981',
+  },
+];
+
+function FlipCard({
+  data,
+  isFlipped,
+  onFlip,
+}: {
+  data: CardData;
+  isFlipped: boolean;
+  onFlip: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch(window.matchMedia('(hover: none)').matches);
+  }, []);
+
+  const tiltTransform = !isFlipped && hovered && !isTouch ? 'rotateY(8deg)' : 'rotateY(0deg)';
+  const flipTransform = isFlipped ? 'rotateY(180deg)' : tiltTransform;
+
+  return (
+    <div
+      onClick={onFlip}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        width: 300,
+        height: 420,
+        perspective: '1000px',
+        cursor: 'pointer',
+        flexShrink: 0,
+      }}
+    >
+      {/* Flip container */}
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'relative',
+          transformStyle: 'preserve-3d',
+          WebkitTransformStyle: 'preserve-3d',
+          transform: flipTransform,
+          transition: isFlipped
+            ? 'transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1)'
+            : 'transform 0.3s ease',
+        }}
+      >
+        {/* ── FRONT FACE ── */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: 20,
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            background: 'linear-gradient(145deg, #1A1D2E, #0F1117)',
+            border: '1px solid #2D3148',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '32px 24px',
+            boxSizing: 'border-box',
+          }}
+        >
+          {/* Avatar */}
+          <img
+            src={data.avatarUrl}
+            alt={data.name}
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: '50%',
+              objectFit: 'cover',
+              objectPosition: 'center top',
+              border: `3px solid ${data.avatarBorder}`,
+              boxShadow: data.avatarShadow,
+              marginBottom: 10,
+              flexShrink: 0,
+              display: 'block',
+            }}
+          />
+
+          {/* Name */}
+          <div style={{ fontSize: 18, fontWeight: 700, color: '#ffffff', marginBottom: 2 }}>
+            {data.name}
+          </div>
+
+          {/* Agent title */}
+          <div style={{ fontSize: 11, color: '#94A3B8', letterSpacing: '0.05em', marginBottom: 4 }}>
+            {data.agentTitle}
+          </div>
+
+          {/* Brokerage */}
+          <div style={{ fontSize: 13, color: '#94A3B8', marginBottom: 12 }}>
+            {data.brokerage}
+          </div>
+
+          {/* Divider */}
+          <div style={{ width: '100%', height: 1, background: '#2D3148', marginBottom: 14 }} />
+
+          {/* Stars */}
+          <div style={{ fontSize: 18, color: '#F59E0B', marginBottom: 4 }}>&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <div style={{ fontSize: 13, color: '#94A3B8', marginBottom: 14 }}>{data.stars}</div>
+
+          {/* Blurred data pills */}
+          <div style={{ width: '100%', marginBottom: 10 }}>
+            {[
+              'Licensed X years · X transactions',
+              'Property ownership · portfolio value',
+              'Price reduction rate · last sale date',
+            ].map((text, i) => (
+              <div
+                key={i}
+                style={{
+                  background: '#1E2330',
+                  borderRadius: 8,
+                  padding: '8px 12px',
+                  marginBottom: 8,
+                  filter: 'blur(4px)',
+                  fontSize: 12,
+                  color: '#CBD5E1',
+                  userSelect: 'none',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                }}
+              >
+                {text}
+              </div>
+            ))}
+          </div>
+
+          {/* Tap to reveal */}
+          <div style={{ fontSize: 11, color: '#4B5563', fontStyle: 'italic', marginBottom: 6 }}>
+            Tap to reveal · Tap again to compare
+          </div>
+
+          {/* Lock icon pulse */}
+          <div
+            style={{
+              fontSize: 16,
+              marginBottom: 12,
+              animation: 'lock-pulse 2s ease-in-out infinite',
+              display: 'inline-block',
+            }}
+          >
+            &#128274;
+          </div>
+
+          {/* Blurred score bar */}
+          <div style={{ width: '100%' }}>
+            <div
+              style={{
+                fontSize: 11,
+                color: '#4B5563',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: 6,
+              }}
+            >
+              PROVN SCORE — HIDDEN
+            </div>
+            <div
+              style={{
+                height: 8,
+                borderRadius: 999,
+                background: '#94A3B8',
+                filter: 'blur(6px)',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* ── BACK FACE ── */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: 20,
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            transform: 'rotateY(180deg)',
+            background: data.bgGradient,
+            border: `2px solid ${data.borderColor}`,
+            boxShadow: `0 8px 40px ${data.shadowColor}`,
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '20px',
+            boxSizing: 'border-box',
+            overflowY: 'hidden',
+          }}
+        >
+          {/* Agent header */}
+          <div style={{ textAlign: 'center', marginBottom: 10 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: '#ffffff' }}>{data.name}</div>
+            <div style={{ fontSize: 12, color: '#94A3B8' }}>{data.brokerage}</div>
+          </div>
+
+          {/* Score ring */}
+          <ScoreRing score={data.score} color={data.scoreColor} grade={data.grade} glow={data.glow} />
+
+          {/* Stat rows */}
+          <div style={{ width: '100%', flex: 1 }}>
+            {data.rows.map((row, i) => (
+              <div key={i}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '5px 0',
+                    gap: 8,
+                  }}
+                >
+                  <span style={{ fontSize: 11, color: '#94A3B8', flexShrink: 0 }}>{row.label}</span>
+                  <span
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: row.color,
+                      textAlign: 'right',
+                    }}
+                  >
+                    {row.value}
+                  </span>
+                </div>
+                <div style={{ height: 1, background: '#2D2D2D' }} />
+              </div>
+            ))}
+
+            {/* Activity row */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '5px 0',
+                gap: 8,
+              }}
+            >
+              <span style={{ fontSize: 11, color: '#94A3B8', flexShrink: 0 }}>Active last 36 mo</span>
+              <ActivityBar pattern={data.activityPattern} />
+            </div>
+          </div>
+
+          {/* Verdict pill */}
+          <div
+            style={{
+              background: data.pillBg,
+              border: `1px solid ${data.pillBorderColor}`,
+              borderRadius: 8,
+              padding: '8px 10px',
+              textAlign: 'center',
+              marginTop: 8,
+              flexShrink: 0,
+            }}
+          >
+            <span style={{ fontSize: 11, fontWeight: 600, color: data.pillTextColor, lineHeight: 1.4, display: 'block' }}>
+              {data.pillText}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CardFlipSection() {
+  const [flipped, setFlipped] = useState([false, false, false]);
+  const [showReveal, setShowReveal] = useState(false);
+  const allFlipped = flipped.every(Boolean);
+
+  useEffect(() => {
+    if (allFlipped) {
+      const t = setTimeout(() => setShowReveal(true), 300);
+      return () => clearTimeout(t);
+    } else {
+      setShowReveal(false);
+    }
+  }, [allFlipped]);
+
+  const handleFlip = (i: number) => {
+    setFlipped(prev => {
+      const next = [...prev];
+      next[i] = !next[i]; // toggle — flip forward and back
+      return next;
+    });
+  };
+
   return (
     <section
       style={{
-        minHeight: '100vh',
-        background: '#080D1A',
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
+        background: 'linear-gradient(180deg, #080D1A 0%, #0A0F1E 50%, #080D1A 100%)',
+        padding: '100px clamp(24px, 4vw, 48px)',
         overflow: 'hidden',
-        padding: 'clamp(80px, 10vh, 120px) clamp(24px, 4vw, 48px) 60px',
       }}
     >
-      {/* Particle field */}
-      <ParticleCanvas />
+      {/* Keyframes injected via style tag so Tailwind v4 cannot purge them */}
+      <style>{`
+        @keyframes tap-pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(0.9); }
+        }
+        @keyframes lock-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
+        }
+        @keyframes dot-ping {
+          0% { transform: scale(1); opacity: 1; }
+          80%, 100% { transform: scale(2.2); opacity: 0; }
+        }
+        @keyframes reveal-fade-up {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+          .flip-card { width: calc(100vw - 48px) !important; }
+        }
+      `}</style>
 
-      {/* Atmospheric green glow blob */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          top: '40%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 600,
-          height: 600,
-          borderRadius: '50%',
-          background: 'rgba(16,185,129,0.06)',
-          filter: 'blur(120px)',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      />
-
-      {/* All content sits above canvas + blob */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          maxWidth: 800,
-          width: '100%',
-          textAlign: 'center',
-        }}
-      >
-        {/* Eyebrow badge */}
-        <div style={{ marginBottom: 32 }}>
-          <span
-            style={{
-              display: 'inline-block',
-              background: 'linear-gradient(135deg, #0F2A1A, #1A1F35)',
-              border: '1px solid rgba(16,185,129,0.3)',
-              borderRadius: 20,
-              padding: '6px 16px',
-              fontSize: 12,
-              color: '#94A3B8',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              fontWeight: 600,
-            }}
-          >
-            ✦ Real estate&rsquo;s best kept secret
-          </span>
-        </div>
-
-        {/* Headline */}
-        <h1
+      {/* Eyebrow pill */}
+      <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <span
           style={{
-            fontSize: 'clamp(56px, 9vw, 120px)',
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, #0F2A1A, #1A1F35)',
+            border: '1px solid rgba(16,185,129,0.3)',
+            borderRadius: 20,
+            padding: '6px 16px',
+            fontSize: 12,
+            color: '#94A3B8',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            fontWeight: 600,
+          }}
+        >
+          ✦ CAN YOU TELL THEM APART?
+        </span>
+      </div>
+
+      {/* Primary headline */}
+      <div style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 24px' }}>
+        <h2
+          style={{
+            fontSize: 'clamp(36px, 6vw, 64px)',
             fontWeight: 900,
-            lineHeight: 0.95,
-            letterSpacing: '-0.03em',
+            lineHeight: 1.1,
+            letterSpacing: '-0.02em',
             margin: 0,
           }}
         >
           <span style={{ display: 'block', color: '#ffffff' }}>
-            They made the house
+            One of these real estate agents will make you $75,000.
           </span>
           <span
             style={{
@@ -601,113 +944,201 @@ function HeroSection() {
               backgroundClip: 'text',
             }}
           >
-            transparent.
+            Two will cost you $75,000.
           </span>
-        </h1>
+        </h2>
+      </div>
 
-        {/* Sub-headline */}
-        <p
-          style={{
-            fontSize: 'clamp(18px, 2.5vw, 22px)',
-            fontWeight: 400,
-            color: '#94A3B8',
-            marginTop: 24,
-            maxWidth: 580,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            lineHeight: 1.6,
-          }}
-        >
-          We made the agent transparent.
-        </p>
+      {/* Subheadline */}
+      <p
+        style={{
+          textAlign: 'center',
+          fontSize: 18,
+          color: '#94A3B8',
+          maxWidth: 580,
+          margin: '0 auto 0',
+          lineHeight: 1.7,
+        }}
+      >
+        They all have five stars. They all call themselves specialists. Every one will tell you they
+        are the best agent for your situation. Without Provn, you have no way to know if that is
+        true. Go ahead — try to pick the right one.
+      </p>
 
-        {/* Divider */}
-        <div
-          aria-hidden
-          style={{
-            width: 120,
-            height: 1,
-            background: 'linear-gradient(90deg, transparent, #10B981, transparent)',
-            margin: '32px auto',
-          }}
-        />
-
-        {/* Body copy */}
-        <p
+      {/* Tap instruction + finger icon */}
+      <div
+        style={{
+          textAlign: 'center',
+          marginTop: 16,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+        }}
+      >
+        <span style={{ fontSize: 14, color: '#10B981' }}>
+          Tap each card to see what Provn reveals.
+        </span>
+        <span
           style={{
             fontSize: 18,
-            color: '#CBD5E1',
-            maxWidth: 560,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            lineHeight: 1.8,
+            display: 'inline-block',
+            animation: 'tap-pulse 1.5s ease-in-out infinite',
           }}
         >
-          Zillow built the most powerful property database in history. Then they
-          hid the one thing that actually determines your outcome.
-        </p>
+          &#128070;
+        </span>
+      </div>
 
-        <p style={{ fontSize: 20, fontWeight: 700, color: '#ffffff', marginTop: 20 }}>
-          Every data point that exposes a bad agent exists in public records.
-        </p>
-
-        <p
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            background: 'linear-gradient(135deg, #E63946, #F59E0B)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            display: 'block',
-            margin: 0,
-          }}
-        >
-          They chose not to show it.
-        </p>
-
-        <p style={{ fontSize: 20, fontWeight: 600, color: '#10B981', marginTop: 4 }}>
-          Provn was built on the other side of that wall.
-        </p>
-
-        {/* Stat pills */}
+      {/* Progress dots */}
+      <div style={{ textAlign: 'center', marginTop: 40 }}>
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 16,
-            flexWrap: 'wrap',
-            marginTop: 40,
+            fontSize: 11,
+            color: '#4B5563',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            marginBottom: 12,
           }}
         >
-          <StatPill
-            value={5000}
-            displayFn={(n) => `${n.toLocaleString()}+`}
-            label="Licensed agents in Sonoma County"
-            color="#ffffff"
-          />
-          <StatPill
-            value={1}
-            displayFn={(n) => String(n)}
-            label="Agent most buyers interview"
-            color="#E63946"
-          />
-          <StatPill
-            value={60}
-            displayFn={(n) => `$${n}K`}
-            label="Avg cost of the wrong hire"
-            color="#F59E0B"
-          />
+          FLIP ALL THREE TO SEE THE FULL PICTURE
         </div>
-
-        {/* Chevron */}
-        <div style={{ marginTop: 48 }}>
-          <ChevronDown color="#10B981" />
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
+          {flipped.map((f, i) => (
+            <div key={i} style={{ position: 'relative', width: 16, height: 16 }}>
+              {/* Ping ring */}
+              {f && (
+                <div
+                  key={`ping-${i}`}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: '50%',
+                    background: '#10B981',
+                    animation: 'dot-ping 0.7s ease-out forwards',
+                  }}
+                />
+              )}
+              {/* Dot */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '50%',
+                  border: f ? 'none' : '2px solid #2D3148',
+                  background: f ? '#10B981' : 'transparent',
+                  transition: 'background 0.3s, border 0.3s',
+                }}
+              />
+            </div>
+          ))}
         </div>
       </div>
+
+      {/* Card row */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 24,
+          flexWrap: 'wrap',
+          marginTop: 56,
+          maxWidth: 1100,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      >
+        {CARD_DATA.map((card, i) => (
+          <FlipCard
+            key={i}
+            data={card}
+            isFlipped={flipped[i]}
+            onFlip={() => handleFlip(i)}
+          />
+        ))}
+      </div>
+
+      {/* Reveal payoff — appears only after all three cards flipped */}
+      {showReveal && (
+        <div
+          style={{
+            textAlign: 'center',
+            maxWidth: 700,
+            margin: '80px auto 0',
+            animation: 'reveal-fade-up 0.6s ease forwards',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: 'clamp(24px, 4vw, 40px)',
+              fontWeight: 800,
+              color: '#ffffff',
+              margin: '0 0 4px',
+              lineHeight: 1.2,
+            }}
+          >
+            The reviews told you almost nothing.
+          </h3>
+          <h3
+            style={{
+              fontSize: 'clamp(24px, 4vw, 40px)',
+              fontWeight: 800,
+              margin: '0 0 0',
+              lineHeight: 1.2,
+              background: 'linear-gradient(135deg, #10B981, #06B6D4)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            The data tells you everything.
+          </h3>
+
+          <p
+            style={{
+              fontSize: 17,
+              color: '#94A3B8',
+              maxWidth: 560,
+              margin: '16px auto 0',
+              lineHeight: 1.7,
+            }}
+          >
+            James and Tara have good reviews. So does Sarah. The difference is $125,000 in
+            potential outcome — and it was invisible until now. Every market in America has
+            the same three agents. Provn shows you which is which.
+          </p>
+
+          <p style={{ fontSize: 15, color: '#CBD5E1', marginTop: 12 }}>
+            This is what it feels like to actually be informed.
+          </p>
+
+          <Link
+            href="/match/buyer"
+            style={{
+              display: 'inline-block',
+              marginTop: 32,
+              background: '#10B981',
+              color: '#ffffff',
+              fontSize: 17,
+              fontWeight: 700,
+              padding: '16px 48px',
+              borderRadius: 10,
+              textDecoration: 'none',
+              boxShadow: '0 4px 24px rgba(16,185,129,0.35)',
+            }}
+          >
+            Find your Provn agent
+          </Link>
+
+          <p style={{ fontSize: 13, color: '#4B5563', marginTop: 16 }}>
+            Free for buyers and sellers · No account required · Matched by verified data
+          </p>
+        </div>
+      )}
     </section>
   );
 }
+
 
 // ── Section 2: The problem nobody talks about ─────────────────────────────────
 
@@ -1684,7 +2115,7 @@ export default function HomePage() {
   return (
     <div style={{ background: BG, color: '#ffffff' }}>
       <Nav />
-      <HeroSection />
+      <CardFlipSection />
       <ProblemSection />
       <ProvnDiffSection />
       <ScoreSection />
