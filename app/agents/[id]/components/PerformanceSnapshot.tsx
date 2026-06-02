@@ -22,7 +22,7 @@ import SectionHeader from './SectionHeader';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 
-const CARD     = { background: '#1A1D2E', border: '1px solid #2D3148' } as const;
+const CARD     = { background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '16px' } as const;
 const C_SEC    = '#94A3B8';
 const C_TER    = '#4B5563';
 const C_INTERP = '#CBD5E1';
@@ -411,7 +411,7 @@ export default function PerformanceSnapshot({ agent }: Props) {
               )}
               <span
                 className="flex items-center gap-1.5 pt-1.5"
-                style={{ borderTop: '1px solid #2D3148' }}
+                style={{ borderTop: '1px solid #1E2A3A' }}
               >
                 <HomeIcon />
                 <span>How long they have lived in the communities they sell.</span>

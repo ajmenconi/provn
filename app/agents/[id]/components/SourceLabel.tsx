@@ -7,7 +7,7 @@ interface SourceLabelProps {
 
 export default function SourceLabel({ source }: SourceLabelProps) {
   return (
-    <p className="text-xs mt-0.5" style={{ color: '#4B5563' }}>
+    <p className="text-xs mt-0.5" style={{ color: '#4B5563', fontSize: '11px', fontStyle: 'italic' }}>
       {source}
     </p>
   );

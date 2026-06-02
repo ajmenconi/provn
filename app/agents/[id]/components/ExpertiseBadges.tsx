@@ -55,15 +55,15 @@ function AutoBadgeCard({ badge, index }: { badge: AutoBadge; index: number }) {
     <div
       className="flex flex-col items-center gap-2 p-4 sm:p-5 rounded-2xl"
       style={{
-        background: '#1A1D2E',
-        border: '1px solid #2D3148',
+        background: '#0F1628',
+        border: '1px solid #1E2A3A',
         borderLeft: `3px solid ${style.iconColor}`,
         animation: `badge-pop 0.4s ease-out ${index * 0.07}s both`,
       }}
     >
       <div
         className="w-11 h-11 rounded-full flex items-center justify-center"
-        style={{ background: '#2D3148' }}
+        style={{ background: '#1A1D2E' }}
       >
         <BadgeIcon name={style.icon} color={style.iconColor} />
       </div>
@@ -80,15 +80,15 @@ function ManualBadgeCard({ badge, index }: { badge: ManualBadge; index: number }
     <div
       className="flex flex-col items-center gap-2 p-4 sm:p-5 rounded-2xl"
       style={{
-        background: '#1A1D2E',
-        border: '1px solid #2D3148',
+        background: '#0F1628',
+        border: '1px solid #1E2A3A',
         borderLeft: '3px solid #8b5cf6',
         animation: `badge-pop 0.4s ease-out ${index * 0.07}s both`,
       }}
     >
       <div
         className="w-11 h-11 rounded-full flex items-center justify-center"
-        style={{ background: '#2D3148' }}
+        style={{ background: '#1A1D2E' }}
       >
         <BadgeIcon name="badge" color="#8b5cf6" />
       </div>
@@ -108,7 +108,7 @@ export default function ExpertiseBadges({ agent }: Props) {
   return (
     <section
       className="rounded-2xl p-4 sm:p-5"
-      style={{ background: '#1A1D2E', border: '1px solid #2D3148' }}
+      style={{ background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '16px' }}
     >
       <SectionHeader>Local Market Expertise</SectionHeader>
 

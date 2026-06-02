@@ -110,19 +110,22 @@ export default function AgentHeader({ agent }: Props) {
           >
             {agent.name}
           </h1>
-          {/* Brokerage / city — 90% opacity minimum */}
-          <p className="text-sm mt-1.5" style={{ color: 'rgba(255,255,255,0.90)' }}>
+          {/* Brokerage / city */}
+          <p className="text-sm mt-1.5" style={{ color: '#94A3B8' }}>
             {agent.brokerageName} &middot; {agent.primaryCity}, {agent.primaryCounty} County
           </p>
         </div>
 
         {/* License type · status · DRE number */}
         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
-          <span className={`text-xs font-black px-3 py-1.5 rounded-full ${
-            agent.licenseType === 'Broker'
-              ? 'bg-amber-400 text-amber-950'
-              : 'bg-white/20 text-white'
-          }`}>
+          <span
+            className="text-xs font-black px-3 py-1.5 rounded-full"
+            style={
+              agent.licenseType === 'Broker'
+                ? { background: '#1A1400', border: '1px solid rgba(245,158,11,0.3)', color: '#F59E0B' }
+                : { background: '#0F1628', border: '1px solid #1E2A3A', color: '#CBD5E1' }
+            }
+          >
             {agent.licenseType}
           </span>
 
@@ -137,8 +140,8 @@ export default function AgentHeader({ agent }: Props) {
             {agent.licenseStatus}
           </span>
 
-          {/* DRE — 85% opacity, link underlined */}
-          <span className="text-xs" style={{ color: 'rgba(255,255,255,0.85)' }}>
+          {/* DRE number */}
+          <span className="text-xs" style={{ color: '#94A3B8' }}>
             DRE#{' '}
             <a
               href="https://www2.dre.ca.gov/PublicASP/pplinfo.asp"
@@ -151,11 +154,11 @@ export default function AgentHeader({ agent }: Props) {
           </span>
         </div>
 
-        {/* License vintage — 75% minimum, source label 75% minimum */}
-        <p className="leading-relaxed" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
+        {/* License vintage */}
+        <p className="leading-relaxed" style={{ fontSize: '12px', color: '#94A3B8', lineHeight: 1.6 }}>
           Licensed {formatLicenseDate(agent.licenseIssueDate)} &mdash;{' '}
-          <span className="font-semibold" style={{ color: 'rgba(255,255,255,0.90)' }}>{years} years</span>
-          <span className="block mt-0.5" style={{ color: 'rgba(255,255,255,0.75)', fontSize: '11px' }}>
+          <span className="font-semibold" style={{ color: '#FFFFFF' }}>{years} years</span>
+          <span className="block mt-0.5" style={{ color: '#4B5563', fontSize: '11px', fontStyle: 'italic' }}>
             Source: CA DRE
           </span>
         </p>
@@ -179,7 +182,7 @@ export default function AgentHeader({ agent }: Props) {
           </div>
         )}
 
-        {/* Language pills — white text, white/10 bg, white/20 border */}
+        {/* Language pills */}
         {agent.languages.length > 0 && (
           <div className="flex flex-wrap justify-center lg:justify-start gap-2">
             {agent.languages.map((lang) => (
@@ -187,9 +190,9 @@ export default function AgentHeader({ agent }: Props) {
                 key={lang}
                 className="text-xs font-medium px-3 py-1 rounded-full"
                 style={{
-                  background: 'rgba(255,255,255,0.10)',
-                  color: '#ffffff',
-                  border: '1px solid rgba(255,255,255,0.20)',
+                  background: '#0F1628',
+                  color: '#CBD5E1',
+                  border: '1px solid #1E2A3A',
                 }}
               >
                 {lang}
@@ -203,22 +206,22 @@ export default function AgentHeader({ agent }: Props) {
       <div className="flex flex-col items-center gap-3 shrink-0 lg:pt-2">
         <ScoreRing score={agent.provnScore} grade={agent.provnLetterGrade} />
         <div className="text-center">
-          {/* "Provn Score" label — 75% minimum */}
+          {/* "Provn Score" label */}
           <p
             className="uppercase mb-2"
-            style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.75)' }}
+            style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', color: '#94A3B8' }}
           >
             Provn Score
           </p>
-          {/* Hero stat — font-weight 600, full white, no opacity reduction */}
+          {/* Hero stat */}
           <p
-            className="font-semibold text-white leading-snug max-w-[220px]"
-            style={{ fontSize: '13px', lineHeight: 1.5 }}
+            className="leading-snug max-w-[220px]"
+            style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF', lineHeight: 1.5 }}
           >
             {heroStat(agent)}
           </p>
-          {/* "Verified by Provn" — 70% minimum */}
-          <p className="mt-1.5" style={{ fontSize: '11px', color: 'rgba(255,255,255,0.70)' }}>
+          {/* "Verified by Provn" */}
+          <p className="mt-1.5" style={{ fontSize: '11px', color: '#4B5563', fontStyle: 'italic' }}>
             Verified by Provn
           </p>
         </div>

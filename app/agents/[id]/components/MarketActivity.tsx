@@ -5,11 +5,11 @@ import SectionHeader from './SectionHeader';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 
-const INNER   = { background: 'rgba(255,255,255,0.04)', border: '1px solid #2D3148' } as const;
+const INNER   = { background: '#0A0F1E', border: '1px solid #1E2A3A' } as const;
 const C_SEC   = '#94A3B8';
 const C_TER   = '#4B5563';
 const C_INTERP = '#CBD5E1';
-const TRACK   = 'rgba(255,255,255,0.08)';
+const TRACK   = '#1E2A3A';
 
 // ── Sub-section header ────────────────────────────────────────────────────────
 
@@ -419,7 +419,7 @@ function ActivityConsistency({ mc, accent }: { mc: MC; accent: string }) {
               <p className="mt-0.5" style={{ fontSize: '13px', color: C_SEC }}>{formatMonthYear(mc.lastClosingDate)}</p>
             </div>
           </div>
-          <p className="leading-relaxed border-l-2 pl-2.5" style={{ fontSize: '12px', color: C_INTERP, lineHeight: 1.6, borderColor: '#2D3148' }}>
+          <p className="leading-relaxed border-l-2 pl-2.5" style={{ fontSize: '12px', color: C_INTERP, lineHeight: 1.6, borderColor: '#1E2A3A' }}>
             Recency of activity is a direct proxy for current market knowledge. An agent who closed
             last month knows what buyers are doing right now.
           </p>
@@ -427,7 +427,7 @@ function ActivityConsistency({ mc, accent }: { mc: MC; accent: string }) {
         </Panel>
       </div>
 
-      <div className="mt-4 pt-4 border-t" style={{ borderColor: '#2D3148' }}>
+      <div className="mt-4 pt-4 border-t" style={{ borderColor: '#1E2A3A' }}>
         <SourceLabel source="Source: MLS transaction and listing history · Provn-verified" />
       </div>
     </div>
@@ -450,7 +450,7 @@ export default function MarketActivity({ agent }: Props) {
   return (
     <section
       className="rounded-2xl p-4 sm:p-5"
-      style={{ background: '#1A1D2E', border: '1px solid #2D3148' }}
+      style={{ background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '16px' }}
     >
       <SectionHeader>Market Activity</SectionHeader>
 
@@ -462,7 +462,7 @@ export default function MarketActivity({ agent }: Props) {
       )}
 
       {mq && mc && (
-        <div className="my-7 border-t" style={{ borderColor: '#2D3148' }} />
+        <div className="my-7 border-t" style={{ borderColor: '#1E2A3A' }} />
       )}
 
       {mc && (

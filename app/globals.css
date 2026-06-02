@@ -60,3 +60,16 @@ body {
   from { transform: translateY(0); }
   to   { transform: translateY(-444px); }
 }
+
+html, body { overflow-x: hidden; }
+
+@media (max-width: 768px) {
+  /* Ensure FadeIn wrapper divs never hide content on mobile */
+  section,
+  section > div,
+  .section-wrap {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+}

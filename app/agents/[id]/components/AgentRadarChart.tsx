@@ -171,7 +171,7 @@ export default function AgentRadarChart({ radarData, accent, agentName, countyNa
   const activeAxisData = activeAxis ? radarData[activeAxis]                 : null;
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: '#1A1D2E', border: '1px solid #2D3148' }}>
+    <div className="rounded-2xl overflow-hidden" style={{ background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '16px' }}>
 
       {/* ── Header + benchmark toggle ──────────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-5 pt-5 pb-1">
@@ -187,7 +187,7 @@ export default function AgentRadarChart({ radarData, accent, agentName, countyNa
         {/* Toggle */}
         <div
           className="flex gap-1 p-1 rounded-xl"
-          style={{ background: 'rgba(255,255,255,0.07)' }}
+          style={{ background: '#0A0F1E', border: '1px solid #1E2A3A' }}
         >
           {(['county', 'top10'] as const).map(mode => (
             <button
@@ -214,7 +214,7 @@ export default function AgentRadarChart({ radarData, accent, agentName, countyNa
           aria-label={`Radar chart comparing ${agentName} to ${benchLabel}`}
         >
           {/* Background */}
-          <rect width="560" height="470" fill="#1A1D2E" />
+          <rect width="560" height="470" fill="#0F1628" />
 
           {/* Grid hexagons */}
           {GRID_LEVELS.map(level => (
@@ -281,7 +281,7 @@ export default function AgentRadarChart({ radarData, accent, agentName, countyNa
                       r="19" fill={`${accent}18`} />
                     {/* Circle */}
                     <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)}
-                      r="14" fill="#0d1117" stroke={accent} strokeWidth="2" />
+                      r="14" fill="#080D1A" stroke={accent} strokeWidth="2" />
                     {/* Score */}
                     <text x={pt.x.toFixed(1)} y={(pt.y + 4.5).toFixed(1)}
                       textAnchor="middle" fontSize="10.5" fontWeight="900" fill={accent}>
@@ -386,7 +386,7 @@ export default function AgentRadarChart({ radarData, accent, agentName, countyNa
           {/* Sheet */}
           <div
             className="relative w-full rounded-t-3xl px-6 pt-4 pb-safe-bottom max-h-[68vh] overflow-y-auto"
-            style={{ background: '#1A1D2E', paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
+            style={{ background: '#0F1628', paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
           >
             {/* Drag handle */}
             <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-5" />

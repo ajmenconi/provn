@@ -4,8 +4,8 @@ import SaleMap from './SaleMap';
 import SourceLabel from './SourceLabel';
 import SectionHeader from './SectionHeader';
 
-const CARD    = { background: '#1A1D2E', border: '1px solid #2D3148' } as const;
-const INNER   = { background: 'rgba(255,255,255,0.04)', border: '1px solid #2D3148' } as const;
+const CARD    = { background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '16px' } as const;
+const INNER   = { background: '#0A0F1E', border: '1px solid #1E2A3A' } as const;
 const C_SEC   = '#94A3B8';
 const C_TER   = '#4B5563';
 const C_INTERP = '#CBD5E1';
@@ -27,7 +27,7 @@ export default function PremiumSection({ agent }: Props) {
         <span className="text-xs font-black px-3 py-1 rounded-full shrink-0" style={{ backgroundColor: '#f59e0b', color: '#1c1000' }}>
           Premium Profile
         </span>
-        <div className="h-px flex-1" style={{ backgroundColor: '#2D3148' }} />
+        <div className="h-px flex-1" style={{ backgroundColor: '#1E2A3A' }} />
       </div>
 
       <div className="space-y-4">
@@ -104,7 +104,7 @@ export default function PremiumSection({ agent }: Props) {
                       {story.dealType}
                     </span>
                     {story.clientVerified && (
-                      <span className="shrink-0 font-semibold flex items-center gap-1" style={{ fontSize: '12px', color: '#10b981' }}>
+                      <span className="shrink-0 font-semibold flex items-center gap-1 px-2.5 py-1 rounded-full" style={{ fontSize: '12px', color: '#10B981', background: '#0A1F12', border: '1px solid rgba(16,185,129,0.4)' }}>
                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
@@ -124,7 +124,7 @@ export default function PremiumSection({ agent }: Props) {
                   </div>
                   <div
                     className="mt-3 pt-3 flex items-center justify-between border-t"
-                    style={{ borderColor: '#2D3148' }}
+                    style={{ borderColor: '#1E2A3A' }}
                   >
                     <span style={{ fontSize: '13px', color: C_SEC }}>Transaction value</span>
                     <span className="font-black text-white" style={{ fontSize: '22px' }}>{story.dollarImpact}</span>

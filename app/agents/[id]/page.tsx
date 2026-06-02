@@ -1,6 +1,6 @@
+import Link from 'next/link';
 import { placeholderAgent } from './placeholder';
 import { scoreAgent } from '@/lib/scoring';
-import { gradeGradient } from '@/lib/gradeAccent';
 import AgentHeader from './components/AgentHeader';
 import HeroSocialProof from './components/HeroSocialProof';
 import BeyondRealEstate from './components/BeyondRealEstate';
@@ -26,7 +26,7 @@ function Divider() {
   return (
     <div
       className="mt-6 sm:mt-8 border-t"
-      style={{ borderColor: '#2D3148' }}
+      style={{ borderColor: '#1E2A3A' }}
       aria-hidden="true"
     />
   );
@@ -34,25 +34,73 @@ function Divider() {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
+// ── Top nav bar ───────────────────────────────────────────────────────────────
+
+function NavBar() {
+  return (
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10"
+      style={{
+        height: '60px',
+        backgroundColor: '#080D1A',
+        borderBottom: '1px solid #1E2A3A',
+      }}
+    >
+      {/* Left: Provn wordmark */}
+      <Link href="/" className="flex items-center gap-2">
+        <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981', flexShrink: 0 }} />
+        <span style={{ fontSize: '20px', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>Provn</span>
+      </Link>
+
+      {/* Right: nav links */}
+      <div className="flex items-center gap-5">
+        <Link href="/agents" style={{ fontSize: '14px', color: '#94A3B8' }}>
+          Find an agent
+        </Link>
+        <Link href="/login" style={{ fontSize: '14px', color: '#94A3B8' }}>
+          Agent login
+        </Link>
+        <Link
+          href="/match/buyer"
+          style={{
+            fontSize: '14px',
+            fontWeight: 600,
+            color: '#FFFFFF',
+            backgroundColor: '#10B981',
+            padding: '8px 18px',
+            borderRadius: '8px',
+          }}
+        >
+          Get matched
+        </Link>
+      </div>
+    </nav>
+  );
+}
+
 export default async function AgentProfilePage({ params }: PageProps) {
   await params;
   const agent = placeholderAgent;
   const { composite, letterGrade, breakdown } = scoreAgent(agent);
   const scoredAgent = { ...agent, provnScore: composite, provnLetterGrade: letterGrade };
-  const gradient    = gradeGradient(scoredAgent.provnLetterGrade);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0F1117' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#080D1A' }}>
+
+      {/* ── Nav bar ── */}
+      <NavBar />
 
       {/* ── 1. HERO — name, score, brokerage, hero stat, license badges ── */}
-      <div className="relative" style={{ background: gradient }}>
+      <div
+        style={{
+          backgroundColor: '#080D1A',
+          borderBottom: '1px solid #1E2A3A',
+          paddingTop: '60px',
+        }}
+      >
         <div className="max-w-7xl mx-auto px-5 md:px-8 py-10 lg:py-14">
           <AgentHeader agent={scoredAgent} />
         </div>
-        <div
-          className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
-          style={{ background: 'linear-gradient(to bottom, transparent, #0F1117)' }}
-        />
       </div>
 
       {/* ── 2–10. Profile body ───────────────────────────────────────────── */}

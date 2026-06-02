@@ -6,11 +6,11 @@ import SectionHeader from './SectionHeader';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 
-const CARD    = { background: '#1A1D2E', border: '1px solid #2D3148' } as const;
+const CARD    = { background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '16px' } as const;
 const C_SEC   = '#94A3B8';
 const C_TER   = '#4B5563';
 const C_INTERP = '#CBD5E1';
-const TRACK   = 'rgba(255,255,255,0.08)';
+const TRACK   = '#1E2A3A';
 
 // ── Card shell ────────────────────────────────────────────────────────────────
 
@@ -200,7 +200,7 @@ function FallThroughCard({ agent, accent }: { agent: Agent; accent: string }) {
 
 // ── 5. Market Cycles Navigated ────────────────────────────────────────────────
 
-const INNER = { background: 'rgba(255,255,255,0.04)', border: '1px solid #2D3148' } as const;
+const INNER = { background: '#0A0F1E', border: '1px solid #1E2A3A' } as const;
 
 function SeverityPill({ severity }: { severity: 'severe' | 'moderate' }) {
   return severity === 'severe' ? (
@@ -223,7 +223,7 @@ function MarketCyclesCard({ agent, accent }: { agent: Agent; accent: string }) {
   const careerAvgPerYr = agent.totalCareerTransactions / careerYears;
 
   return (
-    <div className="rounded-2xl p-4 sm:p-5 col-span-full" style={{ background: '#1A1D2E', border: '1px solid #2D3148' }}>
+    <div className="rounded-2xl p-4 sm:p-5 col-span-full" style={{ background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '16px' }}>
       <div className="flex items-center justify-between mb-5">
         <div>
           <p className="mb-1 uppercase" style={{ fontSize: '11px', fontWeight: 600, color: '#94A3B8', letterSpacing: '0.1em' }}>
@@ -288,7 +288,7 @@ function MarketCyclesCard({ agent, accent }: { agent: Agent; accent: string }) {
         })}
       </div>
 
-      <div className="mt-4 pt-4 border-t" style={{ borderColor: '#2D3148' }}>
+      <div className="mt-4 pt-4 border-t" style={{ borderColor: '#1E2A3A' }}>
         <SourceLabel source="Source: National Association of Realtors · Case-Shiller · Federal Reserve · MLS transaction history" />
       </div>
     </div>

@@ -19,7 +19,7 @@ export default function MarketIntelligence({ agent }: Props) {
   return (
     <section
       className="rounded-2xl p-4 sm:p-5 flex flex-col gap-5"
-      style={{ background: '#1A1D2E', border: '1px solid #2D3148' }}
+      style={{ background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '16px' }}
     >
       <SectionHeader>Market Intelligence</SectionHeader>
 
@@ -64,7 +64,7 @@ export default function MarketIntelligence({ agent }: Props) {
                 </span>
                 <span className="font-black text-white">{zip.percentage}%</span>
               </div>
-              <div className="w-full rounded-full h-2.5 overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+              <div className="w-full rounded-full h-2.5 overflow-hidden" style={{ background: '#1E2A3A' }}>
                 <div
                   className="h-full rounded-full"
                   style={{

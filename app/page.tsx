@@ -43,8 +43,14 @@ function FadeIn({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // On mobile, bypass IntersectionObserver — show content immediately
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setIsMobile(true);
+      return;
+    }
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
@@ -54,6 +60,11 @@ function FadeIn({
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+
+  // Mobile: render immediately, no animation
+  if (isMobile) {
+    return <div>{children}</div>;
+  }
 
   return (
     <div
@@ -378,6 +389,7 @@ function Nav() {
       }}
     >
       <div
+        className="nav-inner"
         style={{
           maxWidth: '1200px',
           margin: '0 auto',
@@ -413,18 +425,20 @@ function Nav() {
 
         {/* Right nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <Link
-            href="/match/buyer"
-            style={{ color: C_SEC, fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}
-          >
-            Find an agent
-          </Link>
-          <Link
-            href="/login"
-            style={{ color: C_SEC, fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}
-          >
-            Agent login
-          </Link>
+          <div className="nav-desktop-links" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <Link
+              href="/match/buyer"
+              style={{ color: C_SEC, fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}
+            >
+              Find an agent
+            </Link>
+            <Link
+              href="/login"
+              style={{ color: C_SEC, fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}
+            >
+              Agent login
+            </Link>
+          </div>
           <Link
             href="/match/buyer"
             style={{
@@ -659,6 +673,7 @@ function FlipCard({
 
   return (
     <div
+      className="flip-card-outer"
       onClick={onFlip}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -705,6 +720,7 @@ function FlipCard({
         >
           {/* Avatar */}
           <img
+            className="flip-avatar-img"
             src={data.avatarUrl}
             alt={data.name}
             style={{
@@ -929,6 +945,7 @@ function CardFlipSection() {
 
   return (
     <section
+      className="section-wrap card-flip-section"
       style={{
         background: 'linear-gradient(180deg, #080D1A 0%, #0A0F1E 50%, #080D1A 100%)',
         padding: '100px clamp(24px, 4vw, 48px)',
@@ -1094,6 +1111,7 @@ function CardFlipSection() {
 
       {/* Card row */}
       <div
+        className="flip-cards-row"
         style={{
           display: 'flex',
           justifyContent: 'center',
@@ -1302,10 +1320,11 @@ function ImpactStats() {
   }, [triggered]);
 
   return (
-    <div ref={ref} style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginTop: 48 }}>
+    <div ref={ref} className="impact-stats-row" style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginTop: 48 }}>
       {IMPACT_STATS.map((stat, i) => (
         <div
           key={i}
+          className="impact-stat-pill"
           style={{
             background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: 16,
             padding: '20px 32px 24px', textAlign: 'center',
@@ -1393,10 +1412,12 @@ function FlowDiagram() {
       {/* Card row */}
       <div
         ref={ref}
+        className="flow-cards-row"
         style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'stretch', justifyContent: 'center' }}
       >
         {/* ── Card 1: Other Platforms ───────────────────────────── */}
         <div
+          className="flow-card-item"
           onMouseEnter={() => setHoveredCard(0)}
           onMouseLeave={() => setHoveredCard(null)}
           style={{
@@ -1480,6 +1501,7 @@ function FlowDiagram() {
 
         {/* ── Card 2: Provn ─────────────────────────────────────── */}
         <div
+          className="flow-card-item"
           onMouseEnter={() => setHoveredCard(1)}
           onMouseLeave={() => setHoveredCard(null)}
           style={{
@@ -1566,7 +1588,7 @@ function FlowDiagram() {
 
 function InsightCards() {
   return (
-    <div style={{
+    <div className="insight-cards-grid" style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
       gap: 16,
@@ -1626,7 +1648,7 @@ function TeaserBar() {
           50%       { transform: translateX(6px); }
         }
       `}</style>
-      <div style={{
+      <div className="teaser-bar-inner" style={{
         maxWidth: 900, margin: '0 auto',
         display: 'flex', alignItems: 'center',
         justifyContent: 'space-between', gap: 24,
@@ -1656,6 +1678,7 @@ function TeaserBar() {
 function ProblemSection() {
   return (
     <section
+      className="section-wrap"
       style={{
         background: 'linear-gradient(180deg, #080D1A 0%, #0A0F1E 60%, #080D1A 100%)',
         padding: '100px clamp(24px, 4vw, 48px)',
@@ -1806,7 +1829,7 @@ function ScoreBarsPanel() {
   }, [triggered]);
 
   return (
-    <div ref={ref} style={{ flex: '11 1 340px', minWidth: 0 }}>
+    <div ref={ref} className="score-bars-col" style={{ flex: '11 1 340px', minWidth: 0 }}>
       {SCORE_ROWS.map((row, i) => {
         const isOpen = openIndex === i;
         const isHovered = hoveredIndex === i;
@@ -1814,6 +1837,7 @@ function ScoreBarsPanel() {
           <div key={row.label}>
             {i > 0 && <div style={{ height: 1, background: '#1E2A3A' }} />}
             <div
+              className="accordion-row-inner"
               onMouseEnter={() => setHoveredIndex(i)}
               onMouseLeave={() => setHoveredIndex(null)}
               onClick={() => setOpenIndex(isOpen ? -1 : i)}
@@ -2003,7 +2027,7 @@ function RadarChartPanel() {
   const benchLabel = mode === 'county' ? 'Sonoma County Avg' : 'Top 10%';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '9 1 280px', minWidth: 0 }}>
+    <div className="radar-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '9 1 280px', minWidth: 0 }}>
       {/* Section label */}
       <div style={{
         fontSize: 13, color: '#4B5563', textTransform: 'uppercase',
@@ -2023,7 +2047,7 @@ function RadarChartPanel() {
         boxSizing: 'border-box',
       }}>
         {/* Toggle */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+        <div className="radar-toggle-wrap" style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
           <div style={{
             display: 'flex', gap: 4, padding: 4,
             background: 'rgba(255,255,255,0.06)', borderRadius: 10,
@@ -2197,6 +2221,7 @@ function ScoreSection() {
   return (
     <section
       id="provn-score-section"
+      className="section-wrap"
       style={{
         background: '#0D1520',
         padding: '100px clamp(24px, 4vw, 48px)',
@@ -2256,6 +2281,7 @@ function ScoreSection() {
 
         {/* Two-column layout */}
         <div
+          className="score-two-col"
           style={{
             display: 'flex',
             flexWrap: 'wrap',
@@ -2429,6 +2455,7 @@ function PersonaCard({ p }: { p: typeof PERSONAS[0] }) {
 function EducationSection() {
   return (
     <section
+      className="section-wrap"
       style={{
         background: '#080D1A',
         padding: '100px clamp(24px, 4vw, 48px)',
@@ -2485,7 +2512,7 @@ function EducationSection() {
 
         {/* Persona grid */}
         <FadeIn delay={80}>
-          <div style={{
+          <div className="persona-grid" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
             gap: 20,
@@ -2621,6 +2648,7 @@ const CTA_CARDS = [
 function CTASection() {
   return (
     <section
+      className="section-wrap"
       style={{
         background: '#080D1A',
         padding: '100px clamp(24px, 4vw, 48px)',
@@ -2660,6 +2688,7 @@ function CTASection() {
 
         {/* Flow cards */}
         <div
+          className="cta-cards-row"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -2670,6 +2699,7 @@ function CTASection() {
           {CTA_CARDS.map((card, i) => (
             <FadeIn key={card.title} delay={i * 100}>
               <div
+                className="cta-card-item"
                 style={{
                   background: '#0F1117',
                   border: `1px solid ${GREEN}`,
@@ -2775,6 +2805,7 @@ function Footer() {
       <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
         {/* Main row */}
         <div
+          className="footer-main-row"
           style={{
             display: 'flex',
             flexWrap: 'wrap',
@@ -2811,6 +2842,7 @@ function Footer() {
 
           {/* Nav links */}
           <div
+            className="footer-nav-links"
             style={{
               display: 'flex',
               gap: '32px',
@@ -2873,6 +2905,79 @@ export default function HomePage() {
 
   return (
     <div style={{ background: BG, color: '#ffffff' }}>
+      <style>{`
+        @media (max-width: 768px) {
+          /* Navigation */
+          .nav-desktop-links { display: none !important; }
+          .nav-inner { height: 56px !important; }
+
+          /* Section padding */
+          .section-wrap { padding-top: 48px !important; padding-bottom: 48px !important; padding-left: 20px !important; padding-right: 20px !important; }
+
+          /* Hero stats pills — stack vertically */
+          .hero-stats-row { flex-direction: column !important; align-items: stretch !important; }
+          .hero-stat-pill { max-width: 100% !important; }
+
+          /* Card flip section — always visible, auto height */
+          .card-flip-section { overflow: visible !important; height: auto !important; }
+
+          /* Card flip container — column stack with explicit min-height */
+          .flip-cards-row { flex-direction: column !important; align-items: center !important; gap: 24px !important; height: auto !important; min-height: calc(3 * 440px + 2 * 24px) !important; overflow: visible !important; }
+
+          /* Each card wrapper — fixed 440px height required for preserve-3d to work */
+          .flip-card-outer { width: calc(100vw - 48px) !important; max-width: 320px !important; height: 440px !important; margin: 0 auto !important; flex-shrink: 0 !important; cursor: pointer !important; }
+
+          /* Avatar — constrain to 80px circle on mobile */
+          .flip-avatar-img { width: 80px !important; height: 80px !important; min-width: 80px !important; min-height: 80px !important; max-width: 80px !important; margin: 0 auto 10px auto !important; }
+
+          /* FadeIn emergency override — sections must be visible on mobile */
+          section { opacity: 1 !important; transform: none !important; visibility: visible !important; }
+
+          /* Impact stats — stack vertically */
+          .impact-stats-row { flex-direction: column !important; align-items: center !important; }
+          .impact-stat-pill { flex: none !important; width: 100% !important; max-width: 100% !important; min-height: auto !important; }
+
+          /* Flow comparison cards — stack vertically */
+          .flow-cards-row { flex-direction: column !important; }
+          .flow-card-item { width: 100% !important; min-height: auto !important; }
+
+          /* Insight cards — single column */
+          .insight-cards-grid { grid-template-columns: 1fr !important; }
+
+          /* Teaser bar — stack vertically */
+          .teaser-bar-inner { flex-direction: column !important; text-align: center !important; gap: 12px !important; }
+
+          /* Score section — stack vertically */
+          .score-two-col { flex-direction: column !important; }
+          .score-bars-col { flex: none !important; width: 100% !important; min-width: 0 !important; }
+          .radar-col { flex: none !important; width: 100% !important; min-width: 0 !important; max-width: 340px !important; margin: 0 auto !important; }
+
+          /* Accordion rows — larger tap targets */
+          .accordion-row-inner { padding-top: 20px !important; padding-bottom: 20px !important; }
+
+          /* Radar chart toggle */
+          .radar-toggle-wrap button { min-height: 44px !important; }
+
+          /* Persona grid — 1 column */
+          .persona-grid { grid-template-columns: 1fr !important; }
+
+          /* CTA section cards — stack */
+          .cta-cards-row { flex-direction: column !important; }
+          .cta-card-item { width: 100% !important; }
+
+          /* Decorative PROVN text — hide */
+          .cta-deco-text { display: none !important; }
+
+          /* Footer — stack */
+          .footer-main-row { flex-direction: column !important; align-items: center !important; text-align: center !important; }
+          .footer-nav-links { justify-content: center !important; }
+        }
+
+        @media (min-width: 480px) and (max-width: 768px) {
+          /* Persona grid — 2 columns on medium mobile */
+          .persona-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+      `}</style>
       <ReadingProgressBar />
       <Nav />
       <CardFlipSection />

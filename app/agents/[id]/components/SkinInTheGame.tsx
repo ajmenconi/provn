@@ -25,7 +25,7 @@ export default function SkinInTheGame({ agent }: Props) {
   return (
     <section
       className="rounded-2xl p-4 sm:p-5 flex flex-col gap-5"
-      style={{ background: '#1A1D2E', border: '1px solid #2D3148' }}
+      style={{ background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '16px' }}
     >
       <SectionHeader>Skin in the Game</SectionHeader>
 
@@ -70,7 +70,7 @@ export default function SkinInTheGame({ agent }: Props) {
                 className="absolute w-44 h-24 rounded-xl flex flex-col items-center justify-center gap-1"
                 style={{
                   background:   isFront ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.05)',
-                  border:       isFront ? '1px solid rgba(16,185,129,0.35)' : '1px solid #2D3148',
+                  border:       isFront ? '1px solid rgba(16,185,129,0.35)' : '1px solid #1E2A3A',
                   transform:    `rotate(${rotate}deg) translateY(${-offset}px)`,
                   zIndex:       i,
                 }}
@@ -99,7 +99,7 @@ export default function SkinInTheGame({ agent }: Props) {
           <span className="font-semibold text-white" style={{ fontSize: '13px' }}>Owner for {agent.yearsOfContinuousOwnership} years</span>
           <span style={{ fontSize: '13px', color: C_TER }}>{MAX_YEARS} yr max</span>
         </div>
-        <div className="h-4 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+        <div className="h-4 rounded-full overflow-hidden" style={{ background: '#1E2A3A' }}>
           <div
             className="h-full rounded-full flex items-center justify-end pr-2"
             style={{ width: `${ownershipPct}%`, backgroundColor: accent }}
@@ -114,7 +114,7 @@ export default function SkinInTheGame({ agent }: Props) {
       {agent.battleScar && (
         <div
           className="rounded-xl p-3 sm:p-4"
-          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid #2D3148' }}
+          style={{ background: '#0A0F1E', border: '1px solid #1E2A3A' }}
         >
           <div className="flex items-center gap-2 mb-2">
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke={C_TER} strokeWidth={2}>

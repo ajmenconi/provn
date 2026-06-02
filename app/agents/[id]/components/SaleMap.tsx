@@ -93,7 +93,7 @@ export default function SaleMap({ agent, accent }: Props) {
   }
 
   return (
-    <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #2D3148' }}>
+    <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid #1E2A3A', borderRadius: '16px' }}>
       <svg
         viewBox="0 0 540 460"
         className="w-full"

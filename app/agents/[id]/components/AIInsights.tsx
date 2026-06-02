@@ -5,7 +5,7 @@ import SectionHeader from './SectionHeader';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 
-const INNER    = { background: 'rgba(255,255,255,0.04)', border: '1px solid #2D3148' } as const;
+const INNER    = { background: '#0A0F1E', border: '1px solid #1E2A3A' } as const;
 const C_SEC    = '#94A3B8';
 const C_TER    = '#4B5563';
 const C_INTERP = '#CBD5E1';
@@ -44,7 +44,7 @@ export default function AIInsights({ agent, breakdown }: Props) {
   return (
     <section
       className="rounded-2xl p-4 sm:p-5"
-      style={{ background: '#1A1D2E', border: '1px solid #2D3148' }}
+      style={{ background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '16px' }}
     >
       <div className="flex items-center gap-3 mb-5">
         <SectionHeader className="mb-0">Provn Intelligence</SectionHeader>
@@ -73,7 +73,7 @@ export default function AIInsights({ agent, breakdown }: Props) {
                     <span className="font-black tabular-nums w-8 text-right" style={{ fontSize: '20px', color }}>{score}</span>
                   </div>
                 </div>
-                <div className="w-full rounded-full h-2 overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                <div className="w-full rounded-full h-2 overflow-hidden" style={{ background: '#1E2A3A' }}>
                   <div className="h-2 rounded-full" style={{ width: `${score}%`, backgroundColor: color }} />
                 </div>
               </div>

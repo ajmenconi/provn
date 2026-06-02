@@ -51,7 +51,7 @@ function CardTile({ card, verified }: { card: PersonalCard; verified: boolean })
   return (
     <div
       className="relative flex-none w-36 snap-start md:w-auto flex flex-col items-center text-center gap-1.5 p-4 rounded-2xl"
-      style={{ background: '#1A1D2E', border: '1px solid #2D3148' }}
+      style={{ background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '12px' }}
     >
       {/* Verified badge — top-right corner */}
       {verified && card.verifiedVia && (
@@ -66,7 +66,7 @@ function CardTile({ card, verified }: { card: PersonalCard; verified: boolean })
       {/* Emoji in a dark circle */}
       <div
         className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-        style={{ background: '#2D3148' }}
+        style={{ background: '#1A1D2E', borderRadius: '50%' }}
       >
         <span className="text-2xl leading-none" role="img" aria-label={card.label}>
           {card.emoji}
@@ -108,7 +108,7 @@ export default function BeyondRealEstate({ agent }: Props) {
   return (
     <section
       className="rounded-2xl p-4 sm:p-5 flex flex-col gap-5"
-      style={{ background: '#1A1D2E', border: '1px solid #2D3148' }}
+      style={{ background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: '16px' }}
     >
       {/* Header row */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
