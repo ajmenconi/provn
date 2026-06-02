@@ -10,6 +10,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import AgentFlipCard from './components/AgentFlipCard';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 
@@ -43,42 +44,44 @@ function FadeIn({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // On mobile, bypass IntersectionObserver — show content immediately
+    // On mobile (<768px) show immediately — skip IntersectionObserver
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
-      setIsMobile(true);
+      setVisible(true);
       return;
     }
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold: 0.1 }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setVisible(true), delay);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.05 }
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
-
-  // Mobile: render immediately, no animation
-  if (isMobile) {
-    return <div>{children}</div>;
-  }
+  }, [delay]);
 
   return (
     <div
       ref={ref}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(28px)',
-        transition: `opacity 0.62s ease ${delay}ms, transform 0.62s ease ${delay}ms`,
+        transform: visible ? 'translateY(0)' : 'translateY(20px)',
+        transition: visible
+          ? `opacity 0.6s ease, transform 0.6s ease`
+          : 'none',
       }}
     >
       {children}
     </div>
   );
 }
+
 
 // ── Score bar ─────────────────────────────────────────────────────────────────
 
@@ -462,464 +465,92 @@ function Nav() {
 
 // ── Section 1: Card Flip Hero ─────────────────────────────────────────────────
 
-function ScoreRing({
-  score,
-  color,
-  grade,
-  glow = false,
-}: {
-  score: number;
-  color: string;
-  grade: string;
-  glow?: boolean;
-}) {
-  const R = 34;
-  const circ = 2 * Math.PI * R;
-  const offset = circ * (1 - score / 100);
-  return (
-    <div
-      style={{
-        position: 'relative',
-        width: 80,
-        height: 80,
-        margin: '0 auto 12px',
-        filter: glow ? 'drop-shadow(0 0 8px rgba(16,185,129,0.6))' : 'none',
-      }}
-    >
-      <svg width={80} height={80} viewBox="0 0 80 80">
-        <circle cx={40} cy={40} r={R} fill="none" stroke="#2D2D2D" strokeWidth={6} />
-        <circle
-          cx={40}
-          cy={40}
-          r={R}
-          fill="none"
-          stroke={color}
-          strokeWidth={6}
-          strokeLinecap="round"
-          strokeDasharray={circ}
-          strokeDashoffset={offset}
-          transform="rotate(-90 40 40)"
-        />
-      </svg>
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <span style={{ fontSize: 22, fontWeight: 900, color, lineHeight: 1 }}>{grade}</span>
-        <span style={{ fontSize: 10, color: C_SEC, marginTop: 2 }}>{score}/100</span>
-      </div>
-    </div>
-  );
-}
-
-type ActivityColor = 'green' | 'red' | 'gray';
-
-function ActivityBar({ pattern }: { pattern: ActivityColor[] }) {
-  return (
-    <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 120 }}>
-      {pattern.map((c, i) => (
-        <div
-          key={i}
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: 2,
-            background: c === 'green' ? '#10B981' : c === 'red' ? '#EF4444' : '#2D2D2D',
-            flexShrink: 0,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-interface CardData {
-  avatarUrl: string;
-  avatarBorder: string;
-  avatarShadow: string;
-  name: string;
-  agentTitle: string;
-  brokerage: string;
-  stars: string;
-  borderColor: string;
-  shadowColor: string;
-  bgGradient: string;
-  score: number;
-  grade: string;
-  scoreColor: string;
-  glow: boolean;
-  rows: { label: string; value: string; color: string }[];
-  activityPattern: ActivityColor[];
-  pillBg: string;
-  pillBorderColor: string;
-  pillText: string;
-  pillTextColor: string;
-}
-
-const CARD_DATA: CardData[] = [
-  // Left — Tara Reynolds (amber · C+ coaster)
+const FLIP_CARDS = [
   {
-    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face',
-    avatarBorder: '#F59E0B',
-    avatarShadow: '0 0 12px rgba(245,158,11,0.3)',
-    name: 'Tara Reynolds',
-    agentTitle: 'REALTOR® · 11 Years',
-    brokerage: 'Keller Williams · Petaluma',
-    stars: '4.9 stars · 34 reviews',
-    borderColor: '#F59E0B',
-    shadowColor: 'rgba(245,158,11,0.12)',
-    bgGradient: 'linear-gradient(145deg, #1A1500, #1A1D2E)',
-    score: 58,
-    grade: 'C+',
-    scoreColor: '#F59E0B',
-    glow: false,
-    rows: [
-      { label: 'Licensed', value: '11 years', color: '#CBD5E1' },
-      { label: 'Career transactions', value: '94 total', color: '#CBD5E1' },
-      { label: 'Last sale', value: '4 months ago', color: '#F59E0B' },
-      { label: 'Price reductions', value: '4 of last 10 listings', color: '#F59E0B' },
-      { label: 'Property owned', value: '1 — primary residence only', color: '#F59E0B' },
-    ],
-    activityPattern: ['green','green','gray','green','gray','gray','green','green','gray','green','gray','green'],
-    pillBg: '#1A1200',
-    pillBorderColor: 'rgba(245,158,11,0.4)',
-    pillText: '⚠ Inconsistent activity — not aligned with your price range',
-    pillTextColor: '#F59E0B',
+    frontData: {
+      name: 'Tara Reynolds',
+      brokerage: 'Keller Williams · Petaluma',
+      avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face',
+      avatarBorder: '#F59E0B',
+      stars: 5,
+      reviewCount: '4.9 stars · 34 reviews',
+      title: 'REALTOR® · 11 Years',
+    },
+    backData: {
+      grade: 'C+',
+      score: 58,
+      gradeColor: '#F59E0B',
+      borderColor: '#F59E0B',
+      glowColor: 'rgba(245,158,11,0.2)',
+      outcomeBg: '#1A1200',
+      stats: [
+        { label: 'Licensed',            value: '11 years',          color: '#CBD5E1' },
+        { label: 'Career transactions', value: '94 total',          color: '#CBD5E1' },
+        { label: 'Last sale',           value: '4 months ago',      color: '#F59E0B' },
+        { label: 'Price reductions',    value: '4 of last 10',      color: '#F59E0B' },
+        { label: 'Property owned',      value: '1 — primary only',  color: '#F59E0B' },
+      ],
+      outcomeText: '⚠ Inconsistent activity — not aligned with your price range',
+      outcomeColor: '#F59E0B',
+    },
   },
-  // Middle — James Miller (red · C novice)
   {
-    avatarUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=face',
-    avatarBorder: '#EF4444',
-    avatarShadow: '0 0 12px rgba(239,68,68,0.3)',
-    name: 'James Miller',
-    agentTitle: 'REALTOR® · 2 Years',
-    brokerage: 'Century 21 · Santa Rosa',
-    stars: '4.8 stars · 11 reviews',
-    borderColor: '#EF4444',
-    shadowColor: 'rgba(239,68,68,0.15)',
-    bgGradient: 'linear-gradient(145deg, #1A0D0D, #1A1D2E)',
-    score: 41,
-    grade: 'C',
-    scoreColor: '#EF4444',
-    glow: false,
-    rows: [
-      { label: 'Licensed', value: '2 years', color: '#EF4444' },
-      { label: 'Career transactions', value: '8 total', color: '#EF4444' },
-      { label: 'Last sale', value: '9 months ago', color: '#F59E0B' },
-      { label: 'Price reductions', value: '6 of last 8 listings', color: '#EF4444' },
-      { label: 'Property owned', value: 'None verified', color: '#EF4444' },
-    ],
-    activityPattern: ['red','red','gray','gray','red','red','gray','gray','red','gray','gray','gray'],
-    pillBg: '#2D0A0A',
-    pillBorderColor: 'rgba(239,68,68,0.4)',
-    pillText: '⚠ High risk — limited experience in current market',
-    pillTextColor: '#EF4444',
+    frontData: {
+      name: 'James Miller',
+      brokerage: 'Century 21 · Santa Rosa',
+      avatarUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=face',
+      avatarBorder: '#EF4444',
+      stars: 5,
+      reviewCount: '4.8 stars · 11 reviews',
+      title: 'REALTOR® · 2 Years',
+    },
+    backData: {
+      grade: 'C',
+      score: 41,
+      gradeColor: '#EF4444',
+      borderColor: '#EF4444',
+      glowColor: 'rgba(239,68,68,0.2)',
+      outcomeBg: '#1A0D0D',
+      stats: [
+        { label: 'Licensed',            value: '2 years',           color: '#EF4444' },
+        { label: 'Career transactions', value: '8 total',           color: '#EF4444' },
+        { label: 'Last sale',           value: '9 months ago',      color: '#EF4444' },
+        { label: 'Price reductions',    value: '6 of last 8',       color: '#EF4444' },
+        { label: 'Property owned',      value: 'None verified',     color: '#EF4444' },
+      ],
+      outcomeText: '⚠ High risk — limited experience in current market',
+      outcomeColor: '#EF4444',
+    },
   },
-  // Right — Sarah Chen (green · A+ pro)
   {
-    avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face',
-    avatarBorder: '#10B981',
-    avatarShadow: '0 0 12px rgba(16,185,129,0.3)',
-    name: 'Sarah Chen',
-    agentTitle: 'BROKER · 19 Years',
-    brokerage: 'Compass · Healdsburg',
-    stars: '4.9 stars · 147 reviews',
-    borderColor: '#10B981',
-    shadowColor: 'rgba(16,185,129,0.2)',
-    bgGradient: 'linear-gradient(145deg, #0A1F12, #0F1628)',
-    score: 94,
-    grade: 'A+',
-    scoreColor: '#10B981',
-    glow: true,
-    rows: [
-      { label: 'Licensed', value: '19 years', color: '#10B981' },
-      { label: 'Career transactions', value: '312 total', color: '#10B981' },
-      { label: 'Last sale', value: '3 weeks ago', color: '#10B981' },
-      { label: 'Price reductions', value: '1 of last 10 listings', color: '#10B981' },
-      { label: 'Property owned', value: '4 properties · $2.1M portfolio', color: '#10B981' },
-    ],
-    activityPattern: ['green','green','green','green','green','green','green','green','green','green','green','green'],
-    pillBg: '#0A2A1A',
-    pillBorderColor: '#10B981',
-    pillText: '✓ Top 5% Sonoma County · Currently active · Verified owner',
-    pillTextColor: '#10B981',
+    frontData: {
+      name: 'Sarah Chen',
+      brokerage: 'Compass · Healdsburg',
+      avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face',
+      avatarBorder: '#10B981',
+      stars: 5,
+      reviewCount: '4.9 stars · 147 reviews',
+      title: 'BROKER · 19 Years',
+    },
+    backData: {
+      grade: 'A+',
+      score: 94,
+      gradeColor: '#10B981',
+      borderColor: '#10B981',
+      glowColor: 'rgba(16,185,129,0.2)',
+      outcomeBg: '#0A1F12',
+      stats: [
+        { label: 'Licensed',            value: '19 years',              color: '#10B981' },
+        { label: 'Career transactions', value: '312 total',             color: '#10B981' },
+        { label: 'Last sale',           value: '3 weeks ago',           color: '#10B981' },
+        { label: 'Price reductions',    value: '1 of last 10',          color: '#10B981' },
+        { label: 'Property owned',      value: '4 · $2.1M portfolio',   color: '#10B981' },
+      ],
+      outcomeText: '✓ Top 5% Sonoma County · Active · Verified owner',
+      outcomeColor: '#10B981',
+    },
   },
 ];
-
-function FlipCard({
-  data,
-  isFlipped,
-  onFlip,
-}: {
-  data: CardData;
-  isFlipped: boolean;
-  onFlip: () => void;
-}) {
-  const [hovered, setHovered] = useState(false);
-  const [isTouch, setIsTouch] = useState(false);
-
-  useEffect(() => {
-    setIsTouch(window.matchMedia('(hover: none)').matches);
-  }, []);
-
-  const tiltTransform = !isFlipped && hovered && !isTouch ? 'rotateY(8deg)' : 'rotateY(0deg)';
-  const flipTransform = isFlipped ? 'rotateY(180deg)' : tiltTransform;
-
-  return (
-    <div
-      className="flip-card-outer"
-      onClick={onFlip}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        width: 300,
-        height: 420,
-        perspective: '1000px',
-        cursor: 'pointer',
-        flexShrink: 0,
-      }}
-    >
-      {/* Flip container */}
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          position: 'relative',
-          transformStyle: 'preserve-3d',
-          WebkitTransformStyle: 'preserve-3d',
-          transform: flipTransform,
-          transition: isFlipped
-            ? 'transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1)'
-            : 'transform 0.3s ease',
-        }}
-      >
-        {/* ── FRONT FACE ── */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            borderRadius: 20,
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-            background: 'linear-gradient(145deg, #1A1D2E, #0F1117)',
-            border: '1px solid #2D3148',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '32px 24px',
-            boxSizing: 'border-box',
-          }}
-        >
-          {/* Avatar */}
-          <img
-            className="flip-avatar-img"
-            src={data.avatarUrl}
-            alt={data.name}
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: '50%',
-              objectFit: 'cover',
-              objectPosition: 'center top',
-              border: `3px solid ${data.avatarBorder}`,
-              boxShadow: data.avatarShadow,
-              marginBottom: 10,
-              flexShrink: 0,
-              display: 'block',
-            }}
-          />
-
-          {/* Name */}
-          <div style={{ fontSize: 18, fontWeight: 700, color: '#ffffff', marginBottom: 2 }}>
-            {data.name}
-          </div>
-
-          {/* Agent title */}
-          <div style={{ fontSize: 11, color: '#94A3B8', letterSpacing: '0.05em', marginBottom: 4 }}>
-            {data.agentTitle}
-          </div>
-
-          {/* Brokerage */}
-          <div style={{ fontSize: 13, color: '#94A3B8', marginBottom: 12 }}>
-            {data.brokerage}
-          </div>
-
-          {/* Divider */}
-          <div style={{ width: '100%', height: 1, background: '#2D3148', marginBottom: 14 }} />
-
-          {/* Stars */}
-          <div style={{ fontSize: 18, color: '#F59E0B', marginBottom: 4 }}>&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <div style={{ fontSize: 13, color: '#94A3B8', marginBottom: 14 }}>{data.stars}</div>
-
-          {/* Blurred data pills */}
-          <div style={{ width: '100%', marginBottom: 10 }}>
-            {[
-              'Licensed X years · X transactions',
-              'Property ownership · portfolio value',
-              'Price reduction rate · last sale date',
-            ].map((text, i) => (
-              <div
-                key={i}
-                style={{
-                  background: '#1E2330',
-                  borderRadius: 8,
-                  padding: '8px 12px',
-                  marginBottom: 8,
-                  filter: 'blur(4px)',
-                  fontSize: 12,
-                  color: '#CBD5E1',
-                  userSelect: 'none',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                }}
-              >
-                {text}
-              </div>
-            ))}
-          </div>
-
-          {/* Tap to reveal */}
-          <div style={{ fontSize: 11, color: '#4B5563', fontStyle: 'italic', marginBottom: 6 }}>
-            Tap to reveal · Tap again to compare
-          </div>
-
-          {/* Lock icon pulse */}
-          <div
-            style={{
-              fontSize: 16,
-              marginBottom: 12,
-              animation: 'lock-pulse 2s ease-in-out infinite',
-              display: 'inline-block',
-            }}
-          >
-            &#128274;
-          </div>
-
-          {/* Blurred score bar */}
-          <div style={{ width: '100%' }}>
-            <div
-              style={{
-                fontSize: 11,
-                color: '#4B5563',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                marginBottom: 6,
-              }}
-            >
-              PROVN SCORE — HIDDEN
-            </div>
-            <div
-              style={{
-                height: 8,
-                borderRadius: 999,
-                background: '#94A3B8',
-                filter: 'blur(6px)',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* ── BACK FACE ── */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            borderRadius: 20,
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-            background: data.bgGradient,
-            border: `2px solid ${data.borderColor}`,
-            boxShadow: `0 8px 40px ${data.shadowColor}`,
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '20px',
-            boxSizing: 'border-box',
-            overflowY: 'hidden',
-          }}
-        >
-          {/* Agent header */}
-          <div style={{ textAlign: 'center', marginBottom: 10 }}>
-            <div style={{ fontSize: 16, fontWeight: 700, color: '#ffffff' }}>{data.name}</div>
-            <div style={{ fontSize: 12, color: '#94A3B8' }}>{data.brokerage}</div>
-          </div>
-
-          {/* Score ring */}
-          <ScoreRing score={data.score} color={data.scoreColor} grade={data.grade} glow={data.glow} />
-
-          {/* Stat rows */}
-          <div style={{ width: '100%', flex: 1 }}>
-            {data.rows.map((row, i) => (
-              <div key={i}>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '5px 0',
-                    gap: 8,
-                  }}
-                >
-                  <span style={{ fontSize: 11, color: '#94A3B8', flexShrink: 0 }}>{row.label}</span>
-                  <span
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: row.color,
-                      textAlign: 'right',
-                    }}
-                  >
-                    {row.value}
-                  </span>
-                </div>
-                <div style={{ height: 1, background: '#2D2D2D' }} />
-              </div>
-            ))}
-
-            {/* Activity row */}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '5px 0',
-                gap: 8,
-              }}
-            >
-              <span style={{ fontSize: 11, color: '#94A3B8', flexShrink: 0 }}>Active last 36 mo</span>
-              <ActivityBar pattern={data.activityPattern} />
-            </div>
-          </div>
-
-          {/* Verdict pill */}
-          <div
-            style={{
-              background: data.pillBg,
-              border: `1px solid ${data.pillBorderColor}`,
-              borderRadius: 8,
-              padding: '8px 10px',
-              textAlign: 'center',
-              marginTop: 8,
-              flexShrink: 0,
-            }}
-          >
-            <span style={{ fontSize: 11, fontWeight: 600, color: data.pillTextColor, lineHeight: 1.4, display: 'block' }}>
-              {data.pillText}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function CardFlipSection() {
   const [flipped, setFlipped] = useState([false, false, false]);
@@ -935,10 +566,10 @@ function CardFlipSection() {
     }
   }, [allFlipped]);
 
-  const handleFlip = (i: number) => {
+  const handleFlip = (index: number) => {
     setFlipped(prev => {
       const next = [...prev];
-      next[i] = !next[i]; // toggle — flip forward and back
+      next[index] = !next[index];
       return next;
     });
   };
@@ -949,29 +580,13 @@ function CardFlipSection() {
       style={{
         background: 'linear-gradient(180deg, #080D1A 0%, #0A0F1E 50%, #080D1A 100%)',
         padding: '100px clamp(24px, 4vw, 48px)',
-        overflow: 'hidden',
+        overflow: 'visible',
       }}
     >
-      {/* Keyframes injected via style tag so Tailwind v4 cannot purge them */}
       <style>{`
-        @keyframes tap-pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(0.9); }
-        }
-        @keyframes lock-pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.6; }
-        }
-        @keyframes dot-ping {
-          0% { transform: scale(1); opacity: 1; }
-          80%, 100% { transform: scale(2.2); opacity: 0; }
-        }
         @keyframes reveal-fade-up {
           from { opacity: 0; transform: translateY(24px); }
           to   { opacity: 1; transform: translateY(0); }
-        }
-        @media (max-width: 768px) {
-          .flip-card { width: calc(100vw - 48px) !important; }
         }
       `}</style>
 
@@ -1001,132 +616,84 @@ function CardFlipSection() {
           style={{
             fontSize: 'clamp(36px, 6vw, 64px)',
             fontWeight: 900,
-            lineHeight: 1.1,
-            letterSpacing: '-0.02em',
+            color: '#ffffff',
+            lineHeight: 1.05,
+            letterSpacing: '-0.03em',
             margin: 0,
           }}
         >
-          <span style={{ display: 'block', color: '#ffffff' }}>
-            One of these real estate agents will make you $75,000.
-          </span>
+          Three agents.{' '}
           <span
             style={{
-              display: 'block',
               background: 'linear-gradient(135deg, #10B981, #06B6D4)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
             }}
           >
-            Two will cost you $75,000.
+            One empty star rating.
           </span>
         </h2>
       </div>
 
-      {/* Subheadline */}
+      {/* Sub-headline */}
       <p
         style={{
           textAlign: 'center',
-          fontSize: 18,
+          fontSize: 'clamp(16px, 2vw, 20px)',
           color: '#94A3B8',
-          maxWidth: 580,
-          margin: '0 auto 0',
-          lineHeight: 1.7,
+          maxWidth: 600,
+          margin: '0 auto 16px',
+          lineHeight: 1.65,
         }}
       >
-        They all have five stars. They all call themselves specialists. Every one will tell you they
-        are the best agent for your situation. Without Provn, you have no way to know if that is
-        true. Go ahead — try to pick the right one.
+        Each has five stars. Each claims local expertise. Only one of them is right
+        for the deal you are about to make.
       </p>
 
-      {/* Tap instruction + finger icon */}
-      <div
-        style={{
-          textAlign: 'center',
-          marginTop: 16,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 8,
-        }}
-      >
-        <span style={{ fontSize: 14, color: '#10B981' }}>
-          Tap each card to see what Provn reveals.
-        </span>
-        <span
-          style={{
-            fontSize: 18,
-            display: 'inline-block',
-            animation: 'tap-pulse 1.5s ease-in-out infinite',
-          }}
-        >
-          &#128070;
-        </span>
-      </div>
+      {/* Instruction */}
+      <p style={{ textAlign: 'center', fontSize: 15, color: '#4B5563', marginBottom: 40 }}>
+        Tap each card to reveal their verified data.
+      </p>
 
       {/* Progress dots */}
-      <div style={{ textAlign: 'center', marginTop: 40 }}>
-        <div
-          style={{
-            fontSize: 11,
-            color: '#4B5563',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            marginBottom: 12,
-          }}
-        >
-          FLIP ALL THREE TO SEE THE FULL PICTURE
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
-          {flipped.map((f, i) => (
-            <div key={i} style={{ position: 'relative', width: 16, height: 16 }}>
-              {/* Ping ring */}
-              {f && (
-                <div
-                  key={`ping-${i}`}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: '50%',
-                    background: '#10B981',
-                    animation: 'dot-ping 0.7s ease-out forwards',
-                  }}
-                />
-              )}
-              {/* Dot */}
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  borderRadius: '50%',
-                  border: f ? 'none' : '2px solid #2D3148',
-                  background: f ? '#10B981' : 'transparent',
-                  transition: 'background 0.3s, border 0.3s',
-                }}
-              />
-            </div>
-          ))}
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 0 }}>
+        {flipped.map((f, i) => (
+          <div
+            key={i}
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              border: f ? 'none' : '2px solid #2D3148',
+              background: f ? '#10B981' : 'transparent',
+              transition: 'background 0.3s, border 0.3s',
+            }}
+          />
+        ))}
       </div>
 
-      {/* Card row */}
+      {/* Card row — row on desktop, column on mobile via .flip-cards-row class */}
       <div
         className="flip-cards-row"
         style={{
           display: 'flex',
+          flexDirection: 'row',
           justifyContent: 'center',
-          gap: 24,
+          alignItems: 'stretch',
+          gap: 20,
           flexWrap: 'wrap',
-          marginTop: 56,
-          maxWidth: 1100,
+          marginTop: 40,
+          maxWidth: 1000,
           marginLeft: 'auto',
           marginRight: 'auto',
         }}
       >
-        {CARD_DATA.map((card, i) => (
-          <FlipCard
+        {FLIP_CARDS.map((card, i) => (
+          <AgentFlipCard
             key={i}
-            data={card}
+            frontData={card.frontData}
+            backData={card.backData}
             isFlipped={flipped[i]}
             onFlip={() => handleFlip(i)}
           />
@@ -1213,6 +780,7 @@ function CardFlipSection() {
     </section>
   );
 }
+
 
 
 // ── Section 2: The problem nobody talks about ────────────────────────────────
@@ -2918,20 +2486,11 @@ export default function HomePage() {
           .hero-stats-row { flex-direction: column !important; align-items: stretch !important; }
           .hero-stat-pill { max-width: 100% !important; }
 
-          /* Card flip section — always visible, auto height */
+          /* Card flip section — always visible */
           .card-flip-section { overflow: visible !important; height: auto !important; }
 
-          /* Card flip container — column stack with explicit min-height */
-          .flip-cards-row { flex-direction: column !important; align-items: center !important; gap: 24px !important; height: auto !important; min-height: calc(3 * 440px + 2 * 24px) !important; overflow: visible !important; }
-
-          /* Each card wrapper — fixed 440px height required for preserve-3d to work */
-          .flip-card-outer { width: calc(100vw - 48px) !important; max-width: 320px !important; height: 440px !important; margin: 0 auto !important; flex-shrink: 0 !important; cursor: pointer !important; }
-
-          /* Avatar — constrain to 80px circle on mobile */
-          .flip-avatar-img { width: 80px !important; height: 80px !important; min-width: 80px !important; min-height: 80px !important; max-width: 80px !important; margin: 0 auto 10px auto !important; }
-
-          /* FadeIn emergency override — sections must be visible on mobile */
-          section { opacity: 1 !important; transform: none !important; visibility: visible !important; }
+          /* Card flip container — column stack on mobile */
+          .flip-cards-row { flex-direction: column !important; align-items: center !important; gap: 20px !important; }
 
           /* Impact stats — stack vertically */
           .impact-stats-row { flex-direction: column !important; align-items: center !important; }
