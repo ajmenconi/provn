@@ -354,81 +354,53 @@ function Nav() {
         top: 0,
         left: 0,
         right: 0,
-        zIndex: 50,
+        zIndex: 100,
         background: '#FFFFFF',
         borderBottom: '1px solid #B2F5EA',
+        padding: '0 24px',
+        height: '56px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
       }}
     >
-      <div
-        className="nav-inner"
-        style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '0 clamp(24px, 4vw, 48px)',
-          height: '60px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        {/* Wordmark with green dot */}
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: GREEN,
-              flexShrink: 0,
-            }}
-          />
-          <span
-            style={{
-              fontSize: '20px',
-              fontWeight: 800,
-              color: '#00B894',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Provn
-          </span>
-        </Link>
-
-        {/* Right nav */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <div className="nav-desktop-links" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <Link
-              href="/match/buyer"
-              style={{ color: C_SEC, fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}
-            >
-              Find an agent
-            </Link>
-            <Link
-              href="/login"
-              style={{ color: C_SEC, fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}
-            >
-              Agent login
-            </Link>
-          </div>
-          <Link
-            href="/match/buyer"
-            style={{
-              background: GREEN,
-              color: '#FFFFFF',
-              padding: '8px 20px',
-              borderRadius: '20px',
-              fontSize: '14px',
-              fontWeight: 600,
-              textDecoration: 'none',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Get matched
-          </Link>
-        </div>
+      <a href="/" style={{
+        fontSize: '18px',
+        fontWeight: '900',
+        color: '#00B894',
+        textDecoration: 'none',
+      }}>
+        ● provn
+      </a>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <a href="/agents/sarah-chen-001" style={{
+          color: '#636E72',
+          fontSize: '14px',
+          textDecoration: 'none',
+        }}>
+          Find an agent
+        </a>
+        <a href="/sign-in" style={{
+          color: '#636E72',
+          fontSize: '14px',
+          textDecoration: 'none',
+        }}>
+          Agent login
+        </a>
+        <a href="/match/buyer" style={{
+          background: '#00B894',
+          color: '#FFFFFF',
+          fontSize: '14px',
+          fontWeight: '600',
+          padding: '8px 20px',
+          borderRadius: '24px',
+          textDecoration: 'none',
+        }}>
+          Get matched
+        </a>
       </div>
     </nav>
-  );
+  )
 }
 
 // ── Section 1: Card Flip Hero ─────────────────────────────────────────────────
@@ -436,6 +408,21 @@ function Nav() {
 function CardFlipSection() {
   return (
     <div style={{ paddingTop: 0, marginTop: 0 }} dangerouslySetInnerHTML={{ __html: `
+<script type="text/javascript">
+var fcF=[false,false,false];
+var fcDone=false;
+function fcFlip(i){
+  fcF[i]=!fcF[i];
+  var c=document.getElementById('fc'+i);
+  var d=document.getElementById('d'+i);
+  if(fcF[i]){c.classList.add('on');d.classList.add('on');}
+  else{c.classList.remove('on');d.classList.remove('on');}
+  if(!fcDone&&fcF[0]&&fcF[1]&&fcF[2]){
+    fcDone=true;
+    document.getElementById('fcReveal').classList.add('on');
+  }
+}
+</script>
 <style>
 .fc-wrap{background:#F0FDF9;padding:60px 20px 40px 20px;text-align:center}
 .fc-pill{display:inline-block;background:#FFFFFF;border:1px solid #00B894;border-radius:20px;padding:6px 16px;font-size:11px;color:#636E72;letter-spacing:0.1em;margin-top:0;margin-bottom:32px}
@@ -601,21 +588,6 @@ function CardFlipSection() {
   </div>
 </div>
 
-<script>
-var fcF=[false,false,false];
-var fcDone=false;
-function fcFlip(i){
-  fcF[i]=!fcF[i];
-  var c=document.getElementById('fc'+i);
-  var d=document.getElementById('d'+i);
-  if(fcF[i]){c.classList.add('on');d.classList.add('on');}
-  else{c.classList.remove('on');d.classList.remove('on');}
-  if(!fcDone&&fcF[0]&&fcF[1]&&fcF[2]){
-    fcDone=true;
-    document.getElementById('fcReveal').classList.add('on');
-  }
-}
-</script>
 ` }} />
   );
 }
@@ -1122,7 +1094,6 @@ const SCORE_ROWS = [
 ];
 
 
-function ScoreSection() {
 const radarHTML = `
 <style>
 .rc-wrap{display:flex;flex-direction:column;gap:16px}
@@ -1284,6 +1255,8 @@ function rcSwitch(m){
 rcInit();
 </script>
 `;
+
+function ScoreSection() {
 
   return (
     <section
@@ -1655,68 +1628,7 @@ function PersonaCard({ p }: { p: typeof PERSONAS[0] }) {
   );
 }
 
-function EducationSection() {
-  return (
-    <section
-      className="section-wrap"
-      style={{
-        background: '#F0FDF9',
-        padding: '100px clamp(24px, 4vw, 48px)',
-        borderTop: '1px solid #B2F5EA',
-        borderBottom: '1px solid #B2F5EA',
-      }}
-    >
-      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-        {/* Header */}
-        <FadeIn>
-          <EyebrowPill text="✦ YOUR SITUATION IS UNIQUE" />
-
-          <div style={{ textAlign: 'center', marginBottom: 8 }}>
-            <h2 style={{
-              fontSize: 'clamp(32px, 5vw, 56px)',
-              fontWeight: 900,
-              color: '#2D3436',
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-              margin: 0,
-              display: 'block',
-            }}>
-              Every buyer and seller is different.
-            </h2>
-            <h2 style={{
-              fontSize: 'clamp(32px, 5vw, 56px)',
-              fontWeight: 900,
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-              margin: 0,
-              background: 'linear-gradient(135deg, #00B894, #00CEC9)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              display: 'block',
-            }}>
-              The industry ignores this.
-            </h2>
-          </div>
-
-          <p style={{
-            textAlign: 'center',
-            fontSize: 17,
-            color: '#636E72',
-            maxWidth: 560,
-            margin: '20px auto 64px',
-            lineHeight: 1.75,
-          }}>
-            A first-time buyer, a move-up seller, and a luxury investor all need completely
-            different skills from their agent. Star ratings do not tell you which agent has
-            them. Provn does.
-          </p>
-        </FadeIn>
-
-        {/* Mobile persona selector — hidden on desktop via CSS */}
-        <div
-          className="persona-mobile"
-          dangerouslySetInnerHTML={{ __html: `
+const PERSONA_MOBILE_HTML = `
 <style>
 .ps-wrap{padding:0}
 .ps-pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -1792,7 +1704,70 @@ document.getElementById('psDetail').addEventListener('touchend',function(e){
 },{passive:true});
 psRender(0);
 </script>
-` }}
+`;
+
+function EducationSection() {
+  return (
+    <section
+      className="section-wrap"
+      style={{
+        background: '#F0FDF9',
+        padding: '100px clamp(24px, 4vw, 48px)',
+        borderTop: '1px solid #B2F5EA',
+        borderBottom: '1px solid #B2F5EA',
+      }}
+    >
+      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+        {/* Header */}
+        <FadeIn>
+          <EyebrowPill text="✦ YOUR SITUATION IS UNIQUE" />
+
+          <div style={{ textAlign: 'center', marginBottom: 8 }}>
+            <h2 style={{
+              fontSize: 'clamp(32px, 5vw, 56px)',
+              fontWeight: 900,
+              color: '#2D3436',
+              lineHeight: 1.1,
+              letterSpacing: '-0.02em',
+              margin: 0,
+              display: 'block',
+            }}>
+              Every buyer and seller is different.
+            </h2>
+            <h2 style={{
+              fontSize: 'clamp(32px, 5vw, 56px)',
+              fontWeight: 900,
+              lineHeight: 1.1,
+              letterSpacing: '-0.02em',
+              margin: 0,
+              background: 'linear-gradient(135deg, #00B894, #00CEC9)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              display: 'block',
+            }}>
+              The industry ignores this.
+            </h2>
+          </div>
+
+          <p style={{
+            textAlign: 'center',
+            fontSize: 17,
+            color: '#636E72',
+            maxWidth: 560,
+            margin: '20px auto 64px',
+            lineHeight: 1.75,
+          }}>
+            A first-time buyer, a move-up seller, and a luxury investor all need completely
+            different skills from their agent. Star ratings do not tell you which agent has
+            them. Provn does.
+          </p>
+        </FadeIn>
+
+        {/* Mobile persona selector — hidden on desktop via CSS */}
+        <div
+          className="persona-mobile"
+          dangerouslySetInnerHTML={{ __html: PERSONA_MOBILE_HTML }}
         />
 
         {/* Persona grid — desktop only */}
