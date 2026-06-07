@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Agent {
+  id                String   @id @default(cuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  licenseNumber     String   @unique
+  licenseType       String   @default("salesperson")
+  licenseStatus     String   @default("active")
+  licenseIssueDate  DateTime @default(now())
+  firstName         String   @default("")
+  lastName          String   @default("")
+  fullName          String
+  brokerage         String?
+  city              String?
+  county            String?
+  state             String   @default("CA")
+  phone             String?
+  email             String?
+  photoUrl          String?
+  videoUrl          String?
+  isPremium         Boolean  @default(false)
+  premiumSince      DateTime?
+  languagesSpoken   String[]
+  priorCareers      String[]
+  personalBio       String?
+  scores            AgentScore?
+  reviews           AgentReview[]
+  properties        AgentProperty[]
+  transactions      AgentTransaction[]
+  matches           MatchRequest[]
+  personalityCards  PersonalityCard[]
+}
+
+model AgentScore {
+  id                    String   @id @default(cuid())
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  agentId               String   @unique
+  agent                 Agent    @relation(fields: [agentId], references: [id])
+  compositeScore        Float    @default(0)
+  letterGrade           String   @default("C")
+  fiveStarReviews       Float    @default(0)
+  localMarketExpertise  Float    @default(0)
+  careerVolume          Float    @default(0)
+  skinInTheGame         Float    @default(0)
+  successfulOutcomes    Float    @default(0)
+  expertiseDepth        Float    @default(0)
+  countyPercentile      Float    @default(0)
+  lastCalculated        DateTime @default(now())
+}
+
+model AgentReview {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  agentId      String
+  agent        Agent    @relation(fields: [agentId], references: [id])
+  platform     String
+  rating       Float
+  reviewCount  Int
+  lastUpdated  DateTime @default(now())
+}
+
+model AgentProperty {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  agentId        String
+  agent          Agent    @relation(fields: [agentId], references: [id])
+  address        String
+  city           String
+  county         String
+  estimatedValue Float?
+  purchaseYear   Int?
+  isLLC          Boolean  @default(false)
+  llcName        String?
+  verified       Boolean  @default(false)
+}
+
+model AgentTransaction {
+  id               String    @id @default(cuid())
+  createdAt        DateTime  @default(now())
+  agentId          String
+  agent            Agent     @relation(fields: [agentId], references: [id])
+  address          String?
+  city             String?
+  zipCode          String?
+  salePrice        Float?
+  listPrice        Float?
+  daysOnMarket     Int?
+  closeDate        DateTime?
+  transactionType  String?
+  priceReduced     Boolean   @default(false)
+  agentSide        String?
+}
+
+model PersonalityCard {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  agentId         String
+  agent           Agent    @relation(fields: [agentId], references: [id])
+  label           String
+  emoji           String
+  source          String
+  confidence      String
+  approved        Boolean  @default(false)
+  displayOrder    Int      @default(0)
+}
+
+model MatchRequest {
+  id                 String    @id @default(cuid())
+  createdAt          DateTime  @default(now())
+  consumerName       String
+  consumerEmail      String
+  consumerPhone      String?
+  flowType           String
+  priceRangeMin      Float?
+  priceRangeMax      Float?
+  locations          String[]
+  priorities         String[]
+  timeline           String?
+  propertyType       String?
+  agentId            String?
+  agent              Agent?    @relation(fields: [agentId], references: [id])
+  status             String    @default("pending")
+  referralAgreed     Boolean   @default(false)
+  referralAgreedAt   DateTime?
+  introductionSentAt DateTime?
+  closedAt           DateTime?
+  referralFeePaid    Boolean   @default(false)
+}

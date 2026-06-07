@@ -3,7 +3,7 @@
 /**
  * Provn marketing landing page — Direction A: Provocation
  * Route: /
- * Primary accent: #E63946 red. Dark #0A0A0A throughout.
+ * Primary accent: #E17055 red. Dark #0A0A0A throughout.
  * 7 sections: Hero · Problem · ProvnDiff · Score · Education · CTA · Footer
  */
 
@@ -13,15 +13,15 @@ import { useRouter } from 'next/navigation';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 
-const BG       = '#0A0A0A';
-const BG_ALT   = '#0F0F0F';
-const BG_CARD  = '#141414';
-const BD       = '#2D2D2D';
-const RED      = '#E63946';
-const C_SEC    = '#94A3B8';
-const C_INTERP = '#CBD5E1';
-const C_TER    = '#4B5563';
-const GREEN    = '#10B981';
+const BG       = '#FFFFFF';
+const BG_ALT   = '#F0FDF9';
+const BG_CARD  = '#FFFFFF';
+const BD       = '#B2F5EA';
+const RED      = '#E17055';
+const C_SEC    = '#636E72';
+const C_INTERP = '#2D3436';
+const C_TER    = '#636E72';
+const GREEN    = '#00B894';
 
 // ── Smooth scroll ─────────────────────────────────────────────────────────────
 
@@ -89,7 +89,7 @@ function ScoreBar({
           marginBottom: '7px',
         }}
       >
-        <span style={{ color: '#ffffff', fontWeight: 600, fontSize: '13px', flexShrink: 0 }}>
+        <span style={{ color: '#2D3436', fontWeight: 600, fontSize: '13px', flexShrink: 0 }}>
           {label}
         </span>
         <span
@@ -107,7 +107,7 @@ function ScoreBar({
         style={{
           height: '4px',
           borderRadius: '999px',
-          background: '#1c1c1c',
+          background: '#B2F5EA',
           overflow: 'hidden',
         }}
       >
@@ -147,7 +147,7 @@ function ReadingProgressBar() {
         left: 0,
         zIndex: 200,
         height: 3,
-        background: 'linear-gradient(90deg, #10B981, #06B6D4)',
+        background: 'linear-gradient(90deg, #00B894, #00CEC9)',
         width: `${progress}%`,
         transition: 'width 0.12s linear',
         pointerEvents: 'none',
@@ -164,12 +164,12 @@ function EyebrowPill({ text }: { text: string }) {
       <span
         style={{
           display: 'inline-block',
-          background: 'linear-gradient(135deg, #0F2A1A, #1A1F35)',
-          border: '1px solid rgba(16,185,129,0.3)',
+          background: '#F0FDF9',
+          border: '1px solid #B2F5EA',
           borderRadius: 20,
           padding: '6px 16px',
           fontSize: 12,
-          color: '#94A3B8',
+          color: '#00B894',
           textTransform: 'uppercase',
           letterSpacing: '0.1em',
           fontWeight: 600,
@@ -355,8 +355,8 @@ function Nav() {
         left: 0,
         right: 0,
         zIndex: 50,
-        background: '#080D1A',
-        borderBottom: '1px solid #1E2A3A',
+        background: '#FFFFFF',
+        borderBottom: '1px solid #B2F5EA',
       }}
     >
       <div
@@ -386,7 +386,7 @@ function Nav() {
             style={{
               fontSize: '20px',
               fontWeight: 800,
-              color: '#ffffff',
+              color: '#00B894',
               letterSpacing: '-0.02em',
             }}
           >
@@ -414,7 +414,7 @@ function Nav() {
             href="/match/buyer"
             style={{
               background: GREEN,
-              color: '#ffffff',
+              color: '#FFFFFF',
               padding: '8px 20px',
               borderRadius: '20px',
               fontSize: '14px',
@@ -437,15 +437,15 @@ function CardFlipSection() {
   return (
     <div style={{ paddingTop: 0, marginTop: 0 }} dangerouslySetInnerHTML={{ __html: `
 <style>
-.fc-wrap{background:#080D1A;padding:60px 20px 40px 20px;text-align:center}
-.fc-pill{display:inline-block;background:#0F1628;border:1px solid #10B981;border-radius:20px;padding:6px 16px;font-size:11px;color:#94A3B8;letter-spacing:0.1em;margin-top:0;margin-bottom:32px}
-.fc-h1{font-size:clamp(28px,6vw,56px);font-weight:900;color:#fff;line-height:1.1;margin:0 0 8px;letter-spacing:-0.02em}
-.fc-h2{font-size:clamp(24px,5vw,48px);font-weight:900;background:linear-gradient(135deg,#10B981,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:0 0 20px}
-.fc-sub{font-size:16px;color:#94A3B8;max-width:560px;margin:0 auto 12px;line-height:1.7}
-.fc-tap{font-size:14px;color:#10B981;margin-bottom:16px}
+.fc-wrap{background:#F0FDF9;padding:60px 20px 40px 20px;text-align:center}
+.fc-pill{display:inline-block;background:#FFFFFF;border:1px solid #00B894;border-radius:20px;padding:6px 16px;font-size:11px;color:#636E72;letter-spacing:0.1em;margin-top:0;margin-bottom:32px}
+.fc-h1{font-size:clamp(28px,6vw,56px);font-weight:900;color:#2D3436;line-height:1.1;margin:0 0 8px;letter-spacing:-0.02em}
+.fc-h2{font-size:clamp(24px,5vw,48px);font-weight:900;color:#00B894;margin:0 0 20px}
+.fc-sub{font-size:16px;color:#636E72;max-width:560px;margin:0 auto 12px;line-height:1.7}
+.fc-tap{font-size:14px;color:#00B894;margin-bottom:16px}
 .fc-dots{display:flex;gap:8px;justify-content:center;margin-bottom:24px}
-.fc-dot{width:10px;height:10px;border-radius:50%;border:2px solid #4B5563;transition:all 0.3s}
-.fc-dot.on{background:#10B981;border-color:#10B981}
+.fc-dot{width:10px;height:10px;border-radius:50%;border:2px solid #B2F5EA;transition:all 0.3s}
+.fc-dot.on{background:#00B894;border-color:#00B894}
 .fc-col{display:flex;flex-direction:column;align-items:center;gap:20px}
 .fc-card{width:calc(100vw - 48px);max-width:300px;min-height:400px;position:relative;border-radius:16px;overflow:hidden;-webkit-tap-highlight-color:transparent}
 .fc-face{position:absolute;inset:0;padding:24px 18px;display:flex;flex-direction:column;align-items:center;transition:opacity 0.3s ease;border-radius:16px;overflow:hidden}
@@ -453,29 +453,29 @@ function CardFlipSection() {
 .fc-back{opacity:0;pointer-events:none}
 .fc-card.on .fc-front{opacity:0;pointer-events:none}
 .fc-card.on .fc-back{opacity:1;pointer-events:auto}
-.fc-img{width:76px;height:76px;border-radius:50%;object-fit:cover;object-position:center top;display:block;margin:0 auto 10px;background:#1E2A3A}
-.fc-name{font-size:16px;font-weight:700;color:#fff;text-align:center;margin-bottom:2px}
+.fc-img{width:76px;height:76px;border-radius:50%;object-fit:cover;object-position:center top;display:block;margin:0 auto 10px;background:#B2F5EA}
+.fc-name{font-size:16px;font-weight:700;color:#2D3436;text-align:center;margin-bottom:2px}
 .fc-role{font-size:11px;font-weight:700;letter-spacing:0.08em;text-align:center;margin-bottom:3px}
-.fc-brok{font-size:12px;color:#94A3B8;text-align:center;margin-bottom:12px}
-.fc-div{width:100%;height:1px;background:#2D3148;margin-bottom:12px}
-.fc-stars{font-size:18px;color:#F59E0B;letter-spacing:2px;margin-bottom:4px}
-.fc-rev{font-size:12px;color:#94A3B8;margin-bottom:14px}
-.fc-blur{width:100%;height:26px;background:#1E2330;border-radius:6px;margin-bottom:7px;filter:blur(3px);opacity:0.6}
-.fc-hint{font-size:11px;color:#4B5563;font-style:italic;margin-top:8px}
+.fc-brok{font-size:12px;color:#636E72;text-align:center;margin-bottom:12px}
+.fc-div{width:100%;height:1px;background:#B2F5EA;margin-bottom:12px}
+.fc-stars{font-size:18px;color:#FDCB6E;letter-spacing:2px;margin-bottom:4px}
+.fc-rev{font-size:12px;color:#636E72;margin-bottom:14px}
+.fc-blur{width:100%;height:26px;background:#E0F5EE;border-radius:6px;margin-bottom:7px;filter:blur(3px);opacity:0.6}
+.fc-hint{font-size:11px;color:#636E72;font-style:italic;margin-top:8px}
 .fc-ring{width:70px;height:70px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 12px;border-width:3px;border-style:solid;flex-shrink:0}
 .fc-grade{font-size:22px;font-weight:900;line-height:1}
-.fc-score{font-size:10px;color:#94A3B8}
-.fc-stat{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1E2A3A;width:100%}
-.fc-slabel{font-size:11px;color:#94A3B8}
+.fc-score{font-size:10px;color:#636E72}
+.fc-stat{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #B2F5EA;width:100%}
+.fc-slabel{font-size:11px;color:#636E72}
 .fc-sval{font-size:11px;font-weight:600;text-align:right;max-width:55%}
 .fc-out{width:100%;border-radius:8px;padding:9px 12px;margin-top:10px;text-align:center;border-width:1px;border-style:solid}
 .fc-otext{font-size:11px;font-weight:600;line-height:1.4}
 .fc-reveal{display:none;padding:32px 20px;text-align:center}
 .fc-reveal.on{display:block}
-.fc-rtitle{font-size:24px;font-weight:900;color:#fff;margin-bottom:8px}
-.fc-rsub{font-size:15px;color:#94A3B8;line-height:1.7;max-width:500px;margin:0 auto 24px}
-.fc-rgreen{color:#10B981;font-weight:700}
-.fc-btn{display:inline-block;background:#10B981;color:#fff;font-size:16px;font-weight:700;padding:14px 36px;border-radius:10px;text-decoration:none;border:none;cursor:pointer}
+.fc-rtitle{font-size:24px;font-weight:900;color:#2D3436;margin-bottom:8px}
+.fc-rsub{font-size:15px;color:#636E72;line-height:1.7;max-width:500px;margin:0 auto 24px}
+.fc-rgreen{color:#00B894;font-weight:700}
+.fc-btn{display:inline-block;background:#00B894;color:#fff;font-size:16px;font-weight:700;padding:14px 36px;border-radius:10px;text-decoration:none;border:none;cursor:pointer}
 @media(min-width:768px){
   .fc-col{flex-direction:row;justify-content:center;align-items:stretch}
   .fc-card{width:280px;max-width:280px}
@@ -496,13 +496,13 @@ function CardFlipSection() {
 
   <div class="fc-col">
 
-    <div class="fc-card" id="fc0" style="border:2px solid #F59E0B;background:#1A1200" ontouchstart="" onclick="fcFlip(0)">
+    <div class="fc-card" id="fc0" style="border:2px solid #FDCB6E;background:#FFFBEB" ontouchstart="" onclick="fcFlip(0)">
       <div class="fc-face fc-front">
-        <div style="border:3px solid #F59E0B;border-radius:50%;width:76px;height:76px;overflow:hidden;flex-shrink:0;margin:0 auto 10px">
+        <div style="border:3px solid #FDCB6E;border-radius:50%;width:76px;height:76px;overflow:hidden;flex-shrink:0;margin:0 auto 10px">
           <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=160&amp;h=160&amp;fit=crop&amp;crop=face" width="76" height="76" style="display:block;border-radius:50%;object-fit:cover" alt="Tara Reynolds">
         </div>
         <div class="fc-name">Tara Reynolds</div>
-        <div class="fc-role" style="color:#F59E0B">REALTOR · 11 YEARS</div>
+        <div class="fc-role" style="color:#FDCB6E">REALTOR · 11 YEARS</div>
         <div class="fc-brok">Keller Williams · Petaluma</div>
         <div class="fc-div"></div>
         <div class="fc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
@@ -513,28 +513,28 @@ function CardFlipSection() {
       <div class="fc-face fc-back">
         <div class="fc-name" style="margin-bottom:2px">Tara Reynolds</div>
         <div class="fc-brok" style="margin-bottom:12px">Keller Williams · Petaluma</div>
-        <div class="fc-ring" style="border-color:#F59E0B">
-          <div class="fc-grade" style="color:#F59E0B">C+</div>
+        <div class="fc-ring" style="border-color:#FDCB6E">
+          <div class="fc-grade" style="color:#FDCB6E">C+</div>
           <div class="fc-score">58/100</div>
         </div>
-        <div class="fc-stat"><span class="fc-slabel">Licensed</span><span class="fc-sval" style="color:#CBD5E1">11 years</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Career transactions</span><span class="fc-sval" style="color:#CBD5E1">94 total</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Last sale</span><span class="fc-sval" style="color:#F59E0B">4 months ago</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Price reductions</span><span class="fc-sval" style="color:#F59E0B">4 of last 10</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Property owned</span><span class="fc-sval" style="color:#F59E0B">1 — primary only</span></div>
-        <div class="fc-out" style="background:#1A1200;border-color:#F59E0B">
-          <div class="fc-otext" style="color:#F59E0B">&#9888; Inconsistent activity — not aligned with your price range</div>
+        <div class="fc-stat"><span class="fc-slabel">Licensed</span><span class="fc-sval" style="color:#2D3436">11 years</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Career transactions</span><span class="fc-sval" style="color:#2D3436">94 total</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Last sale</span><span class="fc-sval" style="color:#FDCB6E">4 months ago</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Price reductions</span><span class="fc-sval" style="color:#FDCB6E">4 of last 10</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Property owned</span><span class="fc-sval" style="color:#FDCB6E">1 — primary only</span></div>
+        <div class="fc-out" style="background:#FFFBEB;border-color:#FDCB6E">
+          <div class="fc-otext" style="color:#FDCB6E">&#9888; Inconsistent activity — not aligned with your price range</div>
         </div>
       </div>
     </div>
 
-    <div class="fc-card" id="fc1" style="border:2px solid #EF4444;background:#1A0D0D" ontouchstart="" onclick="fcFlip(1)">
+    <div class="fc-card" id="fc1" style="border:2px solid #E17055;background:#FFF5F0" ontouchstart="" onclick="fcFlip(1)">
       <div class="fc-face fc-front">
-        <div style="border:3px solid #EF4444;border-radius:50%;width:76px;height:76px;overflow:hidden;flex-shrink:0;margin:0 auto 10px">
+        <div style="border:3px solid #E17055;border-radius:50%;width:76px;height:76px;overflow:hidden;flex-shrink:0;margin:0 auto 10px">
           <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=160&amp;h=160&amp;fit=crop&amp;crop=face" width="76" height="76" style="display:block;border-radius:50%;object-fit:cover" alt="James Miller">
         </div>
         <div class="fc-name">James Miller</div>
-        <div class="fc-role" style="color:#EF4444">REALTOR · 2 YEARS</div>
+        <div class="fc-role" style="color:#E17055">REALTOR · 2 YEARS</div>
         <div class="fc-brok">Century 21 · Santa Rosa</div>
         <div class="fc-div"></div>
         <div class="fc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
@@ -545,28 +545,28 @@ function CardFlipSection() {
       <div class="fc-face fc-back">
         <div class="fc-name" style="margin-bottom:2px">James Miller</div>
         <div class="fc-brok" style="margin-bottom:12px">Century 21 · Santa Rosa</div>
-        <div class="fc-ring" style="border-color:#EF4444">
-          <div class="fc-grade" style="color:#EF4444">C</div>
+        <div class="fc-ring" style="border-color:#E17055">
+          <div class="fc-grade" style="color:#E17055">C</div>
           <div class="fc-score">41/100</div>
         </div>
-        <div class="fc-stat"><span class="fc-slabel">Licensed</span><span class="fc-sval" style="color:#EF4444">2 years</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Career transactions</span><span class="fc-sval" style="color:#EF4444">8 total</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Last sale</span><span class="fc-sval" style="color:#EF4444">9 months ago</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Price reductions</span><span class="fc-sval" style="color:#EF4444">6 of last 8</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Property owned</span><span class="fc-sval" style="color:#EF4444">None verified</span></div>
-        <div class="fc-out" style="background:#1A0D0D;border-color:#EF4444">
-          <div class="fc-otext" style="color:#EF4444">&#9888; High risk — limited experience in current market</div>
+        <div class="fc-stat"><span class="fc-slabel">Licensed</span><span class="fc-sval" style="color:#E17055">2 years</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Career transactions</span><span class="fc-sval" style="color:#E17055">8 total</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Last sale</span><span class="fc-sval" style="color:#E17055">9 months ago</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Price reductions</span><span class="fc-sval" style="color:#E17055">6 of last 8</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Property owned</span><span class="fc-sval" style="color:#E17055">None verified</span></div>
+        <div class="fc-out" style="background:#FFF5F0;border-color:#E17055">
+          <div class="fc-otext" style="color:#E17055">&#9888; High risk — limited experience in current market</div>
         </div>
       </div>
     </div>
 
-    <div class="fc-card" id="fc2" style="border:2px solid #10B981;background:#0A1F12" ontouchstart="" onclick="fcFlip(2)">
+    <div class="fc-card" id="fc2" style="border:2px solid #00B894;background:#F0FDF9" ontouchstart="" onclick="fcFlip(2)">
       <div class="fc-face fc-front">
-        <div style="border:3px solid #10B981;border-radius:50%;width:76px;height:76px;overflow:hidden;flex-shrink:0;margin:0 auto 10px">
+        <div style="border:3px solid #00B894;border-radius:50%;width:76px;height:76px;overflow:hidden;flex-shrink:0;margin:0 auto 10px">
           <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=160&amp;h=160&amp;fit=crop&amp;crop=face" width="76" height="76" style="display:block;border-radius:50%;object-fit:cover" alt="Sarah Chen">
         </div>
         <div class="fc-name">Sarah Chen</div>
-        <div class="fc-role" style="color:#10B981">BROKER · 19 YEARS</div>
+        <div class="fc-role" style="color:#00B894">BROKER · 19 YEARS</div>
         <div class="fc-brok">Compass · Healdsburg</div>
         <div class="fc-div"></div>
         <div class="fc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
@@ -577,17 +577,17 @@ function CardFlipSection() {
       <div class="fc-face fc-back">
         <div class="fc-name" style="margin-bottom:2px">Sarah Chen</div>
         <div class="fc-brok" style="margin-bottom:12px">Compass · Healdsburg</div>
-        <div class="fc-ring" style="border-color:#10B981">
-          <div class="fc-grade" style="color:#10B981">A+</div>
+        <div class="fc-ring" style="border-color:#00B894">
+          <div class="fc-grade" style="color:#00B894">A+</div>
           <div class="fc-score">94/100</div>
         </div>
-        <div class="fc-stat"><span class="fc-slabel">Licensed</span><span class="fc-sval" style="color:#10B981">19 years</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Career transactions</span><span class="fc-sval" style="color:#10B981">312 total</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Last sale</span><span class="fc-sval" style="color:#10B981">3 weeks ago</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Price reductions</span><span class="fc-sval" style="color:#10B981">1 of last 10</span></div>
-        <div class="fc-stat"><span class="fc-slabel">Property owned</span><span class="fc-sval" style="color:#10B981">4 · $2.1M portfolio</span></div>
-        <div class="fc-out" style="background:#0A1F12;border-color:#10B981">
-          <div class="fc-otext" style="color:#10B981">&#10003; Top 5% Sonoma County · Active · Verified owner</div>
+        <div class="fc-stat"><span class="fc-slabel">Licensed</span><span class="fc-sval" style="color:#00B894">19 years</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Career transactions</span><span class="fc-sval" style="color:#00B894">312 total</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Last sale</span><span class="fc-sval" style="color:#00B894">3 weeks ago</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Price reductions</span><span class="fc-sval" style="color:#00B894">1 of last 10</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Property owned</span><span class="fc-sval" style="color:#00B894">4 · $2.1M portfolio</span></div>
+        <div class="fc-out" style="background:#F0FDF9;border-color:#00B894">
+          <div class="fc-otext" style="color:#00B894">&#10003; Top 5% Sonoma County · Active · Verified owner</div>
         </div>
       </div>
     </div>
@@ -625,53 +625,53 @@ function fcFlip(i){
 // ── Section 2: The problem nobody talks about ────────────────────────────────
 
 const IMPACT_STATS = [
-  { display: '$500', color: '#E63946', label: 'Average cost per lead agents pay Zillow just to call you back' },
-  { display: '0',    color: '#F59E0B', label: "Zillow's accountability when that agent underperforms for you" },
-  { display: '$75K', color: '#10B981', label: 'Potential difference between the right agent and the wrong one' },
+  { display: '$500', color: '#E17055', label: 'Average cost per lead agents pay Zillow just to call you back' },
+  { display: '0',    color: '#FDCB6E', label: "Zillow's accountability when that agent underperforms for you" },
+  { display: '$75K', color: '#00B894', label: 'Potential difference between the right agent and the wrong one' },
 ];
 
 const FLOW_ROWS = [
   {
-    label: 'OTHER PLATFORMS', labelColor: '#E63946',
+    label: 'OTHER PLATFORMS', labelColor: '#E17055',
     steps: [
       { text: 'You search for an agent',           box: false },
-      { text: 'Advertising auction  $',            box: true,  bg: '#1A0D0D', border: 'rgba(230,57,70,0.4)'   },
+      { text: 'Advertising auction  $',            box: true,  bg: '#FFF5F0', border: 'rgba(225,112,85,0.4)'   },
       { text: 'Highest bidder gets your info',     box: false },
     ],
-    outcome: { text: 'Stranger shows up to your showing', bg: '#1A0D0D', border: 'rgba(230,57,70,0.5)', color: '#E63946' },
+    outcome: { text: 'Stranger shows up to your showing', bg: '#FFE8DC', border: 'rgba(225,112,85,0.5)', color: '#9A3412' },
   },
   {
-    label: 'PROVN', labelColor: '#10B981',
+    label: 'PROVN', labelColor: '#00B894',
     steps: [
       { text: 'You describe your situation',       box: false },
-      { text: '✓  Verified data match',            box: true,  bg: '#0A1F12', border: 'rgba(16,185,129,0.4)'  },
+      { text: '✓  Verified data match',            box: true,  bg: '#F0FDF9', border: 'rgba(0,184,148,0.4)'  },
       { text: 'Top 3 agents by actual performance', box: false },
     ],
-    outcome: { text: 'Agent proven in your market arrives', bg: '#0A1F12', border: 'rgba(16,185,129,0.5)', color: '#10B981' },
+    outcome: { text: 'Agent proven in your market arrives', bg: '#B2F5EA', border: 'rgba(0,184,148,0.5)', color: '#065F46' },
   },
 ];
 
 const INSIGHT_CARDS = [
   {
-    emoji: '🎯', borderColor: '#E63946',
+    emoji: '🎯', borderColor: '#E17055',
     title: 'You are not taught what to ask',
     body: 'Price reduction rate. Fall-through rate. Whether they own any real estate themselves. These questions exist — nobody told you to ask them.',
     accent: 'Agents count on that.',
-    accentColor: '#E63946',
+    accentColor: '#E17055',
   },
   {
-    emoji: '📍', borderColor: '#F59E0B',
+    emoji: '📍', borderColor: '#FDCB6E',
     title: 'Local knowledge is not universal',
     body: 'A 4.9-star agent in Santa Rosa may have never sold in Healdsburg. Star ratings do not tell you if they are right for your situation.',
     accent: 'Provn filters by your exact situation.',
-    accentColor: '#F59E0B',
+    accentColor: '#FDCB6E',
   },
   {
-    emoji: '⚡', borderColor: '#10B981',
+    emoji: '⚡', borderColor: '#00B894',
     title: "Today's market has no margin for error",
     body: "In today's market overpriced listings sit for months. The right agent prices correctly on day one — and never reduces.",
     accent: 'The difference is tens of thousands of dollars.',
-    accentColor: '#10B981',
+    accentColor: '#00B894',
   },
 ];
 
@@ -683,7 +683,7 @@ function ImpactStats() {
           key={i}
           className="impact-stat-pill"
           style={{
-            background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: 16,
+            background: '#FFFFFF', border: '1px solid #B2F5EA', borderRadius: 16,
             padding: '20px 32px 24px', textAlign: 'center',
             flex: '1 1 180px', maxWidth: 260,
             minHeight: 120, overflow: 'visible',
@@ -694,7 +694,7 @@ function ImpactStats() {
             {stat.display}
           </div>
           <div style={{
-            fontSize: 12, color: '#94A3B8', lineHeight: 1.6,
+            fontSize: 12, color: '#636E72', lineHeight: 1.6,
             maxWidth: 200, margin: '0 auto',
             whiteSpace: 'normal', wordWrap: 'break-word',
           }}>
@@ -735,8 +735,8 @@ function FlowDiagram() {
     transform: hoveredCard === i ? 'translateY(-4px)' : 'none',
     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     boxShadow: hoveredCard === i
-      ? '0 16px 48px rgba(0,0,0,0.4)'
-      : '0 4px 20px rgba(0,0,0,0.2)',
+      ? '0 16px 48px rgba(0,0,0,0.1)'
+      : '0 4px 20px rgba(0,0,0,0.05)',
     cursor: 'default',
   });
 
@@ -744,7 +744,7 @@ function FlowDiagram() {
     <div style={{ maxWidth: 900, margin: '48px auto 0' }}>
       {/* Header label */}
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
-        <span style={{ fontSize: 12, color: '#4B5563', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        <span style={{ fontSize: 12, color: '#636E72', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
           HOW YOUR INQUIRY ACTUALLY GETS HANDLED
         </span>
       </div>
@@ -761,18 +761,18 @@ function FlowDiagram() {
           onMouseLeave={() => setHoveredCard(null)}
           style={{
             ...cardBase(0),
-            background: '#1A0D0D',
-            border: '1px solid rgba(239,68,68,0.5)',
+            background: '#FFF5F0',
+            border: '1px solid rgba(225,112,85,0.5)',
           }}
         >
           {/* Label pill */}
           <div style={{ marginBottom: 20 }}>
             <span style={{
               display: 'inline-block',
-              background: '#2D0A0A',
-              border: '1px solid rgba(239,68,68,0.4)',
+              background: '#FFE8DC',
+              border: '1px solid rgba(225,112,85,0.4)',
               borderRadius: 20, padding: '6px 16px',
-              fontSize: 11, fontWeight: 700, color: '#EF4444',
+              fontSize: 11, fontWeight: 700, color: '#C2410C',
               textTransform: 'uppercase', letterSpacing: '0.1em',
             }}>
               ✗ OTHER PLATFORMS
@@ -786,7 +786,7 @@ function FlowDiagram() {
 
           {/* Headline */}
           <h3 style={{
-            fontSize: 20, fontWeight: 700, color: '#ffffff',
+            fontSize: 20, fontWeight: 700, color: '#2D3436',
             textAlign: 'center', margin: '0 0 24px', lineHeight: 1.3,
           }}>
             You get whoever paid the most
@@ -797,22 +797,22 @@ function FlowDiagram() {
             {/* Vertical line */}
             <div style={{
               position: 'absolute', left: 7, top: 6, bottom: 6,
-              width: 1, background: '#EF4444', opacity: 0.35,
-              borderLeft: '1px dotted rgba(239,68,68,0.5)',
+              width: 1, background: '#E17055', opacity: 0.35,
+              borderLeft: '1px dotted rgba(225,112,85,0.5)',
             }} />
             {OTHER_STEPS.map((step, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: i < OTHER_STEPS.length - 1 ? 16 : 0 }}>
                 <div style={{
                   flexShrink: 0, width: 14, height: 14,
-                  borderRadius: '50%', background: '#2D0A0A',
-                  border: '1px solid #EF4444',
+                  borderRadius: '50%', background: '#FFE8DC',
+                  border: '1px solid #E17055',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 9, color: '#EF4444', fontWeight: 900,
+                  fontSize: 9, color: '#E17055', fontWeight: 900,
                   marginTop: 2, position: 'relative', zIndex: 1,
                 }}>
                   ✗
                 </div>
-                <span style={{ fontSize: 14, color: '#CBD5E1', lineHeight: 1.6 }}>
+                <span style={{ fontSize: 14, color: '#2D3436', lineHeight: 1.6 }}>
                   {step}
                 </span>
               </div>
@@ -822,16 +822,16 @@ function FlowDiagram() {
           {/* Outcome box */}
           <div style={{
             display: 'flex', alignItems: 'flex-start', gap: 10,
-            background: '#2D0A0A', border: '1px solid #EF4444',
+            background: '#FFE8DC', border: '1px solid #E17055',
             borderRadius: 12, padding: '14px 16px',
             marginTop: 'auto', minHeight: 80,
           }}>
             <span style={{ fontSize: 16, flexShrink: 0, marginTop: 2 }}>⚠</span>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#EF4444', lineHeight: 1.5 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#E17055', lineHeight: 1.5 }}>
                 You never chose this agent.
               </div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#EF4444', lineHeight: 1.5, marginTop: 6 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#E17055', lineHeight: 1.5, marginTop: 6 }}>
                 The platform chose for you to increase their profits — not yours.
               </div>
             </div>
@@ -845,18 +845,18 @@ function FlowDiagram() {
           onMouseLeave={() => setHoveredCard(null)}
           style={{
             ...cardBase(1),
-            background: '#0A1F12',
-            border: '1px solid rgba(16,185,129,0.5)',
+            background: '#F0FDF9',
+            border: '1px solid rgba(0,184,148,0.5)',
           }}
         >
           {/* Label pill */}
           <div style={{ marginBottom: 20 }}>
             <span style={{
               display: 'inline-block',
-              background: '#0A2A1A',
-              border: '1px solid rgba(16,185,129,0.4)',
+              background: '#B2F5EA',
+              border: '1px solid rgba(0,184,148,0.4)',
               borderRadius: 20, padding: '6px 16px',
-              fontSize: 11, fontWeight: 700, color: '#10B981',
+              fontSize: 11, fontWeight: 700, color: '#065F46',
               textTransform: 'uppercase', letterSpacing: '0.1em',
             }}>
               ✓ PROVN
@@ -870,7 +870,7 @@ function FlowDiagram() {
 
           {/* Headline */}
           <h3 style={{
-            fontSize: 20, fontWeight: 700, color: '#ffffff',
+            fontSize: 20, fontWeight: 700, color: '#2D3436',
             textAlign: 'center', margin: '0 0 24px', lineHeight: 1.3,
           }}>
             You get whoever performs best
@@ -881,21 +881,21 @@ function FlowDiagram() {
             {/* Vertical line */}
             <div style={{
               position: 'absolute', left: 7, top: 6, bottom: 6,
-              width: 1, background: '#10B981', opacity: 0.4,
+              width: 1, background: '#00B894', opacity: 0.4,
             }} />
             {PROVN_STEPS.map((step, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: i < PROVN_STEPS.length - 1 ? 16 : 0 }}>
                 <div style={{
                   flexShrink: 0, width: 14, height: 14,
-                  borderRadius: '50%', background: '#0A2A1A',
-                  border: '1px solid #10B981',
+                  borderRadius: '50%', background: '#B2F5EA',
+                  border: '1px solid #00B894',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 9, color: '#10B981', fontWeight: 900,
+                  fontSize: 9, color: '#00B894', fontWeight: 900,
                   marginTop: 2, position: 'relative', zIndex: 1,
                 }}>
                   ✓
                 </div>
-                <span style={{ fontSize: 14, color: '#CBD5E1', lineHeight: 1.6 }}>
+                <span style={{ fontSize: 14, color: '#2D3436', lineHeight: 1.6 }}>
                   {step}
                 </span>
               </div>
@@ -905,16 +905,16 @@ function FlowDiagram() {
           {/* Outcome box */}
           <div style={{
             display: 'flex', alignItems: 'flex-start', gap: 10,
-            background: '#0A2A1A', border: '1px solid #10B981',
+            background: '#B2F5EA', border: '1px solid #00B894',
             borderRadius: 12, padding: '14px 16px',
             marginTop: 'auto', minHeight: 80,
           }}>
-            <span style={{ fontSize: 16, flexShrink: 0, marginTop: 2, color: '#10B981', fontWeight: 700 }}>✓</span>
+            <span style={{ fontSize: 16, flexShrink: 0, marginTop: 2, color: '#00B894', fontWeight: 700 }}>✓</span>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#10B981', lineHeight: 1.5 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#00B894', lineHeight: 1.5 }}>
                 You chose this agent.
               </div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#10B981', lineHeight: 1.5, marginTop: 6 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#00B894', lineHeight: 1.5, marginTop: 6 }}>
                 The data helped you decide — not someone else&apos;s advertising budget.
               </div>
             </div>
@@ -947,13 +947,13 @@ function InsightCards() {
               {card.emoji}
             </div>
             <h3 style={{
-              fontSize: 15, fontWeight: 700, color: '#ffffff',
+              fontSize: 15, fontWeight: 700, color: '#2D3436',
               margin: '0 0 10px', lineHeight: 1.35,
             }}>
               {card.title}
             </h3>
             <p style={{
-              fontSize: 15, color: '#94A3B8',
+              fontSize: 15, color: '#636E72',
               lineHeight: 1.8, margin: '0 0 16px',
             }}>
               {card.body}
@@ -975,9 +975,9 @@ function TeaserBar() {
 
   return (
     <div style={{
-      borderTop: '1px solid rgba(16,185,129,0.3)',
-      borderBottom: '1px solid rgba(16,185,129,0.3)',
-      background: '#0F2A1A',
+      borderTop: '1px solid #B2F5EA',
+      borderBottom: '1px solid #B2F5EA',
+      background: '#F0FDF9',
       padding: '20px 24px',
       marginTop: 64,
     }}>
@@ -993,14 +993,14 @@ function TeaserBar() {
         justifyContent: 'space-between', gap: 24,
         flexWrap: 'wrap',
       }}>
-        <span style={{ fontSize: 16, fontWeight: 600, color: '#ffffff', lineHeight: 1.4 }}>
+        <span style={{ fontSize: 16, fontWeight: 600, color: '#2D3436', lineHeight: 1.4 }}>
           So how do you actually find the right one?
         </span>
         <button
           onClick={scrollToScore}
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            fontSize: 15, fontWeight: 600, color: '#10B981',
+            fontSize: 15, fontWeight: 600, color: '#00B894',
             display: 'flex', alignItems: 'center', gap: 6, padding: 0,
           }}
         >
@@ -1019,7 +1019,7 @@ function ProblemSection() {
     <section
       className="section-wrap"
       style={{
-        background: 'linear-gradient(180deg, #080D1A 0%, #0A0F1E 60%, #080D1A 100%)',
+        background: 'linear-gradient(180deg, #FFFFFF 0%, #F0FDF9 60%, #FFFFFF 100%)',
         padding: '100px clamp(24px, 4vw, 48px)',
       }}
     >
@@ -1031,7 +1031,7 @@ function ProblemSection() {
           <div style={{ textAlign: 'center', marginBottom: 8 }}>
             <h2 style={{
               fontSize: 'clamp(36px, 5.5vw, 60px)',
-              fontWeight: 900, color: '#ffffff',
+              fontWeight: 900, color: '#2D3436',
               lineHeight: 1.1, letterSpacing: '-0.02em',
               margin: 0, display: 'block',
             }}>
@@ -1041,7 +1041,7 @@ function ProblemSection() {
               fontSize: 'clamp(36px, 5.5vw, 60px)',
               fontWeight: 900, lineHeight: 1.1,
               letterSpacing: '-0.02em', margin: 0,
-              background: 'linear-gradient(135deg, #E63946, #F59E0B)',
+              background: 'linear-gradient(135deg, #E17055, #FDCB6E)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -1053,7 +1053,7 @@ function ProblemSection() {
 
           {/* Subtext */}
           <p style={{
-            textAlign: 'center', fontSize: 18, color: '#CBD5E1',
+            textAlign: 'center', fontSize: 18, color: '#2D3436',
             maxWidth: 580, margin: '20px auto 0', lineHeight: 1.7,
           }}>
             When you click &ldquo;contact agent&rdquo; on Zillow you are not reaching the agent
@@ -1126,18 +1126,18 @@ function ScoreSection() {
 const radarHTML = `
 <style>
 .rc-wrap{display:flex;flex-direction:column;gap:16px}
-.rc-label{font-size:12px;color:#4B5563;text-transform:uppercase;letter-spacing:0.08em;text-align:center;margin-bottom:4px}
-.rc-card{background:#0F1628;border:1px solid #1E2A3A;border-radius:16px;padding:20px}
-.rc-toggle{display:flex;gap:4px;background:#0A0A0A;border-radius:10px;padding:4px;margin-bottom:16px}
-.rc-tbtn{flex:1;padding:10px 8px;border-radius:7px;border:none;cursor:pointer;font-size:12px;font-weight:700;color:rgba(255,255,255,0.4);background:transparent;-webkit-tap-highlight-color:transparent;min-height:44px;transition:all 0.2s}
-.rc-tbtn.active{background:#10B981;color:#fff}
+.rc-label{font-size:12px;color:#636E72;text-transform:uppercase;letter-spacing:0.08em;text-align:center;margin-bottom:4px}
+.rc-card{background:#FFFFFF;border:1px solid #B2F5EA;border-radius:16px;padding:20px}
+.rc-toggle{display:flex;gap:4px;background:#FFFFFF;border-radius:10px;padding:4px;margin-bottom:16px}
+.rc-tbtn{flex:1;padding:10px 8px;border-radius:7px;border:none;cursor:pointer;font-size:12px;font-weight:700;color:rgba(45,52,54,0.4);background:transparent;-webkit-tap-highlight-color:transparent;min-height:44px;transition:all 0.2s}
+.rc-tbtn.active{background:#00B894;color:#fff}
 .rc-svg{width:100%;height:auto;display:block;overflow:visible}
 .rc-legend{display:flex;gap:16px;justify-content:center;margin-top:12px}
-.rc-li{display:flex;align-items:center;gap:6px;font-size:11px;color:#94A3B8}
+.rc-li{display:flex;align-items:center;gap:6px;font-size:11px;color:#636E72}
 .rc-lmark{width:16px;height:2px;display:inline-block}
-.rc-verify{background:#0F1628;border:1px solid #1E2A3A;border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;margin-top:4px}
-.rc-vtext{font-size:13px;color:#CBD5E1;line-height:1.6}
-.rc-btn{display:block;width:100%;background:#10B981;color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:center;margin-top:4px}
+.rc-verify{background:#FFFFFF;border:1px solid #B2F5EA;border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;margin-top:4px}
+.rc-vtext{font-size:13px;color:#2D3436;line-height:1.6}
+.rc-btn{display:block;width:100%;background:#00B894;color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:center;margin-top:4px}
 </style>
 <div class='rc-wrap'>
   <div class='rc-label'>SAMPLE PROVN STRENGTH PROFILE</div>
@@ -1147,19 +1147,19 @@ const radarHTML = `
       <button class='rc-tbtn' id='rcbtn1' onclick='rcSwitch(1)' ontouchstart=''>vs Top 10%</button>
     </div>
     <svg class='rc-svg' viewBox='0 0 340 340' xmlns='http://www.w3.org/2000/svg'>
-      <polygon id='rcGrid100' fill='none' stroke='#1E2A3A' stroke-width='1'/>
-      <polygon id='rcGrid75' fill='none' stroke='#1E2A3A' stroke-width='0.5'/>
-      <polygon id='rcGrid50' fill='none' stroke='#1E2A3A' stroke-width='0.5'/>
-      <polygon id='rcGrid25' fill='none' stroke='#1E2A3A' stroke-width='0.5'/>
-      <g id='rcAxes' stroke='#1E2A3A' stroke-width='0.5'></g>
-      <polygon id='rcBench' fill='rgba(75,85,99,0.15)' stroke='#4B5563' stroke-width='1.5' stroke-dasharray='4,3'/>
-      <polygon id='rcAgent' fill='rgba(16,185,129,0.15)' stroke='#10B981' stroke-width='2'/>
+      <polygon id='rcGrid100' fill='none' stroke='#B2F5EA' stroke-width='1'/>
+      <polygon id='rcGrid75' fill='none' stroke='#B2F5EA' stroke-width='0.5'/>
+      <polygon id='rcGrid50' fill='none' stroke='#B2F5EA' stroke-width='0.5'/>
+      <polygon id='rcGrid25' fill='none' stroke='#B2F5EA' stroke-width='0.5'/>
+      <g id='rcAxes' stroke='#B2F5EA' stroke-width='0.5'></g>
+      <polygon id='rcBench' fill='rgba(75,85,99,0.15)' stroke='#636E72' stroke-width='1.5' stroke-dasharray='4,3'/>
+      <polygon id='rcAgent' fill='rgba(0,184,148,0.15)' stroke='#00B894' stroke-width='2'/>
       <g id='rcDots'></g>
-      <g id='rcLabels' font-size='10' fill='#94A3B8' text-anchor='middle' font-family='system-ui,sans-serif'></g>
+      <g id='rcLabels' font-size='10' fill='#636E72' text-anchor='middle' font-family='system-ui,sans-serif'></g>
     </svg>
     <div class='rc-legend'>
-      <div class='rc-li'><div class='rc-lmark' style='background:#10B981'></div>Sarah Chen</div>
-      <div class='rc-li'><div class='rc-lmark' style='background:#4B5563'></div><span id='rcLegendLabel'>Sonoma County Avg</span></div>
+      <div class='rc-li'><div class='rc-lmark' style='background:#00B894'></div>Sarah Chen</div>
+      <div class='rc-li'><div class='rc-lmark' style='background:#636E72'></div><span id='rcLegendLabel'>Sonoma County Avg</span></div>
     </div>
   </div>
   <div class='rc-verify'>
@@ -1221,7 +1221,7 @@ function rcInit(){
     var cy=(CY+r*Math.sin(a)).toFixed(1);
     var circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
     circle.setAttribute('cx',cx);circle.setAttribute('cy',cy);
-    circle.setAttribute('r','11');circle.setAttribute('fill','#10B981');
+    circle.setAttribute('r','11');circle.setAttribute('fill','#00B894');
     var txt=document.createElementNS('http://www.w3.org/2000/svg','text');
     txt.setAttribute('x',cx);txt.setAttribute('y',cy);
     txt.setAttribute('text-anchor','middle');
@@ -1243,7 +1243,7 @@ function rcInit(){
     var t=document.createElementNS('http://www.w3.org/2000/svg','text');
     t.setAttribute('x',lx);t.setAttribute('y',ly);
     t.setAttribute('text-anchor','middle');
-    t.setAttribute('fill','#94A3B8');
+    t.setAttribute('fill','#636E72');
     t.setAttribute('font-size','10');
     t.setAttribute('font-family','system-ui,sans-serif');
     var ts1=document.createElementNS('http://www.w3.org/2000/svg','tspan');
@@ -1277,7 +1277,7 @@ function rcSwitch(m){
   document.getElementById('rcbtn1').classList.toggle('active',m===1);
   document.getElementById('rcLegendLabel').textContent=m===0?'Sonoma County Avg':'Top 10%';
   var bench=document.getElementById('rcBench');
-  bench.setAttribute('stroke',m===0?'#4B5563':'#F59E0B');
+  bench.setAttribute('stroke',m===0?'#636E72':'#FDCB6E');
   bench.setAttribute('fill',m===0?'rgba(75,85,99,0.15)':'rgba(245,158,11,0.1)');
   rcAnimateTo(m===0?COUNTY:TOP10);
 }
@@ -1290,9 +1290,9 @@ rcInit();
       id="provn-score-section"
       className="section-wrap"
       style={{
-        background: '#0D1520',
+        background: '#FFFFFF',
         padding: '100px clamp(24px, 4vw, 48px)',
-        borderTop: '1px solid #1E2A3A',
+        borderTop: '1px solid #B2F5EA',
       }}
     >
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
@@ -1307,7 +1307,7 @@ rcInit();
                 lineHeight: 1.1,
                 letterSpacing: '-0.02em',
                 margin: 0,
-                background: 'linear-gradient(135deg, #10B981, #06B6D4)',
+                background: 'linear-gradient(135deg, #00B894, #00CEC9)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -1322,7 +1322,7 @@ rcInit();
               style={{
                 fontSize: 'clamp(24px, 3.5vw, 38px)',
                 fontWeight: 800,
-                color: '#ffffff',
+                color: '#2D3436',
                 letterSpacing: '-0.02em',
                 lineHeight: 1.1,
               }}
@@ -1334,7 +1334,7 @@ rcInit();
             style={{
               textAlign: 'center',
               fontSize: 19,
-              color: '#94A3B8',
+              color: '#636E72',
               maxWidth: 600,
               margin: '0 auto 72px',
               lineHeight: 1.75,
@@ -1363,28 +1363,28 @@ rcInit();
           <div style={{ flex: '0 0 440px', maxWidth: '440px' }} dangerouslySetInnerHTML={{ __html: `
 <style>
 .sb-wrap{flex:1;min-width:0}
-.sb-row{border-bottom:1px solid #1E2A3A}
+.sb-row{border-bottom:1px solid #B2F5EA}
 .sb-row:last-child{border-bottom:none}
 .sb-btn{width:100%;background:transparent;border:none;padding:16px 0;cursor:pointer;text-align:left;font:inherit;-webkit-tap-highlight-color:transparent;min-height:56px;display:flex;flex-direction:column;gap:8px}
 .sb-header{display:flex;align-items:center;justify-content:space-between;width:100%}
 .sb-left{display:flex;align-items:center;gap:10px}
 .sb-emoji{font-size:18px;width:24px;text-align:center}
-.sb-label{font-size:14px;font-weight:600;color:#FFFFFF}
+.sb-label{font-size:14px;font-weight:600;color:#2D3436}
 .sb-right{display:flex;align-items:center;gap:6px}
-.sb-pct{font-size:14px;font-weight:700;color:#10B981}
-.sb-chev{font-size:10px;color:#4B5563;transition:transform 0.3s;display:inline-block}
+.sb-pct{font-size:14px;font-weight:700;color:#00B894}
+.sb-chev{font-size:10px;color:#636E72;transition:transform 0.3s;display:inline-block}
 .sb-chev.open{transform:rotate(180deg)}
-.sb-track{width:100%;height:6px;background:#1E2A3A;border-radius:3px;overflow:hidden}
-.sb-fill{height:100%;background:#10B981;border-radius:3px}
+.sb-track{width:100%;height:6px;background:#B2F5EA;border-radius:3px;overflow:hidden}
+.sb-fill{height:100%;background:#00B894;border-radius:3px}
 .sb-body{overflow:hidden;transition:max-height 0.3s ease;max-height:0px}
-.sb-why{font-size:13px;color:#CBD5E1;line-height:1.7;padding:8px 0 4px;font-style:italic}
-.sb-source{font-size:11px;color:#4B5563;padding-bottom:12px}
-.sb-formula-btn{background:transparent;border:none;color:#10B981;font-size:13px;cursor:pointer;padding:16px 0;text-align:left;width:100%;-webkit-tap-highlight-color:transparent;min-height:44px}
+.sb-why{font-size:13px;color:#2D3436;line-height:1.7;padding:8px 0 4px;font-style:italic}
+.sb-source{font-size:11px;color:#636E72;padding-bottom:12px}
+.sb-formula-btn{background:transparent;border:none;color:#00B894;font-size:13px;cursor:pointer;padding:16px 0;text-align:left;width:100%;-webkit-tap-highlight-color:transparent;min-height:44px}
 .sb-formula-body{overflow:hidden;transition:max-height 0.3s ease;max-height:0px}
-.sb-formula-text{font-size:13px;color:#94A3B8;line-height:1.7;padding-bottom:16px}
+.sb-formula-text{font-size:13px;color:#636E72;line-height:1.7;padding-bottom:16px}
 .sb-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
-.sb-pill{background:#0F1628;border:1px solid #1E2A3A;border-radius:20px;padding:8px 16px;font-size:12px;color:#94A3B8}
-.sb-closing{font-size:12px;color:#4B5563;font-style:italic;margin-top:16px;line-height:1.6}
+.sb-pill{background:#FFFFFF;border:1px solid #B2F5EA;border-radius:20px;padding:8px 16px;font-size:12px;color:#636E72}
+.sb-closing{font-size:12px;color:#636E72;font-style:italic;margin-top:16px;line-height:1.6}
 </style>
 <div class="sb-wrap" id="sbWrap">
   <div class="sb-row">
@@ -1513,7 +1513,7 @@ function sbFormula(){
 const PERSONAS = [
   {
     emoji: '🔑',
-    gradFrom: '#10B981', gradTo: '#06B6D4',
+    gradFrom: '#00B894', gradTo: '#00CEC9',
     label: 'FIRST-TIME BUYER',
     priceLoc: '$550K–$700K · Petaluma',
     situation: 'Never bought before. Nervous about offers, inspections, and making a mistake.',
@@ -1522,7 +1522,7 @@ const PERSONAS = [
   },
   {
     emoji: '⬆️',
-    gradFrom: '#F59E0B', gradTo: '#EF4444',
+    gradFrom: '#FDCB6E', gradTo: '#E17055',
     label: 'MOVE-UP SELLER',
     priceLoc: 'Selling $900K · Buying $1.4M · Windsor',
     situation: 'Needs to sell before buying. Two transactions to coordinate simultaneously.',
@@ -1531,7 +1531,7 @@ const PERSONAS = [
   },
   {
     emoji: '💎',
-    gradFrom: '#8B5CF6', gradTo: '#06B6D4',
+    gradFrom: '#8B5CF6', gradTo: '#00CEC9',
     label: 'LUXURY BUYER',
     priceLoc: '$2.1M+ · Healdsburg',
     situation: 'Wants vineyard or estate property. Needs off-market access and discretion.',
@@ -1540,7 +1540,7 @@ const PERSONAS = [
   },
   {
     emoji: '🏘',
-    gradFrom: '#10B981', gradTo: '#8B5CF6',
+    gradFrom: '#00B894', gradTo: '#8B5CF6',
     label: 'INVESTMENT BUYER',
     priceLoc: '$800K–$1.2M · Multifamily',
     situation: 'Looking for rental income property. Needs to analyze cash flow and cap rates.',
@@ -1549,7 +1549,7 @@ const PERSONAS = [
   },
   {
     emoji: '📋',
-    gradFrom: '#EF4444', gradTo: '#F59E0B',
+    gradFrom: '#E17055', gradTo: '#FDCB6E',
     label: 'TRUST SALE SELLER',
     priceLoc: 'Estate property · Santa Rosa',
     situation: 'Managing a parent estate. Needs speed, sensitivity, and probate knowledge.',
@@ -1558,7 +1558,7 @@ const PERSONAS = [
   },
   {
     emoji: '🌱',
-    gradFrom: '#06B6D4', gradTo: '#10B981',
+    gradFrom: '#00CEC9', gradTo: '#00B894',
     label: 'DOWNSIZER',
     priceLoc: 'Selling $1.3M · Buying $750K · Sonoma',
     situation: '30 years in the family home. Emotional transaction that needs patience.',
@@ -1574,14 +1574,14 @@ function PersonaCard({ p }: { p: typeof PERSONAS[0] }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: '#0F1628',
-        border: `1px solid ${hovered ? 'rgba(16,185,129,0.5)' : '#1E2A3A'}`,
+        background: '#FFFFFF',
+        border: `1px solid ${hovered ? '#00B894' : '#B2F5EA'}`,
         borderRadius: 16,
         padding: 24,
         position: 'relative',
         transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
         transition: 'transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
-        boxShadow: hovered ? '0 12px 40px rgba(0,0,0,0.4)' : '0 4px 16px rgba(0,0,0,0.2)',
+        boxShadow: hovered ? '0 12px 40px rgba(0,0,0,0.1)' : '0 4px 16px rgba(0,0,0,0.05)',
         display: 'flex',
         flexDirection: 'column',
         gap: 0,
@@ -1592,9 +1592,9 @@ function PersonaCard({ p }: { p: typeof PERSONAS[0] }) {
         <div style={{ position: 'relative', width: 8, height: 8 }}>
           <div style={{
             position: 'absolute', inset: 0, borderRadius: '50%',
-            background: '#10B981', animation: 'dot-ping 2s ease-out infinite',
+            background: '#00B894', animation: 'dot-ping 2s ease-out infinite',
           }} />
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981' }} />
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00B894' }} />
         </div>
       </div>
 
@@ -1624,30 +1624,30 @@ function PersonaCard({ p }: { p: typeof PERSONAS[0] }) {
       </div>
 
       {/* Price / location */}
-      <div style={{ textAlign: 'center', fontSize: 13, color: '#94A3B8', marginBottom: 10 }}>
+      <div style={{ textAlign: 'center', fontSize: 13, color: '#636E72', marginBottom: 10 }}>
         {p.priceLoc}
       </div>
 
       {/* Situation */}
-      <p style={{ fontSize: 13, color: '#CBD5E1', lineHeight: 1.6, margin: '0 0 14px', textAlign: 'center' }}>
+      <p style={{ fontSize: 13, color: '#2D3436', lineHeight: 1.6, margin: '0 0 14px', textAlign: 'center' }}>
         {p.situation}
       </p>
 
       {/* Divider */}
-      <div style={{ height: 1, background: '#1E2A3A', marginBottom: 14 }} />
+      <div style={{ height: 1, background: '#B2F5EA', marginBottom: 14 }} />
 
       {/* Needs label */}
-      <div style={{ fontSize: 11, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+      <div style={{ fontSize: 11, color: '#636E72', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
         Needs from agent
       </div>
 
       {/* Agent requirement */}
-      <p style={{ fontSize: 13, color: '#ffffff', fontWeight: 500, lineHeight: 1.5, margin: '0 0 14px' }}>
+      <p style={{ fontSize: 13, color: '#2D3436', fontWeight: 500, lineHeight: 1.5, margin: '0 0 14px' }}>
         {p.needs}
       </p>
 
       {/* Match stat */}
-      <div style={{ marginTop: 'auto', paddingTop: 4, fontSize: 12, color: '#10B981', display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div style={{ marginTop: 'auto', paddingTop: 4, fontSize: 12, color: '#00B894', display: 'flex', alignItems: 'center', gap: 6 }}>
         <span>✓</span>
         <span>{p.match}</span>
       </div>
@@ -1660,10 +1660,10 @@ function EducationSection() {
     <section
       className="section-wrap"
       style={{
-        background: '#080D1A',
+        background: '#F0FDF9',
         padding: '100px clamp(24px, 4vw, 48px)',
-        borderTop: '1px solid #1E2A3A',
-        borderBottom: '1px solid #1E2A3A',
+        borderTop: '1px solid #B2F5EA',
+        borderBottom: '1px solid #B2F5EA',
       }}
     >
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
@@ -1675,7 +1675,7 @@ function EducationSection() {
             <h2 style={{
               fontSize: 'clamp(32px, 5vw, 56px)',
               fontWeight: 900,
-              color: '#ffffff',
+              color: '#2D3436',
               lineHeight: 1.1,
               letterSpacing: '-0.02em',
               margin: 0,
@@ -1689,7 +1689,7 @@ function EducationSection() {
               lineHeight: 1.1,
               letterSpacing: '-0.02em',
               margin: 0,
-              background: 'linear-gradient(135deg, #10B981, #06B6D4)',
+              background: 'linear-gradient(135deg, #00B894, #00CEC9)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -1702,7 +1702,7 @@ function EducationSection() {
           <p style={{
             textAlign: 'center',
             fontSize: 17,
-            color: '#94A3B8',
+            color: '#636E72',
             maxWidth: 560,
             margin: '20px auto 64px',
             lineHeight: 1.75,
@@ -1721,23 +1721,23 @@ function EducationSection() {
 .ps-wrap{padding:0}
 .ps-pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .ps-pills::-webkit-scrollbar{display:none}
-.ps-pill{flex-shrink:0;padding:10px 16px;border-radius:24px;border:1.5px solid #1E2A3A;background:#0F1628;color:#94A3B8;font-size:13px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;min-height:44px;display:flex;align-items:center;gap:6px;transition:all 0.2s}
-.ps-pill.active{background:#0F2A1A;border-color:#10B981;color:#FFFFFF}
+.ps-pill{flex-shrink:0;padding:10px 16px;border-radius:24px;border:1.5px solid #B2F5EA;background:#FFFFFF;color:#636E72;font-size:13px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;min-height:44px;display:flex;align-items:center;gap:6px;transition:all 0.2s}
+.ps-pill.active{background:#F0FDF9;border-color:#00B894;color:#2D3436}
 .ps-pill-emoji{font-size:15px}
-.ps-detail{background:#0F1628;border:1px solid #1E2A3A;border-radius:16px;padding:24px;margin-top:4px;min-height:200px}
+.ps-detail{background:#FFFFFF;border:1px solid #B2F5EA;border-radius:16px;padding:24px;margin-top:4px;min-height:200px}
 .ps-detail-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .ps-detail-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
 .ps-detail-label{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px}
-.ps-detail-price{font-size:13px;color:#94A3B8}
-.ps-detail-divider{height:1px;background:#1E2A3A;margin-bottom:14px}
-.ps-detail-situation{font-size:14px;color:#CBD5E1;line-height:1.7;margin-bottom:14px}
-.ps-detail-needs-label{font-size:10px;color:#94A3B8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
-.ps-detail-needs{font-size:14px;color:#FFFFFF;font-weight:500;line-height:1.6;margin-bottom:14px}
-.ps-detail-match{font-size:12px;font-weight:600;color:#10B981;display:flex;align-items:center;gap:6px}
+.ps-detail-price{font-size:13px;color:#636E72}
+.ps-detail-divider{height:1px;background:#B2F5EA;margin-bottom:14px}
+.ps-detail-situation{font-size:14px;color:#2D3436;line-height:1.7;margin-bottom:14px}
+.ps-detail-needs-label{font-size:10px;color:#636E72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
+.ps-detail-needs{font-size:14px;color:#2D3436;font-weight:500;line-height:1.6;margin-bottom:14px}
+.ps-detail-match{font-size:12px;font-weight:600;color:#00B894;display:flex;align-items:center;gap:6px}
 .ps-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
-.ps-nav-btn{background:#0A0A0A;border:1px solid #1E2A3A;border-radius:8px;padding:8px 16px;color:#94A3B8;font-size:13px;cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:44px;display:flex;align-items:center;gap:6px}
+.ps-nav-btn{background:#FFFFFF;border:1px solid #B2F5EA;border-radius:8px;padding:8px 16px;color:#636E72;font-size:13px;cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:44px;display:flex;align-items:center;gap:6px}
 .ps-nav-btn:disabled{opacity:0.3;cursor:default}
-.ps-counter{font-size:12px;color:#4B5563}
+.ps-counter{font-size:12px;color:#636E72}
 </style>
 <div class='ps-wrap'>
   <div class='ps-pills' id='psPills'>
@@ -1749,7 +1749,7 @@ function EducationSection() {
     <button class='ps-pill' onclick='psSelect(5)' ontouchstart='' id='pspill5'><span class='ps-pill-emoji'>&#127807;</span>Downsizer</button>
   </div>
   <div class='ps-detail' id='psDetail'></div>
-  <div id='psSwipeHint' style='text-align:center;font-size:11px;color:#4B5563;padding:8px 0;font-style:italic'>&#8592; swipe to browse &#8594;</div>
+  <div id='psSwipeHint' style='text-align:center;font-size:11px;color:#636E72;padding:8px 0;font-style:italic'>&#8592; swipe to browse &#8594;</div>
   <div class='ps-nav'>
     <button class='ps-nav-btn' onclick='psNav(-1)' ontouchstart='' id='psPrev'>&#8592; Prev</button>
     <span class='ps-counter' id='psCounter'>1 of 6</span>
@@ -1758,12 +1758,12 @@ function EducationSection() {
 </div>
 <script>
 var psData=[
-  {emoji:'&#128273;',label:'FIRST-TIME BUYER',labelColor:'#10B981',iconBg:'#0A1F12',price:'$550K-$700K \xb7 Petaluma',situation:'Never bought before. Nervous about offers, inspections, and making a mistake on the largest purchase of their life.',needs:'Patient educator with strong lender network and first-time buyer transaction experience.',match:'Matched to 8 agents on Provn'},
-  {emoji:'&#11014;',label:'MOVE-UP SELLER',labelColor:'#F59E0B',iconBg:'#1A1200',price:'Selling $900K \xb7 Buying $1.4M \xb7 Windsor',situation:'Needs to sell before buying. Two transactions to coordinate simultaneously without losing either one.',needs:'Tactical coordinator with contingent sale experience and calm under pressure.',match:'Matched to 5 agents on Provn'},
-  {emoji:'&#128142;',label:'LUXURY BUYER',labelColor:'#8B5CF6',iconBg:'#0D0A1A',price:'$2.1M+ \xb7 Healdsburg',situation:'Wants vineyard or estate property. Needs off-market access and complete discretion.',needs:'Off-market specialist with $50M+ luxury volume and vineyard transaction experience.',match:'Matched to 3 agents on Provn'},
-  {emoji:'&#127960;',label:'INVESTMENT BUYER',labelColor:'#06B6D4',iconBg:'#0A1520',price:'$800K-$1.2M \xb7 Multifamily',situation:'Looking for rental income property. Needs to analyze cash flow, cap rates, and long-term appreciation.',needs:'Investor-minded agent who personally owns investment property and understands NOI.',match:'Matched to 6 agents on Provn'},
-  {emoji:'&#128203;',label:'TRUST SALE SELLER',labelColor:'#EF4444',iconBg:'#1A0D0D',price:'Estate property \xb7 Santa Rosa',situation:'Managing a parent estate. Needs speed, sensitivity, and deep probate knowledge.',needs:'Probate and trust sale specialist with documented estate transaction experience.',match:'Matched to 4 agents on Provn'},
-  {emoji:'&#127807;',label:'DOWNSIZER',labelColor:'#10B981',iconBg:'#0A1F12',price:'Selling $1.3M \xb7 Buying $750K \xb7 Sonoma',situation:'30 years in the family home. An emotional transaction that needs patience as much as skill.',needs:'High-EQ agent with downsizer experience who understands this is not just a financial decision.',match:'Matched to 7 agents on Provn'}
+  {emoji:'&#128273;',label:'FIRST-TIME BUYER',labelColor:'#00B894',iconBg:'#0A1F12',price:'$550K-$700K \xb7 Petaluma',situation:'Never bought before. Nervous about offers, inspections, and making a mistake on the largest purchase of their life.',needs:'Patient educator with strong lender network and first-time buyer transaction experience.',match:'Matched to 8 agents on Provn'},
+  {emoji:'&#11014;',label:'MOVE-UP SELLER',labelColor:'#FDCB6E',iconBg:'#FFFBEB',price:'Selling $900K \xb7 Buying $1.4M \xb7 Windsor',situation:'Needs to sell before buying. Two transactions to coordinate simultaneously without losing either one.',needs:'Tactical coordinator with contingent sale experience and calm under pressure.',match:'Matched to 5 agents on Provn'},
+  {emoji:'&#128142;',label:'LUXURY BUYER',labelColor:'#8B5CF6',iconBg:'#EDE9FE',price:'$2.1M+ \xb7 Healdsburg',situation:'Wants vineyard or estate property. Needs off-market access and complete discretion.',needs:'Off-market specialist with $50M+ luxury volume and vineyard transaction experience.',match:'Matched to 3 agents on Provn'},
+  {emoji:'&#127960;',label:'INVESTMENT BUYER',labelColor:'#00CEC9',iconBg:'#0A1520',price:'$800K-$1.2M \xb7 Multifamily',situation:'Looking for rental income property. Needs to analyze cash flow, cap rates, and long-term appreciation.',needs:'Investor-minded agent who personally owns investment property and understands NOI.',match:'Matched to 6 agents on Provn'},
+  {emoji:'&#128203;',label:'TRUST SALE SELLER',labelColor:'#E17055',iconBg:'#FFF5F0',price:'Estate property \xb7 Santa Rosa',situation:'Managing a parent estate. Needs speed, sensitivity, and deep probate knowledge.',needs:'Probate and trust sale specialist with documented estate transaction experience.',match:'Matched to 4 agents on Provn'},
+  {emoji:'&#127807;',label:'DOWNSIZER',labelColor:'#00B894',iconBg:'#0A1F12',price:'Selling $1.3M \xb7 Buying $750K \xb7 Sonoma',situation:'30 years in the family home. An emotional transaction that needs patience as much as skill.',needs:'High-EQ agent with downsizer experience who understands this is not just a financial decision.',match:'Matched to 7 agents on Provn'}
 ];
 var psCurrent=0;
 function psRender(i){
@@ -1814,7 +1814,7 @@ psRender(0);
             <p style={{
               fontSize: 20,
               fontWeight: 700,
-              color: '#ffffff',
+              color: '#2D3436',
               margin: '0 0 4px',
             }}>
               Provn does not give you the most popular agent.
@@ -1823,7 +1823,7 @@ psRender(0);
               fontSize: 20,
               fontWeight: 700,
               margin: '0 0 32px',
-              background: 'linear-gradient(135deg, #10B981, #06B6D4)',
+              background: 'linear-gradient(135deg, #00B894, #00CEC9)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -1836,14 +1836,14 @@ psRender(0);
                 href="/match/buyer"
                 style={{
                   display: 'inline-block',
-                  background: '#10B981',
-                  color: '#ffffff',
+                  background: '#00B894',
+                  color: '#FFFFFF',
                   fontSize: 17,
                   fontWeight: 700,
                   padding: '16px 48px',
                   borderRadius: 10,
                   textDecoration: 'none',
-                  boxShadow: '0 4px 24px rgba(16,185,129,0.35)',
+                  boxShadow: '0 4px 24px rgba(0,184,148,0.35)',
                 }}
               >
                 Tell us your situation →
@@ -1885,10 +1885,10 @@ function AgentSearchInput() {
         style={{
           flex: 1,
           padding: '11px 16px',
-          background: 'rgba(255,255,255,0.05)',
-          border: `1px solid ${BD}`,
+          background: '#FFFFFF',
+          border: `1px solid #B2F5EA`,
           borderRadius: '8px',
-          color: '#ffffff',
+          color: '#2D3436',
           fontSize: '14px',
           outline: 'none',
         }}
@@ -1935,9 +1935,8 @@ function CTASection() {
     <section
       className="section-wrap"
       style={{
-        background: '#080D1A',
+        background: '#00B894',
         padding: '100px clamp(24px, 4vw, 48px)',
-        borderTop: '1px solid #1E2A3A',
       }}
     >
       <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
@@ -1947,7 +1946,7 @@ function CTASection() {
             style={{
               fontSize: 'clamp(32px, 5vw, 56px)',
               fontWeight: 900,
-              color: '#ffffff',
+              color: '#FFFFFF',
               textAlign: 'center',
               lineHeight: 1.1,
               letterSpacing: '-0.02em',
@@ -1960,7 +1959,7 @@ function CTASection() {
           <p
             style={{
               fontSize: '20px',
-              color: C_INTERP,
+              color: 'rgba(255,255,255,0.85)',
               textAlign: 'center',
               maxWidth: '560px',
               margin: '0 auto 56px',
@@ -1986,8 +1985,8 @@ function CTASection() {
               <div
                 className="cta-card-item"
                 style={{
-                  background: '#0F1117',
-                  border: `1px solid ${GREEN}`,
+                  background: '#FFFFFF',
+                  border: '1px solid rgba(255,255,255,0.3)',
                   borderRadius: '16px',
                   padding: '32px',
                   height: '100%',
@@ -2001,7 +2000,7 @@ function CTASection() {
                     width: '44px',
                     height: '44px',
                     borderRadius: '12px',
-                    background: 'rgba(16,185,129,0.12)',
+                    background: 'rgba(0,184,148,0.12)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -2014,7 +2013,7 @@ function CTASection() {
                   style={{
                     fontSize: '22px',
                     fontWeight: 800,
-                    color: '#ffffff',
+                    color: '#2D3436',
                     marginBottom: '10px',
                     letterSpacing: '-0.01em',
                   }}
@@ -2040,7 +2039,7 @@ function CTASection() {
                     justifyContent: 'center',
                     gap: '8px',
                     background: GREEN,
-                    color: '#ffffff',
+                    color: '#FFFFFF',
                     fontWeight: 600,
                     fontSize: '15px',
                     borderRadius: '8px',
@@ -2082,8 +2081,8 @@ function Footer() {
   return (
     <footer
       style={{
-        background: BG,
-        borderTop: `1px solid ${BD}`,
+        background: '#2D3436',
+        borderTop: '1px solid rgba(255,255,255,0.1)',
         padding: '40px clamp(24px, 4vw, 48px) 0',
       }}
     >
@@ -2116,13 +2115,13 @@ function Footer() {
                 style={{
                   fontSize: '20px',
                   fontWeight: 800,
-                  color: '#ffffff',
+                  color: '#00B894',
                 }}
               >
                 Provn
               </span>
             </Link>
-            <div style={{ fontSize: '13px', color: C_SEC }}>Know before you hire.</div>
+            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>Know before you hire.</div>
           </div>
 
           {/* Nav links */}
@@ -2140,7 +2139,7 @@ function Footer() {
                 key={label}
                 href="#"
                 style={{
-                  color: C_SEC,
+                  color: 'rgba(255,255,255,0.6)',
                   fontSize: '13px',
                   textDecoration: 'none',
                 }}
@@ -2154,7 +2153,7 @@ function Footer() {
           <Link
             href="/agents/claim"
             style={{
-              color: GREEN,
+              color: '#00B894',
               fontSize: '13px',
               textDecoration: 'none',
               fontWeight: 500,
@@ -2167,13 +2166,13 @@ function Footer() {
         {/* Bottom bar */}
         <div
           style={{
-            borderTop: `1px solid ${BD}`,
+            borderTop: '1px solid rgba(255,255,255,0.1)',
             paddingTop: '20px',
             paddingBottom: '32px',
             textAlign: 'center',
           }}
         >
-          <p style={{ fontSize: '11px', color: C_TER, lineHeight: 1.6 }}>
+          <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.6 }}>
             Provn scores are based on publicly available data and verified submissions.
             Provn is not affiliated with any brokerage or real estate portal. © 2026 Provn.
           </p>
@@ -2189,7 +2188,7 @@ export default function HomePage() {
   useSmoothScroll();
 
   return (
-    <div style={{ background: BG, color: '#ffffff' }}>
+    <div style={{ background: BG, color: '#2D3436' }}>
       <style>{`
         @media (max-width: 768px) {
           /* Navigation */
