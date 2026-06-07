@@ -63,7 +63,13 @@ body {
 
 html, body { overflow-x: hidden; }
 
+/* Persona section: mobile selector vs desktop grid */
+.persona-mobile { display: none; }
+
 @media (max-width: 768px) {
+  .persona-mobile { display: block; }
+  .persona-desktop { display: none !important; }
+
   /* Ensure FadeIn wrapper divs never hide content on mobile */
   section,
   section > div,

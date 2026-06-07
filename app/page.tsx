@@ -10,7 +10,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import AgentFlipCard from './components/AgentFlipCard';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 
@@ -38,45 +37,14 @@ function useSmoothScroll() {
 function FadeIn({
   children,
   delay = 0,
+  className = '',
 }: {
   children: React.ReactNode;
   delay?: number;
+  className?: string;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    // On mobile (<768px) show immediately — skip IntersectionObserver
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
-      setVisible(true);
-      return;
-    }
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => setVisible(true), delay);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.05 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [delay]);
-
   return (
-    <div
-      ref={ref}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
-        transition: visible
-          ? `opacity 0.6s ease, transform 0.6s ease`
-          : 'none',
-      }}
-    >
+    <div className={className} style={{ opacity: 1, transform: 'none' }}>
       {children}
     </div>
   );
@@ -465,319 +433,190 @@ function Nav() {
 
 // ── Section 1: Card Flip Hero ─────────────────────────────────────────────────
 
-const FLIP_CARDS = [
-  {
-    frontData: {
-      name: 'Tara Reynolds',
-      brokerage: 'Keller Williams · Petaluma',
-      avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face',
-      avatarBorder: '#F59E0B',
-      stars: 5,
-      reviewCount: '4.9 stars · 34 reviews',
-      title: 'REALTOR® · 11 Years',
-    },
-    backData: {
-      grade: 'C+',
-      score: 58,
-      gradeColor: '#F59E0B',
-      borderColor: '#F59E0B',
-      glowColor: 'rgba(245,158,11,0.2)',
-      outcomeBg: '#1A1200',
-      stats: [
-        { label: 'Licensed',            value: '11 years',          color: '#CBD5E1' },
-        { label: 'Career transactions', value: '94 total',          color: '#CBD5E1' },
-        { label: 'Last sale',           value: '4 months ago',      color: '#F59E0B' },
-        { label: 'Price reductions',    value: '4 of last 10',      color: '#F59E0B' },
-        { label: 'Property owned',      value: '1 — primary only',  color: '#F59E0B' },
-      ],
-      outcomeText: '⚠ Inconsistent activity — not aligned with your price range',
-      outcomeColor: '#F59E0B',
-    },
-  },
-  {
-    frontData: {
-      name: 'James Miller',
-      brokerage: 'Century 21 · Santa Rosa',
-      avatarUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=face',
-      avatarBorder: '#EF4444',
-      stars: 5,
-      reviewCount: '4.8 stars · 11 reviews',
-      title: 'REALTOR® · 2 Years',
-    },
-    backData: {
-      grade: 'C',
-      score: 41,
-      gradeColor: '#EF4444',
-      borderColor: '#EF4444',
-      glowColor: 'rgba(239,68,68,0.2)',
-      outcomeBg: '#1A0D0D',
-      stats: [
-        { label: 'Licensed',            value: '2 years',           color: '#EF4444' },
-        { label: 'Career transactions', value: '8 total',           color: '#EF4444' },
-        { label: 'Last sale',           value: '9 months ago',      color: '#EF4444' },
-        { label: 'Price reductions',    value: '6 of last 8',       color: '#EF4444' },
-        { label: 'Property owned',      value: 'None verified',     color: '#EF4444' },
-      ],
-      outcomeText: '⚠ High risk — limited experience in current market',
-      outcomeColor: '#EF4444',
-    },
-  },
-  {
-    frontData: {
-      name: 'Sarah Chen',
-      brokerage: 'Compass · Healdsburg',
-      avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face',
-      avatarBorder: '#10B981',
-      stars: 5,
-      reviewCount: '4.9 stars · 147 reviews',
-      title: 'BROKER · 19 Years',
-    },
-    backData: {
-      grade: 'A+',
-      score: 94,
-      gradeColor: '#10B981',
-      borderColor: '#10B981',
-      glowColor: 'rgba(16,185,129,0.2)',
-      outcomeBg: '#0A1F12',
-      stats: [
-        { label: 'Licensed',            value: '19 years',              color: '#10B981' },
-        { label: 'Career transactions', value: '312 total',             color: '#10B981' },
-        { label: 'Last sale',           value: '3 weeks ago',           color: '#10B981' },
-        { label: 'Price reductions',    value: '1 of last 10',          color: '#10B981' },
-        { label: 'Property owned',      value: '4 · $2.1M portfolio',   color: '#10B981' },
-      ],
-      outcomeText: '✓ Top 5% Sonoma County · Active · Verified owner',
-      outcomeColor: '#10B981',
-    },
-  },
-];
-
 function CardFlipSection() {
-  const [flipped, setFlipped] = useState([false, false, false]);
-  const [showReveal, setShowReveal] = useState(false);
-  const allFlipped = flipped.every(Boolean);
-
-  useEffect(() => {
-    if (allFlipped) {
-      const t = setTimeout(() => setShowReveal(true), 300);
-      return () => clearTimeout(t);
-    } else {
-      setShowReveal(false);
-    }
-  }, [allFlipped]);
-
-  const handleFlip = (index: number) => {
-    setFlipped(prev => {
-      const next = [...prev];
-      next[index] = !next[index];
-      return next;
-    });
-  };
-
   return (
-    <section
-      className="section-wrap card-flip-section"
-      style={{
-        background: 'linear-gradient(180deg, #080D1A 0%, #0A0F1E 50%, #080D1A 100%)',
-        padding: '100px clamp(24px, 4vw, 48px)',
-        overflow: 'visible',
-      }}
-    >
-      <style>{`
-        @keyframes reveal-fade-up {
-          from { opacity: 0; transform: translateY(24px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+    <div style={{ paddingTop: 0, marginTop: 0 }} dangerouslySetInnerHTML={{ __html: `
+<style>
+.fc-wrap{background:#080D1A;padding:60px 20px 40px 20px;text-align:center}
+.fc-pill{display:inline-block;background:#0F1628;border:1px solid #10B981;border-radius:20px;padding:6px 16px;font-size:11px;color:#94A3B8;letter-spacing:0.1em;margin-top:0;margin-bottom:32px}
+.fc-h1{font-size:clamp(28px,6vw,56px);font-weight:900;color:#fff;line-height:1.1;margin:0 0 8px;letter-spacing:-0.02em}
+.fc-h2{font-size:clamp(24px,5vw,48px);font-weight:900;background:linear-gradient(135deg,#10B981,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:0 0 20px}
+.fc-sub{font-size:16px;color:#94A3B8;max-width:560px;margin:0 auto 12px;line-height:1.7}
+.fc-tap{font-size:14px;color:#10B981;margin-bottom:16px}
+.fc-dots{display:flex;gap:8px;justify-content:center;margin-bottom:24px}
+.fc-dot{width:10px;height:10px;border-radius:50%;border:2px solid #4B5563;transition:all 0.3s}
+.fc-dot.on{background:#10B981;border-color:#10B981}
+.fc-col{display:flex;flex-direction:column;align-items:center;gap:20px}
+.fc-card{width:calc(100vw - 48px);max-width:300px;min-height:400px;position:relative;border-radius:16px;overflow:hidden;-webkit-tap-highlight-color:transparent}
+.fc-face{position:absolute;inset:0;padding:24px 18px;display:flex;flex-direction:column;align-items:center;transition:opacity 0.3s ease;border-radius:16px;overflow:hidden}
+.fc-front{opacity:1}
+.fc-back{opacity:0;pointer-events:none}
+.fc-card.on .fc-front{opacity:0;pointer-events:none}
+.fc-card.on .fc-back{opacity:1;pointer-events:auto}
+.fc-img{width:76px;height:76px;border-radius:50%;object-fit:cover;object-position:center top;display:block;margin:0 auto 10px;background:#1E2A3A}
+.fc-name{font-size:16px;font-weight:700;color:#fff;text-align:center;margin-bottom:2px}
+.fc-role{font-size:11px;font-weight:700;letter-spacing:0.08em;text-align:center;margin-bottom:3px}
+.fc-brok{font-size:12px;color:#94A3B8;text-align:center;margin-bottom:12px}
+.fc-div{width:100%;height:1px;background:#2D3148;margin-bottom:12px}
+.fc-stars{font-size:18px;color:#F59E0B;letter-spacing:2px;margin-bottom:4px}
+.fc-rev{font-size:12px;color:#94A3B8;margin-bottom:14px}
+.fc-blur{width:100%;height:26px;background:#1E2330;border-radius:6px;margin-bottom:7px;filter:blur(3px);opacity:0.6}
+.fc-hint{font-size:11px;color:#4B5563;font-style:italic;margin-top:8px}
+.fc-ring{width:70px;height:70px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 12px;border-width:3px;border-style:solid;flex-shrink:0}
+.fc-grade{font-size:22px;font-weight:900;line-height:1}
+.fc-score{font-size:10px;color:#94A3B8}
+.fc-stat{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1E2A3A;width:100%}
+.fc-slabel{font-size:11px;color:#94A3B8}
+.fc-sval{font-size:11px;font-weight:600;text-align:right;max-width:55%}
+.fc-out{width:100%;border-radius:8px;padding:9px 12px;margin-top:10px;text-align:center;border-width:1px;border-style:solid}
+.fc-otext{font-size:11px;font-weight:600;line-height:1.4}
+.fc-reveal{display:none;padding:32px 20px;text-align:center}
+.fc-reveal.on{display:block}
+.fc-rtitle{font-size:24px;font-weight:900;color:#fff;margin-bottom:8px}
+.fc-rsub{font-size:15px;color:#94A3B8;line-height:1.7;max-width:500px;margin:0 auto 24px}
+.fc-rgreen{color:#10B981;font-weight:700}
+.fc-btn{display:inline-block;background:#10B981;color:#fff;font-size:16px;font-weight:700;padding:14px 36px;border-radius:10px;text-decoration:none;border:none;cursor:pointer}
+@media(min-width:768px){
+  .fc-col{flex-direction:row;justify-content:center;align-items:stretch}
+  .fc-card{width:280px;max-width:280px}
+}
+</style>
 
-      {/* Eyebrow pill */}
-      <div style={{ textAlign: 'center', marginBottom: 32 }}>
-        <span
-          style={{
-            display: 'inline-block',
-            background: 'linear-gradient(135deg, #0F2A1A, #1A1F35)',
-            border: '1px solid rgba(16,185,129,0.3)',
-            borderRadius: 20,
-            padding: '6px 16px',
-            fontSize: 12,
-            color: '#94A3B8',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            fontWeight: 600,
-          }}
-        >
-          ✦ CAN YOU TELL THEM APART?
-        </span>
-      </div>
+<div class="fc-wrap">
+  <div class="fc-pill">&#10022; CAN YOU TELL THEM APART?</div>
+  <h2 class="fc-h1">One of these agents will make you $75,000.</h2>
+  <p class="fc-h2">Two will cost you $75,000.</p>
+  <p class="fc-sub">They all have five stars. They all call themselves specialists. Without Provn you have no way to know if that is true.</p>
+  <p class="fc-tap">Tap each card to see what Provn reveals. &#x1F447;</p>
+  <div class="fc-dots">
+    <div class="fc-dot" id="d0"></div>
+    <div class="fc-dot" id="d1"></div>
+    <div class="fc-dot" id="d2"></div>
+  </div>
 
-      {/* Primary headline */}
-      <div style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 24px' }}>
-        <h2
-          style={{
-            fontSize: 'clamp(36px, 6vw, 64px)',
-            fontWeight: 900,
-            color: '#ffffff',
-            lineHeight: 1.05,
-            letterSpacing: '-0.03em',
-            margin: 0,
-          }}
-        >
-          Three agents.{' '}
-          <span
-            style={{
-              background: 'linear-gradient(135deg, #10B981, #06B6D4)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            One empty star rating.
-          </span>
-        </h2>
-      </div>
+  <div class="fc-col">
 
-      {/* Sub-headline */}
-      <p
-        style={{
-          textAlign: 'center',
-          fontSize: 'clamp(16px, 2vw, 20px)',
-          color: '#94A3B8',
-          maxWidth: 600,
-          margin: '0 auto 16px',
-          lineHeight: 1.65,
-        }}
-      >
-        Each has five stars. Each claims local expertise. Only one of them is right
-        for the deal you are about to make.
-      </p>
-
-      {/* Instruction */}
-      <p style={{ textAlign: 'center', fontSize: 15, color: '#4B5563', marginBottom: 40 }}>
-        Tap each card to reveal their verified data.
-      </p>
-
-      {/* Progress dots */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 0 }}>
-        {flipped.map((f, i) => (
-          <div
-            key={i}
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              border: f ? 'none' : '2px solid #2D3148',
-              background: f ? '#10B981' : 'transparent',
-              transition: 'background 0.3s, border 0.3s',
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Card row — row on desktop, column on mobile via .flip-cards-row class */}
-      <div
-        className="flip-cards-row"
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'stretch',
-          gap: 20,
-          flexWrap: 'wrap',
-          marginTop: 40,
-          maxWidth: 1000,
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-      >
-        {FLIP_CARDS.map((card, i) => (
-          <AgentFlipCard
-            key={i}
-            frontData={card.frontData}
-            backData={card.backData}
-            isFlipped={flipped[i]}
-            onFlip={() => handleFlip(i)}
-          />
-        ))}
-      </div>
-
-      {/* Reveal payoff — appears only after all three cards flipped */}
-      {showReveal && (
-        <div
-          style={{
-            textAlign: 'center',
-            maxWidth: 700,
-            margin: '80px auto 0',
-            animation: 'reveal-fade-up 0.6s ease forwards',
-          }}
-        >
-          <h3
-            style={{
-              fontSize: 'clamp(24px, 4vw, 40px)',
-              fontWeight: 800,
-              color: '#ffffff',
-              margin: '0 0 4px',
-              lineHeight: 1.2,
-            }}
-          >
-            The reviews told you almost nothing.
-          </h3>
-          <h3
-            style={{
-              fontSize: 'clamp(24px, 4vw, 40px)',
-              fontWeight: 800,
-              margin: '0 0 0',
-              lineHeight: 1.2,
-              background: 'linear-gradient(135deg, #10B981, #06B6D4)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            The data tells you everything.
-          </h3>
-
-          <p
-            style={{
-              fontSize: 17,
-              color: '#94A3B8',
-              maxWidth: 560,
-              margin: '16px auto 0',
-              lineHeight: 1.7,
-            }}
-          >
-            James and Tara have good reviews. So does Sarah. The difference is $125,000 in
-            potential outcome — and it was invisible until now. Every market in America has
-            the same three agents. Provn shows you which is which.
-          </p>
-
-          <p style={{ fontSize: 15, color: '#CBD5E1', marginTop: 12 }}>
-            This is what it feels like to actually be informed.
-          </p>
-
-          <Link
-            href="/match/buyer"
-            style={{
-              display: 'inline-block',
-              marginTop: 32,
-              background: '#10B981',
-              color: '#ffffff',
-              fontSize: 17,
-              fontWeight: 700,
-              padding: '16px 48px',
-              borderRadius: 10,
-              textDecoration: 'none',
-              boxShadow: '0 4px 24px rgba(16,185,129,0.35)',
-            }}
-          >
-            Find your Provn agent
-          </Link>
-
-          <p style={{ fontSize: 13, color: '#4B5563', marginTop: 16 }}>
-            Free for buyers and sellers · No account required · Matched by verified data
-          </p>
+    <div class="fc-card" id="fc0" style="border:2px solid #F59E0B;background:#1A1200" ontouchstart="" onclick="fcFlip(0)">
+      <div class="fc-face fc-front">
+        <div style="border:3px solid #F59E0B;border-radius:50%;width:76px;height:76px;overflow:hidden;flex-shrink:0;margin:0 auto 10px">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=160&amp;h=160&amp;fit=crop&amp;crop=face" width="76" height="76" style="display:block;border-radius:50%;object-fit:cover" alt="Tara Reynolds">
         </div>
-      )}
-    </section>
+        <div class="fc-name">Tara Reynolds</div>
+        <div class="fc-role" style="color:#F59E0B">REALTOR · 11 YEARS</div>
+        <div class="fc-brok">Keller Williams · Petaluma</div>
+        <div class="fc-div"></div>
+        <div class="fc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="fc-rev">4.9 stars · 34 reviews</div>
+        <div class="fc-blur"></div><div class="fc-blur"></div><div class="fc-blur"></div>
+        <div class="fc-hint">Tap to reveal · tap again to compare</div>
+      </div>
+      <div class="fc-face fc-back">
+        <div class="fc-name" style="margin-bottom:2px">Tara Reynolds</div>
+        <div class="fc-brok" style="margin-bottom:12px">Keller Williams · Petaluma</div>
+        <div class="fc-ring" style="border-color:#F59E0B">
+          <div class="fc-grade" style="color:#F59E0B">C+</div>
+          <div class="fc-score">58/100</div>
+        </div>
+        <div class="fc-stat"><span class="fc-slabel">Licensed</span><span class="fc-sval" style="color:#CBD5E1">11 years</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Career transactions</span><span class="fc-sval" style="color:#CBD5E1">94 total</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Last sale</span><span class="fc-sval" style="color:#F59E0B">4 months ago</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Price reductions</span><span class="fc-sval" style="color:#F59E0B">4 of last 10</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Property owned</span><span class="fc-sval" style="color:#F59E0B">1 — primary only</span></div>
+        <div class="fc-out" style="background:#1A1200;border-color:#F59E0B">
+          <div class="fc-otext" style="color:#F59E0B">&#9888; Inconsistent activity — not aligned with your price range</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fc-card" id="fc1" style="border:2px solid #EF4444;background:#1A0D0D" ontouchstart="" onclick="fcFlip(1)">
+      <div class="fc-face fc-front">
+        <div style="border:3px solid #EF4444;border-radius:50%;width:76px;height:76px;overflow:hidden;flex-shrink:0;margin:0 auto 10px">
+          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=160&amp;h=160&amp;fit=crop&amp;crop=face" width="76" height="76" style="display:block;border-radius:50%;object-fit:cover" alt="James Miller">
+        </div>
+        <div class="fc-name">James Miller</div>
+        <div class="fc-role" style="color:#EF4444">REALTOR · 2 YEARS</div>
+        <div class="fc-brok">Century 21 · Santa Rosa</div>
+        <div class="fc-div"></div>
+        <div class="fc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="fc-rev">4.8 stars · 11 reviews</div>
+        <div class="fc-blur"></div><div class="fc-blur"></div><div class="fc-blur"></div>
+        <div class="fc-hint">Tap to reveal · tap again to compare</div>
+      </div>
+      <div class="fc-face fc-back">
+        <div class="fc-name" style="margin-bottom:2px">James Miller</div>
+        <div class="fc-brok" style="margin-bottom:12px">Century 21 · Santa Rosa</div>
+        <div class="fc-ring" style="border-color:#EF4444">
+          <div class="fc-grade" style="color:#EF4444">C</div>
+          <div class="fc-score">41/100</div>
+        </div>
+        <div class="fc-stat"><span class="fc-slabel">Licensed</span><span class="fc-sval" style="color:#EF4444">2 years</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Career transactions</span><span class="fc-sval" style="color:#EF4444">8 total</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Last sale</span><span class="fc-sval" style="color:#EF4444">9 months ago</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Price reductions</span><span class="fc-sval" style="color:#EF4444">6 of last 8</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Property owned</span><span class="fc-sval" style="color:#EF4444">None verified</span></div>
+        <div class="fc-out" style="background:#1A0D0D;border-color:#EF4444">
+          <div class="fc-otext" style="color:#EF4444">&#9888; High risk — limited experience in current market</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fc-card" id="fc2" style="border:2px solid #10B981;background:#0A1F12" ontouchstart="" onclick="fcFlip(2)">
+      <div class="fc-face fc-front">
+        <div style="border:3px solid #10B981;border-radius:50%;width:76px;height:76px;overflow:hidden;flex-shrink:0;margin:0 auto 10px">
+          <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=160&amp;h=160&amp;fit=crop&amp;crop=face" width="76" height="76" style="display:block;border-radius:50%;object-fit:cover" alt="Sarah Chen">
+        </div>
+        <div class="fc-name">Sarah Chen</div>
+        <div class="fc-role" style="color:#10B981">BROKER · 19 YEARS</div>
+        <div class="fc-brok">Compass · Healdsburg</div>
+        <div class="fc-div"></div>
+        <div class="fc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="fc-rev">4.9 stars · 147 reviews</div>
+        <div class="fc-blur"></div><div class="fc-blur"></div><div class="fc-blur"></div>
+        <div class="fc-hint">Tap to reveal · tap again to compare</div>
+      </div>
+      <div class="fc-face fc-back">
+        <div class="fc-name" style="margin-bottom:2px">Sarah Chen</div>
+        <div class="fc-brok" style="margin-bottom:12px">Compass · Healdsburg</div>
+        <div class="fc-ring" style="border-color:#10B981">
+          <div class="fc-grade" style="color:#10B981">A+</div>
+          <div class="fc-score">94/100</div>
+        </div>
+        <div class="fc-stat"><span class="fc-slabel">Licensed</span><span class="fc-sval" style="color:#10B981">19 years</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Career transactions</span><span class="fc-sval" style="color:#10B981">312 total</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Last sale</span><span class="fc-sval" style="color:#10B981">3 weeks ago</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Price reductions</span><span class="fc-sval" style="color:#10B981">1 of last 10</span></div>
+        <div class="fc-stat"><span class="fc-slabel">Property owned</span><span class="fc-sval" style="color:#10B981">4 · $2.1M portfolio</span></div>
+        <div class="fc-out" style="background:#0A1F12;border-color:#10B981">
+          <div class="fc-otext" style="color:#10B981">&#10003; Top 5% Sonoma County · Active · Verified owner</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="fc-reveal" id="fcReveal">
+    <div class="fc-rtitle">The reviews told you almost nothing.</div>
+    <div class="fc-rsub">The data tells you <span class="fc-rgreen">everything.</span><br><br>James and Tara have good reviews. So does Sarah. The difference is $125,000 in potential outcome — and it was invisible until now. Every market has the same three agents. Provn shows you which is which.</div>
+    <button class="fc-btn" onclick="window.location.href='/match/buyer'">Find your Provn agent</button>
+  </div>
+</div>
+
+<script>
+var fcF=[false,false,false];
+var fcDone=false;
+function fcFlip(i){
+  fcF[i]=!fcF[i];
+  var c=document.getElementById('fc'+i);
+  var d=document.getElementById('d'+i);
+  if(fcF[i]){c.classList.add('on');d.classList.add('on');}
+  else{c.classList.remove('on');d.classList.remove('on');}
+  if(!fcDone&&fcF[0]&&fcF[1]&&fcF[2]){
+    fcDone=true;
+    document.getElementById('fcReveal').classList.add('on');
+  }
+}
+</script>
+` }} />
   );
 }
 
@@ -786,18 +625,9 @@ function CardFlipSection() {
 // ── Section 2: The problem nobody talks about ────────────────────────────────
 
 const IMPACT_STATS = [
-  {
-    value: 500, prefix: '$', suffix: '',  color: '#E63946',
-    label: 'Average cost per lead agents pay Zillow just to call you back',
-  },
-  {
-    value: 0,   prefix: '',  suffix: '',  color: '#F59E0B',
-    label: "Zillow's accountability when that agent underperforms for you",
-  },
-  {
-    value: 75,  prefix: '$', suffix: 'K', color: '#10B981',
-    label: 'Potential difference between the right agent and the wrong one',
-  },
+  { display: '$500', color: '#E63946', label: 'Average cost per lead agents pay Zillow just to call you back' },
+  { display: '0',    color: '#F59E0B', label: "Zillow's accountability when that agent underperforms for you" },
+  { display: '$75K', color: '#10B981', label: 'Potential difference between the right agent and the wrong one' },
 ];
 
 const FLOW_ROWS = [
@@ -846,49 +676,8 @@ const INSIGHT_CARDS = [
 ];
 
 function ImpactStats() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [triggered, setTriggered] = useState(false);
-  const [counts, setCounts] = useState([0, 0, 0]);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setTriggered(true); obs.disconnect(); } },
-      { threshold: 0.3 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!triggered) return;
-    const rafs: number[] = [];
-    IMPACT_STATS.forEach((stat, i) => {
-      if (stat.value === 0) return;
-      const delay = i * 180;
-      const duration = 1400;
-      let t0: number | null = null;
-      const tick = (now: number) => {
-        if (!t0) t0 = now;
-        const elapsed = now - t0 - delay;
-        if (elapsed < 0) { rafs[i] = requestAnimationFrame(tick); return; }
-        const t = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - t, 3);
-        setCounts(prev => {
-          const next = [...prev];
-          next[i] = Math.round(eased * stat.value);
-          return next;
-        });
-        if (t < 1) rafs[i] = requestAnimationFrame(tick);
-      };
-      rafs[i] = requestAnimationFrame(tick);
-    });
-    return () => rafs.forEach(r => cancelAnimationFrame(r));
-  }, [triggered]);
-
   return (
-    <div ref={ref} className="impact-stats-row" style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginTop: 48 }}>
+    <div className="impact-stats-row" style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginTop: 48 }}>
       {IMPACT_STATS.map((stat, i) => (
         <div
           key={i}
@@ -902,7 +691,7 @@ function ImpactStats() {
           }}
         >
           <div style={{ fontSize: 40, fontWeight: 900, color: stat.color, lineHeight: 1, marginBottom: 10 }}>
-            {stat.prefix}{counts[i]}{stat.suffix}
+            {stat.display}
           </div>
           <div style={{
             fontSize: 12, color: '#94A3B8', lineHeight: 1.6,
@@ -918,20 +707,7 @@ function ImpactStats() {
 }
 
 function FlowDiagram() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold: 0.15 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
 
   const OTHER_STEPS = [
     'You search for a property on Zillow, Realtor.com, or another third party platform',
@@ -955,13 +731,9 @@ function FlowDiagram() {
     boxSizing: 'border-box' as const,
     display: 'flex',
     flexDirection: 'column' as const,
-    transform: visible
-      ? hoveredCard === i ? 'translateY(-4px)' : 'translateY(0)'
-      : i === 0 ? 'translateX(-40px)' : 'translateX(40px)',
-    opacity: visible ? 1 : 0,
-    transition: visible
-      ? `transform 0.3s ease, box-shadow 0.3s ease, opacity 0.6s ease-out ${i * 0.1}s`
-      : `transform 0.6s ease-out ${i * 0.1}s, opacity 0.6s ease-out ${i * 0.1}s`,
+    opacity: 1,
+    transform: hoveredCard === i ? 'translateY(-4px)' : 'none',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     boxShadow: hoveredCard === i
       ? '0 16px 48px rgba(0,0,0,0.4)'
       : '0 4px 20px rgba(0,0,0,0.2)',
@@ -979,7 +751,6 @@ function FlowDiagram() {
 
       {/* Card row */}
       <div
-        ref={ref}
         className="flow-cards-row"
         style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'stretch', justifyContent: 'center' }}
       >
@@ -1350,442 +1121,170 @@ const SCORE_ROWS = [
   },
 ];
 
-function ScoreBarsPanel() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [triggered, setTriggered] = useState(false);
-  const [counts, setCounts] = useState(SCORE_ROWS.map(() => 0));
-  const [openIndex, setOpenIndex] = useState(0);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [formulaOpen, setFormulaOpen] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) { setTriggered(true); obs.disconnect(); }
-      },
-      { threshold: 0.15 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!triggered) return;
-    const rafs: number[] = [];
-    SCORE_ROWS.forEach((row, i) => {
-      const delay = i * 150;
-      const duration = 1200;
-      let t0: number | null = null;
-      const tick = (now: number) => {
-        if (!t0) t0 = now;
-        const elapsed = now - t0 - delay;
-        if (elapsed < 0) { rafs[i] = requestAnimationFrame(tick); return; }
-        const t = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - t, 3);
-        setCounts(prev => {
-          const next = [...prev];
-          next[i] = Math.round(eased * row.pct);
-          return next;
-        });
-        if (t < 1) rafs[i] = requestAnimationFrame(tick);
-      };
-      rafs[i] = requestAnimationFrame(tick);
-    });
-    return () => rafs.forEach(r => cancelAnimationFrame(r));
-  }, [triggered]);
-
-  return (
-    <div ref={ref} className="score-bars-col" style={{ flex: '11 1 340px', minWidth: 0 }}>
-      {SCORE_ROWS.map((row, i) => {
-        const isOpen = openIndex === i;
-        const isHovered = hoveredIndex === i;
-        return (
-          <div key={row.label}>
-            {i > 0 && <div style={{ height: 1, background: '#1E2A3A' }} />}
-            <div
-              className="accordion-row-inner"
-              onMouseEnter={() => setHoveredIndex(i)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              onClick={() => setOpenIndex(isOpen ? -1 : i)}
-              style={{
-                padding: '16px 12px',
-                cursor: 'pointer',
-                background: isHovered ? '#0F1628' : 'transparent',
-                transition: 'background 0.2s ease',
-                borderRadius: 8,
-                margin: '0 -12px',
-              }}
-            >
-              {/* Header row */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 20, lineHeight: 1 }}>{row.icon}</span>
-                  <span style={{ fontSize: 16, fontWeight: 700, color: '#ffffff' }}>{row.label}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-                  <span style={{ fontSize: 16, fontWeight: 700, color: '#10B981' }}>{counts[i]}%</span>
-                  <span style={{
-                    display: 'inline-block',
-                    fontSize: 11,
-                    color: '#4B5563',
-                    transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                    transition: 'transform 0.3s ease',
-                    lineHeight: 1,
-                  }}>
-                    ▼
-                  </span>
-                </div>
-              </div>
-
-              {/* Fill bar — always visible below header */}
-              <div style={{ height: 6, borderRadius: 3, background: '#1E2A3A', overflow: 'hidden', marginTop: 12 }}>
-                <div
-                  style={{
-                    height: '100%',
-                    borderRadius: 3,
-                    background: 'linear-gradient(90deg, #10B981, #06B6D4)',
-                    width: triggered ? `${row.pct}%` : '0%',
-                    transition: `width 1.2s cubic-bezier(0.4,0,0.2,1) ${i * 0.15}s`,
-                  }}
-                />
-              </div>
-
-              {/* Expandable: why + source */}
-              <div style={{
-                maxHeight: isOpen ? '220px' : '0px',
-                overflow: 'hidden',
-                transition: 'max-height 0.3s ease',
-              }}>
-                <p style={{
-                  fontSize: 15, color: '#CBD5E1',
-                  lineHeight: 1.8, margin: '12px 0 4px',
-                  opacity: isOpen ? 1 : 0,
-                  transition: 'opacity 0.25s ease 0.05s',
-                }}>
-                  {row.why}
-                </p>
-                <div style={{ fontSize: 12, color: '#4B5563', paddingBottom: 8 }}>
-                  {row.source}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })}
-
-      {/* Expandable formula */}
-      <div style={{ marginTop: 12, borderTop: '1px solid #1E2A3A', paddingTop: 16 }}>
-        <button
-          onClick={() => setFormulaOpen(f => !f)}
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-            fontSize: 13, color: '#10B981', fontWeight: 600,
-            display: 'flex', alignItems: 'center', gap: 4,
-          }}
-        >
-          How is the overall score calculated?
-          <span style={{
-            display: 'inline-block',
-            transform: formulaOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 0.3s ease',
-            fontSize: 12,
-          }}>
-            ↓
-          </span>
-        </button>
-        <div style={{
-          maxHeight: formulaOpen ? '220px' : '0px',
-          overflow: 'hidden',
-          transition: 'max-height 0.35s ease',
-        }}>
-          <p style={{
-            fontSize: 13, color: '#94A3B8', maxWidth: 480,
-            lineHeight: 1.7, margin: '12px 0 0',
-          }}>
-            Each category is weighted independently and combined into a single composite
-            score from 0 to 100. Transaction performance and client outcomes carry the
-            most weight. The exact formula is proprietary — agents cannot
-            reverse-engineer it, which means the only way to improve a Provn score is to
-            actually serve clients better. Scores update as new data becomes available.
-          </p>
-        </div>
-      </div>
-
-      <p style={{
-        fontSize: 13,
-        color: '#4B5563',
-        fontStyle: 'italic',
-        textAlign: 'center',
-        marginTop: 32,
-        lineHeight: 1.65,
-      }}>
-        Scores update automatically as new data becomes available.
-        Agents are never notified in advance of score changes.
-      </p>
-    </div>
-  );
-}
-
-
-// ── Inline radar chart (self-contained) ──────────────────────────────────────
-
-const _RCX = 280;
-const _RCY = 228;
-const _RR  = 138;
-const _RLR = 190;
-
-const _RADAR_AXES: { label: string[]; angle: number; anchor: 'middle' | 'start' | 'end'; ldy: number }[] = [
-  { label: ['Five Star', 'Reviews'],       angle: -90,  anchor: 'middle', ldy: -8 },
-  { label: ['Local Market', 'Expertise'],  angle: -30,  anchor: 'start',  ldy: -6 },
-  { label: ['Career', 'Volume'],           angle:  30,  anchor: 'start',  ldy:  0 },
-  { label: ['Skin in', 'the Game'],        angle:  90,  anchor: 'middle', ldy: 10 },
-  { label: ['Successful', 'Outcomes'],     angle: 150,  anchor: 'end',    ldy:  0 },
-  { label: ['Expertise', 'Depth'],         angle: 210,  anchor: 'end',    ldy: -6 },
-];
-
-const _SARAH   = [89, 94, 76, 92, 88, 95];
-const _COUNTY  = [50, 50, 50, 50, 50, 50];
-const _TOP10   = [82, 88, 85, 79, 84, 91];
-const _RGRID   = [0.25, 0.50, 0.75, 1.0];
-
-function _rxy(angleDeg: number, dist: number) {
-  const a = (angleDeg * Math.PI) / 180;
-  return { x: _RCX + dist * Math.cos(a), y: _RCY + dist * Math.sin(a) };
-}
-
-function _rpts(vals: number[]): string {
-  return _RADAR_AXES.map((ax, i) => {
-    const p = _rxy(ax.angle, (vals[i] / 100) * _RR);
-    return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
-  }).join(' ');
-}
-
-function RadarChartPanel() {
-  const [mode, setMode] = useState<'county' | 'top10'>('county');
-  const benchRef = useRef<number[]>([..._COUNTY]);
-  const [benchDisplay, setBenchDisplay] = useState<number[]>([..._COUNTY]);
-  const rafRef = useRef<number>(0);
-
-  const animateTo = useCallback((target: number[]) => {
-    cancelAnimationFrame(rafRef.current);
-    const from = [...benchRef.current];
-    const t0 = performance.now();
-    const dur = 600;
-    const tick = (now: number) => {
-      const t = Math.min((now - t0) / dur, 1);
-      const e = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-      const vals = from.map((f, i) => f + (target[i] - f) * e);
-      benchRef.current = vals;
-      setBenchDisplay([...vals]);
-      if (t < 1) rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
-  }, []);
-
-  useEffect(() => {
-    animateTo(mode === 'county' ? _COUNTY : _TOP10);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [mode, animateTo]);
-
-  const agentPts = _rpts(_SARAH);
-  const benchPts = _rpts(benchDisplay);
-  const benchColor = mode === 'county' ? '#4B5563' : '#F59E0B';
-  const benchLabel = mode === 'county' ? 'Sonoma County Avg' : 'Top 10%';
-
-  return (
-    <div className="radar-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '9 1 280px', minWidth: 0 }}>
-      {/* Section label */}
-      <div style={{
-        fontSize: 13, color: '#4B5563', textTransform: 'uppercase',
-        letterSpacing: '0.08em', marginBottom: 24,
-      }}>
-        SAMPLE PROVN STRENGTH PROFILE
-      </div>
-
-      {/* Chart card */}
-      <div style={{
-        background: '#1A1D2E',
-        border: '1px solid #2D3148',
-        borderRadius: 16,
-        padding: '20px 20px 12px',
-        width: '100%',
-        boxShadow: '0 0 40px rgba(16,185,129,0.12)',
-        boxSizing: 'border-box',
-      }}>
-        {/* Toggle */}
-        <div className="radar-toggle-wrap" style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
-          <div style={{
-            display: 'flex', gap: 4, padding: 4,
-            background: 'rgba(255,255,255,0.06)', borderRadius: 10,
-          }}>
-            {(['county', 'top10'] as const).map(m => (
-              <button
-                key={m}
-                onClick={() => setMode(m)}
-                style={{
-                  padding: '6px 14px', borderRadius: 7, border: 'none',
-                  cursor: 'pointer', fontSize: 12, fontWeight: 700,
-                  background: mode === m ? '#10B981' : 'transparent',
-                  color: mode === m ? '#ffffff' : 'rgba(255,255,255,0.38)',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                {m === 'county' ? 'vs County Average' : 'vs Top 10%'}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* SVG radar */}
-        <svg viewBox="0 0 560 470" style={{ width: '100%', display: 'block' }} aria-label="Strength profile radar chart for Sarah Chen">
-          <rect width="560" height="470" fill="#1A1D2E" />
-
-          {/* Grid hexagons */}
-          {_RGRID.map(level => (
-            <polygon
-              key={level}
-              points={_rpts(_RADAR_AXES.map(() => level * 100))}
-              fill="none"
-              stroke={level === 1.0 ? 'rgba(255,255,255,0.11)' : 'rgba(255,255,255,0.05)'}
-              strokeWidth={level === 1.0 ? 1.2 : 0.8}
-            />
-          ))}
-
-          {/* Grid level numbers on top axis */}
-          {_RGRID.slice(0, -1).map(level => {
-            const p = _rxy(-90, level * _RR);
-            return (
-              <text key={level} x={p.x + 5} y={p.y + 3.5} fontSize="7.5" fill="rgba(255,255,255,0.16)" fontWeight="700">
-                {Math.round(level * 100)}
-              </text>
-            );
-          })}
-
-          {/* Axis spokes */}
-          {_RADAR_AXES.map((ax, i) => {
-            const tip = _rxy(ax.angle, _RR);
-            return (
-              <line key={i} x1={_RCX} y1={_RCY}
-                x2={tip.x.toFixed(1)} y2={tip.y.toFixed(1)}
-                stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-            );
-          })}
-
-          {/* Benchmark polygon */}
-          <polygon
-            points={benchPts}
-            fill={mode === 'county' ? 'rgba(255,255,255,0.06)' : 'rgba(251,191,36,0.08)'}
-            stroke={benchColor}
-            strokeWidth="1.5"
-            strokeDasharray="4 3"
-            strokeLinejoin="round"
-          />
-
-          {/* Agent polygon */}
-          <polygon
-            points={agentPts}
-            fill="rgba(16,185,129,0.14)"
-            stroke="#10B981"
-            strokeWidth="2.5"
-            strokeLinejoin="round"
-          />
-
-          {/* Agent score dots */}
-          {_RADAR_AXES.map((ax, i) => {
-            const score = _SARAH[i];
-            const pt = _rxy(ax.angle, (score / 100) * _RR);
-            return (
-              <g key={i}>
-                <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r="19" fill="rgba(16,185,129,0.12)" />
-                <circle cx={pt.x.toFixed(1)} cy={pt.y.toFixed(1)} r="14" fill="#0d1117" stroke="#10B981" strokeWidth="2" />
-                <text x={pt.x.toFixed(1)} y={(pt.y + 4.5).toFixed(1)}
-                  textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#10B981">
-                  {score}
-                </text>
-              </g>
-            );
-          })}
-
-          {/* Center dot */}
-          <circle cx={_RCX} cy={_RCY} r="3" fill="rgba(255,255,255,0.15)" />
-
-          {/* Axis labels */}
-          {_RADAR_AXES.map((ax, i) => {
-            const lp = _rxy(ax.angle, _RLR);
-            const lh = 13.5;
-            const by = lp.y + ax.ldy - ((ax.label.length - 1) * lh) / 2;
-            return (
-              <g key={i}>
-                {ax.label.map((line, j) => (
-                  <text
-                    key={j}
-                    x={lp.x.toFixed(1)}
-                    y={(by + j * lh).toFixed(1)}
-                    textAnchor={ax.anchor}
-                    fontSize="10.5"
-                    fontWeight="700"
-                    fill="rgba(255,255,255,0.72)"
-                  >
-                    {line}
-                  </text>
-                ))}
-              </g>
-            );
-          })}
-
-          {/* Legend */}
-          <g transform="translate(14,452)">
-            <rect x="0" y="-5.5" width="9" height="9" rx="1.5" fill="#10B981" opacity="0.75" />
-            <text x="13" y="3" fontSize="9.5" fill="rgba(255,255,255,0.42)" fontWeight="700">
-              Sarah Chen
-            </text>
-            <rect x="82" y="-5.5" width="9" height="9" rx="1.5" fill={benchColor} opacity="0.75" />
-            <text x="95" y="3" fontSize="9.5" fill="rgba(255,255,255,0.42)" fontWeight="700">
-              {benchLabel}
-            </text>
-          </g>
-        </svg>
-      </div>
-
-      {/* Verified data callout */}
-      <div style={{
-        display: 'flex', alignItems: 'flex-start', gap: 10, marginTop: 14,
-        background: '#0F1628', border: '1px solid #1E2A3A', borderRadius: 10,
-        padding: '12px 16px', width: '100%', boxSizing: 'border-box',
-      }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 1 }}>
-          <path d="M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z" fill="#10B981" opacity="0.2" />
-          <path d="M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z" stroke="#10B981" strokeWidth="1.5" strokeLinejoin="round" />
-          <path d="M9 12l2 2 4-4" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        <span style={{ fontSize: 15, color: '#CBD5E1', lineHeight: 1.65 }}>
-          Every axis on this chart is calculated from verified public data. Sarah Chen cannot edit any of it.
-        </span>
-      </div>
-
-      {/* CTA button */}
-      <a
-        href="/agents/sarah-chen-001"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{
-          display: 'inline-block', marginTop: 18,
-          background: '#10B981', color: '#ffffff',
-          fontSize: 16, fontWeight: 700,
-          padding: '14px 28px', borderRadius: 8,
-          textDecoration: 'none',
-          boxShadow: '0 4px 20px rgba(16,185,129,0.3)',
-        }}
-      >
-        See a full agent profile →
-      </a>
-    </div>
-  );
-}
 
 function ScoreSection() {
+const radarHTML = `
+<style>
+.rc-wrap{display:flex;flex-direction:column;gap:16px}
+.rc-label{font-size:12px;color:#4B5563;text-transform:uppercase;letter-spacing:0.08em;text-align:center;margin-bottom:4px}
+.rc-card{background:#0F1628;border:1px solid #1E2A3A;border-radius:16px;padding:20px}
+.rc-toggle{display:flex;gap:4px;background:#0A0A0A;border-radius:10px;padding:4px;margin-bottom:16px}
+.rc-tbtn{flex:1;padding:10px 8px;border-radius:7px;border:none;cursor:pointer;font-size:12px;font-weight:700;color:rgba(255,255,255,0.4);background:transparent;-webkit-tap-highlight-color:transparent;min-height:44px;transition:all 0.2s}
+.rc-tbtn.active{background:#10B981;color:#fff}
+.rc-svg{width:100%;height:auto;display:block;overflow:visible}
+.rc-legend{display:flex;gap:16px;justify-content:center;margin-top:12px}
+.rc-li{display:flex;align-items:center;gap:6px;font-size:11px;color:#94A3B8}
+.rc-lmark{width:16px;height:2px;display:inline-block}
+.rc-verify{background:#0F1628;border:1px solid #1E2A3A;border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;margin-top:4px}
+.rc-vtext{font-size:13px;color:#CBD5E1;line-height:1.6}
+.rc-btn{display:block;width:100%;background:#10B981;color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:center;margin-top:4px}
+</style>
+<div class='rc-wrap'>
+  <div class='rc-label'>SAMPLE PROVN STRENGTH PROFILE</div>
+  <div class='rc-card'>
+    <div class='rc-toggle'>
+      <button class='rc-tbtn active' id='rcbtn0' onclick='rcSwitch(0)' ontouchstart=''>vs County Average</button>
+      <button class='rc-tbtn' id='rcbtn1' onclick='rcSwitch(1)' ontouchstart=''>vs Top 10%</button>
+    </div>
+    <svg class='rc-svg' viewBox='0 0 340 340' xmlns='http://www.w3.org/2000/svg'>
+      <polygon id='rcGrid100' fill='none' stroke='#1E2A3A' stroke-width='1'/>
+      <polygon id='rcGrid75' fill='none' stroke='#1E2A3A' stroke-width='0.5'/>
+      <polygon id='rcGrid50' fill='none' stroke='#1E2A3A' stroke-width='0.5'/>
+      <polygon id='rcGrid25' fill='none' stroke='#1E2A3A' stroke-width='0.5'/>
+      <g id='rcAxes' stroke='#1E2A3A' stroke-width='0.5'></g>
+      <polygon id='rcBench' fill='rgba(75,85,99,0.15)' stroke='#4B5563' stroke-width='1.5' stroke-dasharray='4,3'/>
+      <polygon id='rcAgent' fill='rgba(16,185,129,0.15)' stroke='#10B981' stroke-width='2'/>
+      <g id='rcDots'></g>
+      <g id='rcLabels' font-size='10' fill='#94A3B8' text-anchor='middle' font-family='system-ui,sans-serif'></g>
+    </svg>
+    <div class='rc-legend'>
+      <div class='rc-li'><div class='rc-lmark' style='background:#10B981'></div>Sarah Chen</div>
+      <div class='rc-li'><div class='rc-lmark' style='background:#4B5563'></div><span id='rcLegendLabel'>Sonoma County Avg</span></div>
+    </div>
+  </div>
+  <div class='rc-verify'>
+    <span style='font-size:16px;flex-shrink:0'>&#128737;</span>
+    <div class='rc-vtext'>Every axis on this chart is calculated from verified public data. Sarah Chen cannot edit any of it.</div>
+  </div>
+  <button class='rc-btn' onclick="window.location.href='/agents/sarah-chen-001'" ontouchstart=''>See a full agent profile &#8594;</button>
+</div>
+<script>
+var CX=170,CY=170,R=110;
+var LABELS=[['Five Star','Reviews'],['Local Market','Expertise'],['Career','Volume'],['Skin in','the Game'],['Successful','Outcomes'],['Expertise','Depth']];
+var SARAH=[89,94,76,92,88,95];
+var COUNTY=[50,50,50,50,50,50];
+var TOP10=[82,88,85,79,84,91];
+var rcMode=0;
+var rcCurrent=[50,50,50,50,50,50];
+var rcRaf=null;
+function pts(vals){
+  var p=[];
+  for(var i=0;i<6;i++){
+    var a=(Math.PI/180)*(60*i-90);
+    var r=(vals[i]/100)*R;
+    p.push((CX+r*Math.cos(a)).toFixed(1)+','+(CY+r*Math.sin(a)).toFixed(1));
+  }
+  return p.join(' ');
+}
+function gridPts(pct){
+  var p=[];
+  for(var i=0;i<6;i++){
+    var a=(Math.PI/180)*(60*i-90);
+    var r=(pct/100)*R;
+    p.push((CX+r*Math.cos(a)).toFixed(1)+','+(CY+r*Math.sin(a)).toFixed(1));
+  }
+  return p.join(' ');
+}
+function rcInit(){
+  document.getElementById('rcGrid100').setAttribute('points',gridPts(100));
+  document.getElementById('rcGrid75').setAttribute('points',gridPts(75));
+  document.getElementById('rcGrid50').setAttribute('points',gridPts(50));
+  document.getElementById('rcGrid25').setAttribute('points',gridPts(25));
+  var ax=document.getElementById('rcAxes');
+  ax.innerHTML='';
+  for(var i=0;i<6;i++){
+    var a=(Math.PI/180)*(60*i-90);
+    var x=(CX+R*Math.cos(a)).toFixed(1);
+    var y=(CY+R*Math.sin(a)).toFixed(1);
+    var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',CX);ln.setAttribute('y1',CY);
+    ln.setAttribute('x2',x);ln.setAttribute('y2',y);
+    ax.appendChild(ln);
+  }
+  document.getElementById('rcAgent').setAttribute('points',pts(SARAH));
+  var dotsEl=document.getElementById('rcDots');
+  dotsEl.innerHTML='';
+  for(var i=0;i<6;i++){
+    var a=(Math.PI/180)*(60*i-90);
+    var r=(SARAH[i]/100)*R;
+    var cx=(CX+r*Math.cos(a)).toFixed(1);
+    var cy=(CY+r*Math.sin(a)).toFixed(1);
+    var circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',cx);circle.setAttribute('cy',cy);
+    circle.setAttribute('r','11');circle.setAttribute('fill','#10B981');
+    var txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x',cx);txt.setAttribute('y',cy);
+    txt.setAttribute('text-anchor','middle');
+    txt.setAttribute('dominant-baseline','central');
+    txt.setAttribute('font-size','9');
+    txt.setAttribute('font-weight','700');
+    txt.setAttribute('fill','#fff');
+    txt.textContent=SARAH[i];
+    dotsEl.appendChild(circle);
+    dotsEl.appendChild(txt);
+  }
+  var labelsEl=document.getElementById('rcLabels');
+  labelsEl.innerHTML='';
+  var lo=R+28;
+  for(var i=0;i<6;i++){
+    var a=(Math.PI/180)*(60*i-90);
+    var lx=(CX+lo*Math.cos(a)).toFixed(1);
+    var ly=(CY+lo*Math.sin(a)).toFixed(1);
+    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',lx);t.setAttribute('y',ly);
+    t.setAttribute('text-anchor','middle');
+    t.setAttribute('fill','#94A3B8');
+    t.setAttribute('font-size','10');
+    t.setAttribute('font-family','system-ui,sans-serif');
+    var ts1=document.createElementNS('http://www.w3.org/2000/svg','tspan');
+    ts1.setAttribute('x',lx);ts1.setAttribute('dy','-5');
+    ts1.textContent=LABELS[i][0];
+    var ts2=document.createElementNS('http://www.w3.org/2000/svg','tspan');
+    ts2.setAttribute('x',lx);ts2.setAttribute('dy','14');
+    ts2.textContent=LABELS[i][1];
+    t.appendChild(ts1);t.appendChild(ts2);
+    labelsEl.appendChild(t);
+  }
+  rcAnimateTo(COUNTY);
+}
+function rcAnimateTo(target){
+  if(rcRaf) cancelAnimationFrame(rcRaf);
+  var from=rcCurrent.slice();
+  var t0=performance.now();
+  var dur=600;
+  function tick(now){
+    var t=Math.min((now-t0)/dur,1);
+    var e=t<0.5?2*t*t:-1+(4-2*t)*t;
+    rcCurrent=from.map(function(f,idx){return f+(target[idx]-f)*e;});
+    document.getElementById('rcBench').setAttribute('points',pts(rcCurrent));
+    if(t<1) rcRaf=requestAnimationFrame(tick);
+  }
+  rcRaf=requestAnimationFrame(tick);
+}
+function rcSwitch(m){
+  rcMode=m;
+  document.getElementById('rcbtn0').classList.toggle('active',m===0);
+  document.getElementById('rcbtn1').classList.toggle('active',m===1);
+  document.getElementById('rcLegendLabel').textContent=m===0?'Sonoma County Avg':'Top 10%';
+  var bench=document.getElementById('rcBench');
+  bench.setAttribute('stroke',m===0?'#4B5563':'#F59E0B');
+  bench.setAttribute('fill',m===0?'rgba(75,85,99,0.15)':'rgba(245,158,11,0.1)');
+  rcAnimateTo(m===0?COUNTY:TOP10);
+}
+rcInit();
+</script>
+`;
+
   return (
     <section
       id="provn-score-section"
@@ -1852,18 +1351,154 @@ function ScoreSection() {
           className="score-two-col"
           style={{
             display: 'flex',
-            flexWrap: 'wrap',
-            gap: 48,
-            alignItems: 'center',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            gap: '48px',
+            maxWidth: '1100px',
+            margin: '0 auto',
+            padding: '0 40px',
           }}
         >
           {/* LEFT — Score bars */}
-          <ScoreBarsPanel />
+          <div style={{ flex: '0 0 440px', maxWidth: '440px' }} dangerouslySetInnerHTML={{ __html: `
+<style>
+.sb-wrap{flex:1;min-width:0}
+.sb-row{border-bottom:1px solid #1E2A3A}
+.sb-row:last-child{border-bottom:none}
+.sb-btn{width:100%;background:transparent;border:none;padding:16px 0;cursor:pointer;text-align:left;font:inherit;-webkit-tap-highlight-color:transparent;min-height:56px;display:flex;flex-direction:column;gap:8px}
+.sb-header{display:flex;align-items:center;justify-content:space-between;width:100%}
+.sb-left{display:flex;align-items:center;gap:10px}
+.sb-emoji{font-size:18px;width:24px;text-align:center}
+.sb-label{font-size:14px;font-weight:600;color:#FFFFFF}
+.sb-right{display:flex;align-items:center;gap:6px}
+.sb-pct{font-size:14px;font-weight:700;color:#10B981}
+.sb-chev{font-size:10px;color:#4B5563;transition:transform 0.3s;display:inline-block}
+.sb-chev.open{transform:rotate(180deg)}
+.sb-track{width:100%;height:6px;background:#1E2A3A;border-radius:3px;overflow:hidden}
+.sb-fill{height:100%;background:#10B981;border-radius:3px}
+.sb-body{overflow:hidden;transition:max-height 0.3s ease;max-height:0px}
+.sb-why{font-size:13px;color:#CBD5E1;line-height:1.7;padding:8px 0 4px;font-style:italic}
+.sb-source{font-size:11px;color:#4B5563;padding-bottom:12px}
+.sb-formula-btn{background:transparent;border:none;color:#10B981;font-size:13px;cursor:pointer;padding:16px 0;text-align:left;width:100%;-webkit-tap-highlight-color:transparent;min-height:44px}
+.sb-formula-body{overflow:hidden;transition:max-height 0.3s ease;max-height:0px}
+.sb-formula-text{font-size:13px;color:#94A3B8;line-height:1.7;padding-bottom:16px}
+.sb-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.sb-pill{background:#0F1628;border:1px solid #1E2A3A;border-radius:20px;padding:8px 16px;font-size:12px;color:#94A3B8}
+.sb-closing{font-size:12px;color:#4B5563;font-style:italic;margin-top:16px;line-height:1.6}
+</style>
+<div class="sb-wrap" id="sbWrap">
+  <div class="sb-row">
+    <button class="sb-btn" onclick="sbToggle(0)" ontouchstart="">
+      <div class="sb-header">
+        <div class="sb-left"><span class="sb-emoji">&#11088;</span><span class="sb-label">Five Star Reviews</span></div>
+        <div class="sb-right"><span class="sb-pct">89%</span><span class="sb-chev open" id="sbchev0">&#9660;</span></div>
+      </div>
+      <div class="sb-track"><div class="sb-fill" style="width:89%"></div></div>
+    </button>
+    <div class="sb-body" id="sbbody0" style="max-height:220px">
+      <div class="sb-why">Volume and recency of verified reviews across every major platform &mdash; not just the ones the agent chose to show you</div>
+      <div class="sb-source">Google &middot; Zillow &middot; Realtor.com &middot; Homes.com</div>
+    </div>
+  </div>
+  <div class="sb-row">
+    <button class="sb-btn" onclick="sbToggle(1)" ontouchstart="">
+      <div class="sb-header">
+        <div class="sb-left"><span class="sb-emoji">&#128205;</span><span class="sb-label">Local Market Expertise</span></div>
+        <div class="sb-right"><span class="sb-pct">94%</span><span class="sb-chev" id="sbchev1">&#9660;</span></div>
+      </div>
+      <div class="sb-track"><div class="sb-fill" style="width:94%"></div></div>
+    </button>
+    <div class="sb-body" id="sbbody1">
+      <div class="sb-why">How many neighborhoods they have sold in and how deeply &mdash; a true local specialist vs someone passing through</div>
+      <div class="sb-source">MLS transaction history by zip code</div>
+    </div>
+  </div>
+  <div class="sb-row">
+    <button class="sb-btn" onclick="sbToggle(2)" ontouchstart="">
+      <div class="sb-header">
+        <div class="sb-left"><span class="sb-emoji">&#128176;</span><span class="sb-label">Career Volume</span></div>
+        <div class="sb-right"><span class="sb-pct">76%</span><span class="sb-chev" id="sbchev2">&#9660;</span></div>
+      </div>
+      <div class="sb-track"><div class="sb-fill" style="width:76%"></div></div>
+    </button>
+    <div class="sb-body" id="sbbody2">
+      <div class="sb-why">Total sales ranked against every other active agent in the county &mdash; top 5% means they outsell 95% of agents</div>
+      <div class="sb-source">MLS career production data</div>
+    </div>
+  </div>
+  <div class="sb-row">
+    <button class="sb-btn" onclick="sbToggle(3)" ontouchstart="">
+      <div class="sb-header">
+        <div class="sb-left"><span class="sb-emoji">&#127968;</span><span class="sb-label">Skin in the Game</span></div>
+        <div class="sb-right"><span class="sb-pct">92%</span><span class="sb-chev" id="sbchev3">&#9660;</span></div>
+      </div>
+      <div class="sb-track"><div class="sb-fill" style="width:92%"></div></div>
+    </button>
+    <div class="sb-body" id="sbbody3">
+      <div class="sb-why">Does this agent personally own real estate? An agent with no property of their own is advising you on something they have never personally risked money on</div>
+      <div class="sb-source">County assessor records &middot; verified LLC docs</div>
+    </div>
+  </div>
+  <div class="sb-row">
+    <button class="sb-btn" onclick="sbToggle(4)" ontouchstart="">
+      <div class="sb-header">
+        <div class="sb-left"><span class="sb-emoji">&#10003;</span><span class="sb-label">Successful Outcomes</span></div>
+        <div class="sb-right"><span class="sb-pct">88%</span><span class="sb-chev" id="sbchev4">&#9660;</span></div>
+      </div>
+      <div class="sb-track"><div class="sb-fill" style="width:88%"></div></div>
+    </button>
+    <div class="sb-body" id="sbbody4">
+      <div class="sb-why">What percentage of every listing they have ever taken eventually sold &mdash; including expired listings and relists. Rewards persistence not just easy markets</div>
+      <div class="sb-source">MLS listing history including expired</div>
+    </div>
+  </div>
+  <div class="sb-row">
+    <button class="sb-btn" onclick="sbToggle(5)" ontouchstart="">
+      <div class="sb-header">
+        <div class="sb-left"><span class="sb-emoji">&#127919;</span><span class="sb-label">Expertise Depth</span></div>
+        <div class="sb-right"><span class="sb-pct">95%</span><span class="sb-chev" id="sbchev5">&#9660;</span></div>
+      </div>
+      <div class="sb-track"><div class="sb-fill" style="width:95%"></div></div>
+    </button>
+    <div class="sb-body" id="sbbody5">
+      <div class="sb-why">Complex transactions like probate, trust sales, and 1031 exchanges score higher than standard residential &mdash; measures real skill not just volume</div>
+      <div class="sb-source">MLS transaction type designations</div>
+    </div>
+  </div>
+  <button class="sb-formula-btn" onclick="sbFormula()" ontouchstart="">How is the overall score calculated? &#8595;</button>
+  <div class="sb-formula-body" id="sbformula">
+    <div class="sb-formula-text">Each category is weighted independently and combined into a single composite score from 0 to 100. Transaction performance and client outcomes carry the most weight. The exact formula is proprietary &mdash; agents cannot reverse-engineer it, which means the only way to improve a Provn score is to actually serve clients better. Scores update as new data becomes available.</div>
+  </div>
+  <div class="sb-pills">
+    <div class="sb-pill">&#128274; Agents cannot edit their score</div>
+    <div class="sb-pill">&#128202; Updated from live data sources</div>
+    <div class="sb-pill">&#10003; Verified not self-reported</div>
+  </div>
+  <p class="sb-closing">Scores update automatically as new data becomes available. Agents are never notified in advance of score changes.</p>
+</div>
+<script>
+var sbOpen=0;
+function sbToggle(i){
+  for(var j=0;j<6;j++){
+    var b=document.getElementById('sbbody'+j);
+    var c=document.getElementById('sbchev'+j);
+    if(j===i&&sbOpen!==i){b.style.maxHeight='220px';c.classList.add('open');}
+    else{b.style.maxHeight='0px';c.classList.remove('open');}
+  }
+  sbOpen=(sbOpen===i)?-1:i;
+}
+function sbFormula(){
+  var f=document.getElementById('sbformula');
+  f.style.maxHeight=f.style.maxHeight==='220px'?'0px':'220px';
+}
+</script>
+` }} />
 
           {/* RIGHT — Radar chart */}
-          <FadeIn delay={120}>
-            <RadarChartPanel />
-          </FadeIn>
+          <div
+            style={{ flex: 1, minWidth: 0 }}
+            dangerouslySetInnerHTML={{ __html: radarHTML }}
+          />
         </div>
       </div>
     </section>
@@ -2078,9 +1713,91 @@ function EducationSection() {
           </p>
         </FadeIn>
 
-        {/* Persona grid */}
+        {/* Mobile persona selector — hidden on desktop via CSS */}
+        <div
+          className="persona-mobile"
+          dangerouslySetInnerHTML={{ __html: `
+<style>
+.ps-wrap{padding:0}
+.ps-pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.ps-pills::-webkit-scrollbar{display:none}
+.ps-pill{flex-shrink:0;padding:10px 16px;border-radius:24px;border:1.5px solid #1E2A3A;background:#0F1628;color:#94A3B8;font-size:13px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;min-height:44px;display:flex;align-items:center;gap:6px;transition:all 0.2s}
+.ps-pill.active{background:#0F2A1A;border-color:#10B981;color:#FFFFFF}
+.ps-pill-emoji{font-size:15px}
+.ps-detail{background:#0F1628;border:1px solid #1E2A3A;border-radius:16px;padding:24px;margin-top:4px;min-height:200px}
+.ps-detail-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.ps-detail-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.ps-detail-label{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px}
+.ps-detail-price{font-size:13px;color:#94A3B8}
+.ps-detail-divider{height:1px;background:#1E2A3A;margin-bottom:14px}
+.ps-detail-situation{font-size:14px;color:#CBD5E1;line-height:1.7;margin-bottom:14px}
+.ps-detail-needs-label{font-size:10px;color:#94A3B8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
+.ps-detail-needs{font-size:14px;color:#FFFFFF;font-weight:500;line-height:1.6;margin-bottom:14px}
+.ps-detail-match{font-size:12px;font-weight:600;color:#10B981;display:flex;align-items:center;gap:6px}
+.ps-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.ps-nav-btn{background:#0A0A0A;border:1px solid #1E2A3A;border-radius:8px;padding:8px 16px;color:#94A3B8;font-size:13px;cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:44px;display:flex;align-items:center;gap:6px}
+.ps-nav-btn:disabled{opacity:0.3;cursor:default}
+.ps-counter{font-size:12px;color:#4B5563}
+</style>
+<div class='ps-wrap'>
+  <div class='ps-pills' id='psPills'>
+    <button class='ps-pill active' onclick='psSelect(0)' ontouchstart='' id='pspill0'><span class='ps-pill-emoji'>&#128273;</span>First-Time Buyer</button>
+    <button class='ps-pill' onclick='psSelect(1)' ontouchstart='' id='pspill1'><span class='ps-pill-emoji'>&#11014;&#65039;</span>Move-Up Seller</button>
+    <button class='ps-pill' onclick='psSelect(2)' ontouchstart='' id='pspill2'><span class='ps-pill-emoji'>&#128142;</span>Luxury Buyer</button>
+    <button class='ps-pill' onclick='psSelect(3)' ontouchstart='' id='pspill3'><span class='ps-pill-emoji'>&#127960;</span>Investment Buyer</button>
+    <button class='ps-pill' onclick='psSelect(4)' ontouchstart='' id='pspill4'><span class='ps-pill-emoji'>&#128203;</span>Trust Sale</button>
+    <button class='ps-pill' onclick='psSelect(5)' ontouchstart='' id='pspill5'><span class='ps-pill-emoji'>&#127807;</span>Downsizer</button>
+  </div>
+  <div class='ps-detail' id='psDetail'></div>
+  <div id='psSwipeHint' style='text-align:center;font-size:11px;color:#4B5563;padding:8px 0;font-style:italic'>&#8592; swipe to browse &#8594;</div>
+  <div class='ps-nav'>
+    <button class='ps-nav-btn' onclick='psNav(-1)' ontouchstart='' id='psPrev'>&#8592; Prev</button>
+    <span class='ps-counter' id='psCounter'>1 of 6</span>
+    <button class='ps-nav-btn' onclick='psNav(1)' ontouchstart='' id='psNext'>Next &#8594;</button>
+  </div>
+</div>
+<script>
+var psData=[
+  {emoji:'&#128273;',label:'FIRST-TIME BUYER',labelColor:'#10B981',iconBg:'#0A1F12',price:'$550K-$700K \xb7 Petaluma',situation:'Never bought before. Nervous about offers, inspections, and making a mistake on the largest purchase of their life.',needs:'Patient educator with strong lender network and first-time buyer transaction experience.',match:'Matched to 8 agents on Provn'},
+  {emoji:'&#11014;',label:'MOVE-UP SELLER',labelColor:'#F59E0B',iconBg:'#1A1200',price:'Selling $900K \xb7 Buying $1.4M \xb7 Windsor',situation:'Needs to sell before buying. Two transactions to coordinate simultaneously without losing either one.',needs:'Tactical coordinator with contingent sale experience and calm under pressure.',match:'Matched to 5 agents on Provn'},
+  {emoji:'&#128142;',label:'LUXURY BUYER',labelColor:'#8B5CF6',iconBg:'#0D0A1A',price:'$2.1M+ \xb7 Healdsburg',situation:'Wants vineyard or estate property. Needs off-market access and complete discretion.',needs:'Off-market specialist with $50M+ luxury volume and vineyard transaction experience.',match:'Matched to 3 agents on Provn'},
+  {emoji:'&#127960;',label:'INVESTMENT BUYER',labelColor:'#06B6D4',iconBg:'#0A1520',price:'$800K-$1.2M \xb7 Multifamily',situation:'Looking for rental income property. Needs to analyze cash flow, cap rates, and long-term appreciation.',needs:'Investor-minded agent who personally owns investment property and understands NOI.',match:'Matched to 6 agents on Provn'},
+  {emoji:'&#128203;',label:'TRUST SALE SELLER',labelColor:'#EF4444',iconBg:'#1A0D0D',price:'Estate property \xb7 Santa Rosa',situation:'Managing a parent estate. Needs speed, sensitivity, and deep probate knowledge.',needs:'Probate and trust sale specialist with documented estate transaction experience.',match:'Matched to 4 agents on Provn'},
+  {emoji:'&#127807;',label:'DOWNSIZER',labelColor:'#10B981',iconBg:'#0A1F12',price:'Selling $1.3M \xb7 Buying $750K \xb7 Sonoma',situation:'30 years in the family home. An emotional transaction that needs patience as much as skill.',needs:'High-EQ agent with downsizer experience who understands this is not just a financial decision.',match:'Matched to 7 agents on Provn'}
+];
+var psCurrent=0;
+function psRender(i){
+  var d=psData[i];
+  document.getElementById('psDetail').innerHTML='<div class="ps-detail-top"><div class="ps-detail-icon" style="background:'+d.iconBg+'">'+d.emoji+'</div><div><div class="ps-detail-label" style="color:'+d.labelColor+'">'+d.label+'</div><div class="ps-detail-price">'+d.price+'</div></div></div><div class="ps-detail-divider"></div><div class="ps-detail-situation">'+d.situation+'</div><div class="ps-detail-needs-label">What they need from an agent</div><div class="ps-detail-needs">'+d.needs+'</div><div class="ps-detail-match">&#10003; '+d.match+'</div>';
+  document.getElementById('psCounter').textContent=(i+1)+' of 6';
+  document.getElementById('psPrev').disabled=(i===0);
+  document.getElementById('psNext').disabled=(i===5);
+  for(var j=0;j<6;j++){var pill=document.getElementById('pspill'+j);if(j===i){pill.classList.add('active');}else{pill.classList.remove('active');}}
+}
+function psSelect(i){psCurrent=i;psRender(i);var pill=document.getElementById('pspill'+i);if(pill){pill.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}}
+function psNav(dir){var next=psCurrent+dir;if(next>=0&&next<=5)psSelect(next);}
+var psSwipeStartX=0;
+var psSwipeStartY=0;
+var psSwipeThreshold=40;
+document.getElementById('psDetail').addEventListener('touchstart',function(e){psSwipeStartX=e.touches[0].clientX;psSwipeStartY=e.touches[0].clientY;},{passive:true});
+document.getElementById('psDetail').addEventListener('touchend',function(e){
+  var dx=e.changedTouches[0].clientX-psSwipeStartX;
+  var dy=e.changedTouches[0].clientY-psSwipeStartY;
+  if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>psSwipeThreshold){
+    if(dx<0&&psCurrent<5){psSelect(psCurrent+1);}
+    else if(dx>0&&psCurrent>0){psSelect(psCurrent-1);}
+    var hint=document.getElementById('psSwipeHint');
+    if(hint) hint.style.display='none';
+  }
+},{passive:true});
+psRender(0);
+</script>
+` }}
+        />
+
+        {/* Persona grid — desktop only */}
         <FadeIn delay={80}>
-          <div className="persona-grid" style={{
+          <div className="persona-grid persona-desktop" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
             gap: 20,
